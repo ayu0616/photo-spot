@@ -11,9 +11,8 @@ const seed = async () => {
 
     console.log("Inserting new user data...");
     const _user = await db.insert(usersTable).values({
-      id: Bun.randomUUIDv7(),
-      userId: "test_user_1",
       name: "テストユーザー1",
+      email: "test_user_1@example.com",
     });
     console.log("New user data inserted.");
   });
