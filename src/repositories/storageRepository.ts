@@ -54,4 +54,13 @@ export class StorageRepository {
   createReadStream(fileName: string): Readable {
     return this.bucket.file(fileName).createReadStream();
   }
+
+  /**
+   * ファイルをGCSから削除する
+   * @param fileName - GCS上のファイル名
+   */
+  async delete(fileName: string): Promise<void> {
+    const file = this.bucket.file(fileName);
+    await file.delete();
+  }
 }
