@@ -4,6 +4,8 @@ import { csrf } from "hono/csrf";
 import { logger } from "hono/logger";
 import { secureHeaders } from "hono/secure-headers";
 
+import { imageController } from "./imageController";
+
 export const app = new Hono()
   .basePath("/api")
   .use(
@@ -18,4 +20,5 @@ export const app = new Hono()
   .onError((err, c) => {
     console.error(err);
     return c.json({ error: err.message }, 500);
-  });
+  })
+  .route("/image", imageController);
