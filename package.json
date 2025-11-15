@@ -12,7 +12,9 @@
     "db:migrate": "bunx --bun drizzle-kit migrate",
     "db:push": "bun --bun run db:generate && bun --bun run db:migrate",
     "db:seed": "bun --bun src/db/seed.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@auth/core": "^0.34.3",
@@ -41,6 +43,7 @@
     "drizzle-kit": "^0.31.7",
     "tailwindcss": "^4",
     "tsx": "^4.20.6",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.0.9"
   }
 }
