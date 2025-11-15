@@ -14,6 +14,8 @@
     "db:seed": "bun --bun src/db/seed.ts"
   },
   "dependencies": {
+    "@auth/core": "^0.34.3",
+    "@hono/auth-js": "^1.1.0",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.44.7",
     "hono": "^4.10.5",
