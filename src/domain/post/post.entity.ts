@@ -2,8 +2,10 @@
 
 import type { PhotoId } from "../../photo/value-object/photo-id";
 import type { SpotId } from "../../spot/value-object/spot-id";
+import type { CreatedAt } from "./value-object/created-at";
 import type { PostDescription } from "./value-object/post-description";
 import type { PostId } from "./value-object/post-id";
+import type { UpdatedAt } from "./value-object/updated-at";
 import type { UserId } from "./value-object/user-id";
 
 export class PostEntity {
@@ -12,8 +14,8 @@ export class PostEntity {
   description: PostDescription;
   spotId: SpotId;
   photoId: PhotoId;
-  readonly createdAt: Date;
-  updatedAt: Date;
+  readonly createdAt: CreatedAt;
+  updatedAt: UpdatedAt;
 
   constructor(
     id: PostId,
@@ -21,8 +23,8 @@ export class PostEntity {
     description: PostDescription,
     spotId: SpotId,
     photoId: PhotoId,
-    createdAt: Date,
-    updatedAt: Date,
+    createdAt: CreatedAt,
+    updatedAt: UpdatedAt,
   ) {
     this.id = id;
     this.userId = userId;
@@ -39,16 +41,16 @@ export class PostEntity {
 
   updateDescription(description: PostDescription): void {
     this.description = description;
-    this.updatedAt = new Date();
+    this.updatedAt = new UpdatedAt(new Date());
   }
 
   updateSpotId(spotId: SpotId): void {
     this.spotId = spotId;
-    this.updatedAt = new Date();
+    this.updatedAt = new UpdatedAt(new Date());
   }
 
   updatePhotoId(photoId: PhotoId): void {
     this.photoId = photoId;
-    this.updatedAt = new Date();
+    this.updatedAt = new UpdatedAt(new Date());
   }
 }

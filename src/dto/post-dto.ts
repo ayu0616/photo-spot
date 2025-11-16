@@ -1,12 +1,14 @@
 // src/dto/post-dto.ts
 
 import { z } from "zod";
-import { PostEntity } from "../domain/post/post.entity";
-import { PostId } from "../domain/post/value-object/post-id";
-import { UserId } from "../domain/post/value-object/user-id";
-import { PostDescription } from "../domain/post/value-object/post-description";
-import { SpotId } from "../domain/spot/value-object/spot-id";
 import { PhotoId } from "../domain/photo/value-object/photo-id";
+import { PostEntity } from "../domain/post/post.entity";
+import { CreatedAt } from "../domain/post/value-object/created-at";
+import { PostDescription } from "../domain/post/value-object/post-description";
+import { PostId } from "../domain/post/value-object/post-id";
+import { UpdatedAt } from "../domain/post/value-object/updated-at";
+import { UserId } from "../domain/post/value-object/user-id";
+import { SpotId } from "../domain/spot/value-object/spot-id";
 
 export const PostDtoSchema = z.object({
   id: z.string().uuid(),
@@ -20,33 +22,35 @@ export const PostDtoSchema = z.object({
 
 export type PostDto = z.infer<typeof PostDtoSchema>;
 
-export class PostDtoMapper {
-  static fromEntity(entity: PostEntity): PostDto {
+export const PostDtoMapper = {
+  fromEntity(entity: PostEntity): PostDto {
     return {
       id: entity.id.value,
       userId: entity.userId.value,
       description: entity.description.value,
       spotId: entity.spotId.value,
       photoId: entity.photoId.value,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
+      createdAt: entity.createdAt.value,
+      updatedAt: entity.updatedAt.value,
     };
-  }
+  },
 
-  static toEntity(dto: PostDto): PostEntity {
+  toEntity(dto: PostDto): PostEntity {
     const id = new PostId(dto.id);
     const userId = new UserId(dto.userId);
     const description = new PostDescription(dto.description);
     const spotId = new SpotId(dto.spotId);
     const photoId = new PhotoId(dto.photoId);
+    const createdAt = new CreatedAt(dto.createdAt);
+    const updatedAt = new UpdatedAt(dto.updatedAt);
     return new PostEntity(
       id,
       userId,
       description,
       spotId,
       photoId,
-      dto.createdAt,
-      dto.updatedAt,
+      createdAt,
+      updatedAt,
     );
-  }
-}
+  },
+};
