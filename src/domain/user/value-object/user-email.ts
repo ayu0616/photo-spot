@@ -1,19 +1,14 @@
 // src/domain/user/value-object/user-email.ts
 
 import { z } from "zod";
+import { StringValue } from "../../common/value-object/string";
 
-export class UserEmail {
-  readonly value: string | null;
-
-  constructor(value: string | null) {
-    if (value !== null && !UserEmail.isValid(value)) {
+export class UserEmail extends StringValue {
+  constructor(value: string) {
+    if (!UserEmail.isValid(value)) {
       throw new Error("Invalid UserEmail");
     }
-    this.value = value;
-  }
-
-  equals(other: UserEmail): boolean {
-    return this.value === other.value;
+    super(value);
   }
 
   static isValid(value: string): boolean {

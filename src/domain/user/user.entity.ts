@@ -3,22 +3,22 @@
 import type { EmailVerified } from "./value-object/email-verified";
 import type { UserEmail } from "./value-object/user-email";
 import type { UserId } from "./value-object/user-id";
-import type { UserName } from "./value-object/user-name";
 import type { UserImage } from "./value-object/user-image";
+import type { UserName } from "./value-object/user-name";
 
 export class UserEntity {
   readonly id: UserId;
-  name: UserName;
-  email: UserEmail;
-  emailVerified: EmailVerified;
-  image: UserImage;
+  name: UserName | null;
+  email: UserEmail | null;
+  emailVerified: EmailVerified | null;
+  image: UserImage | null;
 
   constructor(
     id: UserId,
-    name: UserName,
-    email: UserEmail,
-    emailVerified: EmailVerified,
-    image: UserImage,
+    name: UserName | null,
+    email: UserEmail | null,
+    emailVerified: EmailVerified | null,
+    image: UserImage | null,
   ) {
     this.id = id;
     this.name = name;
@@ -31,19 +31,19 @@ export class UserEntity {
     return this.id.equals(other.id);
   }
 
-  updateName(name: UserName): void {
+  updateName(name: UserName | null): void {
     this.name = name;
   }
 
-  updateEmail(email: UserEmail): void {
+  updateEmail(email: UserEmail | null): void {
     this.email = email;
   }
 
-  updateEmailVerified(emailVerified: EmailVerified): void {
+  updateEmailVerified(emailVerified: EmailVerified | null): void {
     this.emailVerified = emailVerified;
   }
 
-  updateImage(image: UserImage): void {
+  updateImage(image: UserImage | null): void {
     this.image = image;
   }
 }

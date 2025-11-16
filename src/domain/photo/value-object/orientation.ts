@@ -1,5 +1,5 @@
 // src/domain/photo/value-object/orientation.ts
 
-import { OptionalNumber } from "../../common/value-object/optional-number";
+import { NumberValue } from "../../common/value-object/number";
 
-export class Orientation extends OptionalNumber {}
+export class Orientation extends NumberValue {}

@@ -1,5 +1,5 @@
 // src/domain/photo/value-object/lens-make.ts
 
-import { OptionalString } from "../../common/value-object/optional-string";
+import { StringValue } from "../../common/value-object/string";
 
-export class LensMake extends OptionalString {}
+export class LensMake extends StringValue {}

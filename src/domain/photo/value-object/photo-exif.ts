@@ -1,10 +1,10 @@
-// src/domain/photo/photo-exif/photo-exif.ts
+// src/domain/photo/value-object/photo-exif.ts
 
 export class PhotoExif {
-  readonly value: string | null;
+  readonly value: string;
 
-  constructor(value: string | null) {
-    if (value !== null && !PhotoExif.isValid(value)) {
+  constructor(value: string) {
+    if (!PhotoExif.isValid(value)) {
       throw new Error("Invalid PhotoExif");
     }
     this.value = value;

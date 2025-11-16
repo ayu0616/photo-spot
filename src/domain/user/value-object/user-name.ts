@@ -1,13 +1,5 @@
 // src/domain/user/value-object/user-name.ts
 
-export class UserName {
-  readonly value: string | null;
+import { StringValue } from "../../common/value-object/string";
 
-  constructor(value: string | null) {
-    this.value = value;
-  }
-
-  equals(other: UserName): boolean {
-    return this.value === other.value;
-  }
-}
+export class UserName extends StringValue {}

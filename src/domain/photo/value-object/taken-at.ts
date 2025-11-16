@@ -1,5 +1,5 @@
 // src/domain/photo/value-object/taken-at.ts
 
-import { OptionalDateTime } from "../../common/value-object/optional-date-time";
+import { DateTime } from "../../common/value-object/date-time";
 
-export class TakenAt extends OptionalDateTime {}
+export class TakenAt extends DateTime {}

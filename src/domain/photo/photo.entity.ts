@@ -20,38 +20,38 @@ import type { TakenAt } from "./value-object/taken-at";
 export class PhotoEntity {
   readonly id: PhotoId;
   url: PhotoUrl;
-  exif: PhotoExif;
-  takenAt: TakenAt;
-  cameraMake: CameraMake;
-  cameraModel: CameraModel;
-  latitude: Latitude;
-  longitude: Longitude;
-  orientation: Orientation;
-  iso: Iso;
-  lensMake: LensMake;
-  lensModel: LensModel;
-  lensSerial: LensSerial;
-  focalLength: FocalLength;
-  focalLength35mm: FocalLength35mm;
-  aperture: Aperture;
+  exif: PhotoExif | null;
+  takenAt: TakenAt | null;
+  cameraMake: CameraMake | null;
+  cameraModel: CameraModel | null;
+  latitude: Latitude | null;
+  longitude: Longitude | null;
+  orientation: Orientation | null;
+  iso: Iso | null;
+  lensMake: LensMake | null;
+  lensModel: LensModel | null;
+  lensSerial: LensSerial | null;
+  focalLength: FocalLength | null;
+  focalLength35mm: FocalLength35mm | null;
+  aperture: Aperture | null;
 
   constructor(
     id: PhotoId,
     url: PhotoUrl,
-    exif: PhotoExif,
-    takenAt: TakenAt,
-    cameraMake: CameraMake,
-    cameraModel: CameraModel,
-    latitude: Latitude,
-    longitude: Longitude,
-    orientation: Orientation,
-    iso: Iso,
-    lensMake: LensMake,
-    lensModel: LensModel,
-    lensSerial: LensSerial,
-    focalLength: FocalLength,
-    focalLength35mm: FocalLength35mm,
-    aperture: Aperture,
+    exif: PhotoExif | null,
+    takenAt: TakenAt | null,
+    cameraMake: CameraMake | null,
+    cameraModel: CameraModel | null,
+    latitude: Latitude | null,
+    longitude: Longitude | null,
+    orientation: Orientation | null,
+    iso: Iso | null,
+    lensMake: LensMake | null,
+    lensModel: LensModel | null,
+    lensSerial: LensSerial | null,
+    focalLength: FocalLength | null,
+    focalLength35mm: FocalLength35mm | null,
+    aperture: Aperture | null,
   ) {
     this.id = id;
     this.url = url;
@@ -79,59 +79,59 @@ export class PhotoEntity {
     this.url = url;
   }
 
-  updateExif(exif: PhotoExif): void {
+  updateExif(exif: PhotoExif | null): void {
     this.exif = exif;
   }
 
-  updateTakenAt(takenAt: TakenAt): void {
+  updateTakenAt(takenAt: TakenAt | null): void {
     this.takenAt = takenAt;
   }
 
-  updateCameraMake(cameraMake: CameraMake): void {
+  updateCameraMake(cameraMake: CameraMake | null): void {
     this.cameraMake = cameraMake;
   }
 
-  updateCameraModel(cameraModel: CameraModel): void {
+  updateCameraModel(cameraModel: CameraModel | null): void {
     this.cameraModel = cameraModel;
   }
 
-  updateLatitude(latitude: Latitude): void {
+  updateLatitude(latitude: Latitude | null): void {
     this.latitude = latitude;
   }
 
-  updateLongitude(longitude: Longitude): void {
+  updateLongitude(longitude: Longitude | null): void {
     this.longitude = longitude;
   }
 
-  updateOrientation(orientation: Orientation): void {
+  updateOrientation(orientation: Orientation | null): void {
     this.orientation = orientation;
   }
 
-  updateIso(iso: Iso): void {
+  updateIso(iso: Iso | null): void {
     this.iso = iso;
   }
 
-  updateLensMake(lensMake: LensMake): void {
+  updateLensMake(lensMake: LensMake | null): void {
     this.lensMake = lensMake;
   }
 
-  updateLensModel(lensModel: LensModel): void {
+  updateLensModel(lensModel: LensModel | null): void {
     this.lensModel = lensModel;
   }
 
-  updateLensSerial(lensSerial: LensSerial): void {
+  updateLensSerial(lensSerial: LensSerial | null): void {
     this.lensSerial = lensSerial;
   }
 
-  updateFocalLength(focalLength: FocalLength): void {
+  updateFocalLength(focalLength: FocalLength | null): void {
     this.focalLength = focalLength;
   }
 
-  updateFocalLength35mm(focalLength35mm: FocalLength35mm): void {
+  updateFocalLength35mm(focalLength35mm: FocalLength35mm | null): void {
     this.focalLength35mm = focalLength35mm;
   }
 
-  updateAperture(aperture: Aperture): void {
+  updateAperture(aperture: Aperture | null): void {
     this.aperture = aperture;
   }
 }

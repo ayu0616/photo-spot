@@ -1,5 +1,5 @@
 // src/domain/photo/value-object/latitude.ts
 
-import { OptionalString } from "../../common/value-object/optional-string";
+import { StringValue } from "../../common/value-object/string";
 
-export class Latitude extends OptionalString {}
+export class Latitude extends StringValue {}
