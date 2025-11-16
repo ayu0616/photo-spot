@@ -33,12 +33,8 @@
           "name": "city_master_prefecture_id_prefecture_master_id_fk",
           "tableFrom": "city_master",
           "tableTo": "prefecture_master",
-          "columnsFrom": [
-            "prefecture_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["prefecture_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -121,12 +117,8 @@
           "name": "post_userId_user_id_fk",
           "tableFrom": "post",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -134,12 +126,8 @@
           "name": "post_id_spot_id_fk",
           "tableFrom": "post",
           "tableTo": "spot",
-          "columnsFrom": [
-            "id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -147,12 +135,8 @@
           "name": "post_photoId_photo_id_fk",
           "tableFrom": "post",
           "tableTo": "photo",
-          "columnsFrom": [
-            "photoId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["photoId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -217,12 +201,8 @@
           "name": "spot_cityId_city_master_id_fk",
           "tableFrom": "spot",
           "tableTo": "city_master",
-          "columnsFrom": [
-            "cityId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["cityId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -310,12 +290,8 @@
           "name": "account_userId_user_id_fk",
           "tableFrom": "account",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -323,10 +299,7 @@
       "compositePrimaryKeys": {
         "account_provider_providerAccountId_pk": {
           "name": "account_provider_providerAccountId_pk",
-          "columns": [
-            "provider",
-            "providerAccountId"
-          ]
+          "columns": ["provider", "providerAccountId"]
         }
       },
       "uniqueConstraints": {},
@@ -393,12 +366,8 @@
           "name": "authenticator_userId_user_id_fk",
           "tableFrom": "authenticator",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -406,19 +375,14 @@
       "compositePrimaryKeys": {
         "authenticator_userId_credentialID_pk": {
           "name": "authenticator_userId_credentialID_pk",
-          "columns": [
-            "userId",
-            "credentialID"
-          ]
+          "columns": ["userId", "credentialID"]
         }
       },
       "uniqueConstraints": {
         "authenticator_credentialID_unique": {
           "name": "authenticator_credentialID_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "credentialID"
-          ]
+          "columns": ["credentialID"]
         }
       },
       "policies": {},
@@ -454,12 +418,8 @@
           "name": "session_userId_user_id_fk",
           "tableFrom": "session",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -512,9 +472,7 @@
         "user_email_unique": {
           "name": "user_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -549,10 +507,7 @@
       "compositePrimaryKeys": {
         "verificationToken_identifier_token_pk": {
           "name": "verificationToken_identifier_token_pk",
-          "columns": [
-            "identifier",
-            "token"
-          ]
+          "columns": ["identifier", "token"]
         }
       },
       "uniqueConstraints": {},

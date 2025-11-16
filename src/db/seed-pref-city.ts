@@ -1,7 +1,7 @@
-import * as fs from "fs";
-import * as path from "path";
+import * as fs from "node:fs";
+import * as path from "node:path";
 import { db } from "./"; // DB接続インスタンスをインポート
-import { PrefectureMasterTable, CityMasterTable } from "./schema"; // スキーマをインポート
+import { CityMasterTable, PrefectureMasterTable } from "./schema"; // スキーマをインポート
 
 // --- 設定項目 ---
 // 読み込むCSVファイル名を指定してください
