@@ -1,22 +1,5 @@
-// src/domain/post/post-id/post-id.ts
+// src/domain/post/value-object/post-id.ts
 
-import { z } from "zod";
+import { UUID } from "../../common/value-object/uuid";
 
-export class PostId {
-  readonly value: string;
-
-  constructor(value: string) {
-    if (!PostId.isValid(value)) {
-      throw new Error("Invalid PostId");
-    }
-    this.value = value;
-  }
-
-  equals(other: PostId): boolean {
-    return this.value === other.value;
-  }
-
-  static isValid(value: string): boolean {
-    return z.string().uuid().safeParse(value).success;
-  }
-}
+export class PostId extends UUID {}

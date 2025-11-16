@@ -7,8 +7,8 @@ import { CreatedAt } from "../domain/post/value-object/created-at";
 import { PostDescription } from "../domain/post/value-object/post-description";
 import { PostId } from "../domain/post/value-object/post-id";
 import { UpdatedAt } from "../domain/post/value-object/updated-at";
-import { UserId } from "../domain/post/value-object/user-id";
 import { SpotId } from "../domain/spot/value-object/spot-id";
+import { UserId } from "../domain/user/value-object/user-id";
 
 export const PostDtoSchema = z.object({
   id: z.string().uuid(),

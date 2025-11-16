@@ -1,13 +1,5 @@
 // src/domain/photo/value-object/longitude.ts
 
-export class Longitude {
-  readonly value: string | null;
+import { OptionalString } from "../../common/value-object/optional-string";
 
-  constructor(value: string | null) {
-    this.value = value;
-  }
-
-  equals(other: Longitude): boolean {
-    return this.value === other.value;
-  }
-}
+export class Longitude extends OptionalString {}

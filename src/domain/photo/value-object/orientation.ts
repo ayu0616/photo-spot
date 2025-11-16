@@ -1,13 +1,5 @@
 // src/domain/photo/value-object/orientation.ts
 
-export class Orientation {
-  readonly value: number | null;
+import { OptionalNumber } from "../../common/value-object/optional-number";
 
-  constructor(value: number | null) {
-    this.value = value;
-  }
-
-  equals(other: Orientation): boolean {
-    return this.value === other.value;
-  }
-}
+export class Orientation extends OptionalNumber {}

@@ -1,13 +1,5 @@
 // src/domain/photo/value-object/focal-length-35mm.ts
 
-export class FocalLength35mm {
-  readonly value: string | null;
+import { OptionalString } from "../../common/value-object/optional-string";
 
-  constructor(value: string | null) {
-    this.value = value;
-  }
-
-  equals(other: FocalLength35mm): boolean {
-    return this.value === other.value;
-  }
-}
+export class FocalLength35mm extends OptionalString {}

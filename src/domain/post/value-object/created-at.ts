@@ -1,13 +1,5 @@
 // src/domain/post/value-object/created-at.ts
 
-export class CreatedAt {
-  readonly value: Date;
+import { DateTime } from "../../common/value-object/date-time";
 
-  constructor(value: Date) {
-    this.value = value;
-  }
-
-  equals(other: CreatedAt): boolean {
-    return this.value.getTime() === other.value.getTime();
-  }
-}
+export class CreatedAt extends DateTime {}

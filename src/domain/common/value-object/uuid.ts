@@ -1,18 +1,18 @@
-// src/domain/post/user-id/user-id.ts
+// src/domain/common/value-object/uuid.ts
 
 import { z } from "zod";
 
-export class UserId {
+export class UUID {
   readonly value: string;
 
   constructor(value: string) {
-    if (!UserId.isValid(value)) {
-      throw new Error("Invalid UserId");
+    if (!UUID.isValid(value)) {
+      throw new Error("Invalid UUID");
     }
     this.value = value;
   }
 
-  equals(other: UserId): boolean {
+  equals(other: UUID): boolean {
     return this.value === other.value;
   }
 

@@ -1,13 +1,5 @@
 // src/domain/photo/value-object/aperture.ts
 
-export class Aperture {
-  readonly value: string | null;
+import { OptionalString } from "../../common/value-object/optional-string";
 
-  constructor(value: string | null) {
-    this.value = value;
-  }
-
-  equals(other: Aperture): boolean {
-    return this.value === other.value;
-  }
-}
+export class Aperture extends OptionalString {}

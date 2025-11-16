@@ -1,13 +1,5 @@
 // src/domain/photo/value-object/camera-make.ts
 
-export class CameraMake {
-  readonly value: string | null;
+import { OptionalString } from "../../common/value-object/optional-string";
 
-  constructor(value: string | null) {
-    this.value = value;
-  }
-
-  equals(other: CameraMake): boolean {
-    return this.value === other.value;
-  }
-}
+export class CameraMake extends OptionalString {}

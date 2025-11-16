@@ -1,13 +1,5 @@
 // src/domain/photo/value-object/lens-serial.ts
 
-export class LensSerial {
-  readonly value: string | null;
+import { OptionalString } from "../../common/value-object/optional-string";
 
-  constructor(value: string | null) {
-    this.value = value;
-  }
-
-  equals(other: LensSerial): boolean {
-    return this.value === other.value;
-  }
-}
+export class LensSerial extends OptionalString {}
