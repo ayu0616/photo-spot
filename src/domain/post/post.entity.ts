@@ -1,10 +1,10 @@
 // src/domain/post/post.entity.ts
 
-import type { PhotoId } from "../photo/photo-id/photo-id";
-import type { SpotId } from "../spot/spot-id/spot-id";
-import type { PostDescription } from "./post-description/post-description";
-import type { PostId } from "./post-id/post-id";
-import type { UserId } from "./user-id/user-id";
+import type { PhotoId } from "../../photo/value-object/photo-id";
+import type { SpotId } from "../../spot/value-object/spot-id";
+import type { PostDescription } from "./value-object/post-description";
+import type { PostId } from "./value-object/post-id";
+import type { UserId } from "./value-object/user-id";
 
 export class PostEntity {
   readonly id: PostId;

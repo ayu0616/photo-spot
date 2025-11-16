@@ -1,8 +1,8 @@
 // src/domain/photo/photo.entity.ts
 
-import type { PhotoExif } from "../photo/photo-exif/photo-exif";
-import type { PhotoId } from "../photo/photo-id/photo-id";
-import type { PhotoUrl } from "../photo/photo-url/photo-url";
+import type { PhotoExif } from "./value-object/photo-exif";
+import type { PhotoId } from "./value-object/photo-id";
+import type { PhotoUrl } from "./value-object/photo-url";
 
 export class PhotoEntity {
   readonly id: PhotoId;
