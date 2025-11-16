@@ -8,6 +8,20 @@
       "when": 1763193870693,
       "tag": "0000_long_silver_samurai",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1763266137875,
+      "tag": "0001_daily_kree",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1763293902789,
+      "tag": "0002_clammy_ultimatum",
+      "breakpoints": true
     }
   ]
 }

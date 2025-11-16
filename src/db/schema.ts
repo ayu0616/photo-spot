@@ -1,3 +1,4 @@
+import { desc } from "drizzle-orm";
 import {
   boolean,
   integer,
@@ -88,3 +89,91 @@ export const authenticatorsTable = pgTable(
     }),
   }),
 );
+
+export const PostsTable = pgTable("post", {
+  id: varchar("id", { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: varchar("userId", { length: 255 })
+    .notNull()
+    .references(() => usersTable.id, { onDelete: "cascade" }),
+  description: varchar("description", { length: 255 }).notNull(),
+  spotId: varchar("id", { length: 255 })
+    .notNull()
+    .references(() => SpotsTable.id),
+  photoId: varchar("photoId", { length: 255 })
+    .notNull()
+    .references(() => PhotosTable.id),
+  createdAt: timestamp("createdAt", { mode: "date" }).notNull(),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).notNull(),
+});
+
+export const PhotosTable = pgTable("photo", {
+  id: varchar("id", { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+
+  /**
+   * 写真URL（外部ストレージのパス）
+   */
+  url: varchar("url", { length: 255 }).notNull(),
+
+  /**
+   * 生の EXIF 情報を JSON 文字列として保存します。
+   * 必要に応じてパースして個別フィールドにも格納します。
+   */
+  exif: text("exif"),
+
+  // --- 共通のパース済み EXIF フィールド ---
+  /** 撮影日時 */
+  takenAt: timestamp("takenAt", { mode: "date" }),
+  /** カメラメーカー（例: Nikon, Canon） */
+  cameraMake: varchar("cameraMake", { length: 255 }),
+  /** カメラモデル（例: EOS R5） */
+  cameraModel: varchar("cameraModel", { length: 255 }),
+  /** 緯度（文字列で保存、必要に応じて数値に変換） */
+  latitude: varchar("latitude", { length: 255 }),
+  /** 経度（文字列で保存、必要に応じて数値に変換） */
+  longitude: varchar("longitude", { length: 255 }),
+  /** 画像の向き（EXIF Orientation） */
+  orientation: integer("orientation"),
+  /** ISO 感度 */
+  iso: integer("iso"),
+
+  // --- レンズ関連フィールド ---
+  /** レンズメーカー（例: Sigma） */
+  lensMake: varchar("lensMake", { length: 255 }),
+  /** レンズモデル（例: 50mm F1.4） */
+  lensModel: varchar("lensModel", { length: 255 }),
+  /** レンズのシリアル番号（存在する場合） */
+  lensSerial: varchar("lensSerial", { length: 255 }),
+  /** 焦点距離（EXIF のまま文字列で保存） */
+  focalLength: varchar("focalLength", { length: 255 }),
+  /** 35mm 換算の焦点距離（EXIF のまま文字列で保存） */
+  focalLength35mm: varchar("focalLength35mm", { length: 255 }),
+  /** 絞り値（例: f/1.8 をそのまま保存） */
+  aperture: varchar("aperture", { length: 255 }),
+});
+
+export const SpotsTable = pgTable("spot", {
+  id: varchar("id", { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: varchar("name", { length: 255 }).notNull(),
+  cityId: integer("cityId")
+    .notNull()
+    .references(() => CityMasterTable.id),
+});
+
+export const PrefectureMasterTable = pgTable("prefecture_master", {
+  id: integer("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+});
+
+export const CityMasterTable = pgTable("city_master", {
+  id: integer("id").primaryKey(),
+  prefectureId: integer("prefecture_id")
+    .notNull()
+    .references(() => PrefectureMasterTable.id),
+  name: varchar("name", { length: 255 }).notNull(),
+});
