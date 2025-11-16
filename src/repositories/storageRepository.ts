@@ -1,5 +1,5 @@
-import type { Bucket } from " @google-cloud/storage";
 import type { Readable } from "node:stream";
+import type { Bucket } from "@google-cloud/storage";
 
 export class StorageRepository {
   private bucket: Bucket;

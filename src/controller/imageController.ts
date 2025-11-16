@@ -45,7 +45,7 @@ export const imageController = new Hono()
     // 3. Service のメソッドを呼び出す
     const readStream = await imageStorageService.getImageStream(filename);
 
-    if (!readStream) {
+    if (!readStream || !(readStream instanceof ReadableStream)) {
       return c.notFound();
     }
 

@@ -1,11 +1,12 @@
 import { Readable } from "node:stream";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { File } from "@google-cloud/storage";
+import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 import { bucket as gcsBucket } from "../lib/gcsClient";
 import { StorageRepository } from "./storageRepository";
 
 describe("StorageRepository", () => {
   let storageRepository: StorageRepository;
-  let capturedMockFile: any; // Variable to capture the mockFile instance
+  let capturedMockFile: Record<string, Mock>; // Variable to capture the mockFile instance
 
   const imgFileName = "test-image.jpg";
   const imgFileBuffer = Buffer.from("test image data");
@@ -29,13 +30,15 @@ describe("StorageRepository", () => {
     };
 
     // Ensure gcsBucket.file is a vi.Mock object and capture the returned mockFile
-    (gcsBucket.file as any) = vi.fn((fileName: string) => {
+    vi.spyOn(gcsBucket, "file").mockImplementation((fileName: string) => {
       capturedMockFile = {
         ...mockFile,
         exists: vi.fn().mockResolvedValue([fileName === imgFileName]),
       };
-      return capturedMockFile;
+      return capturedMockFile as unknown as File;
     });
+
+    // Mock the makePublic method on the captured mockFile
 
     storageRepository = new StorageRepository(gcsBucket);
   });
