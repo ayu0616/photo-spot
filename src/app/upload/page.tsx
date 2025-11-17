@@ -12,19 +12,39 @@ interface Spot {
   cityId: number;
 }
 
+interface Prefecture {
+  id: number;
+  name: string;
+}
+
+interface City {
+  id: number;
+  name: string;
+  prefectureId: number;
+}
+
 export default function UploadPage() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [spotMode, setSpotMode] = useState<"new" | "existing">("new");
   const [existingSpots, setExistingSpots] = useState<Spot[]>([]);
   const [selectedSpotId, setSelectedSpotId] = useState<string>("");
+
+  // For new spot creation
+  const [prefectures, setPrefectures] = useState<Prefecture[]>([]);
+  const [selectedPrefectureId, setSelectedPrefectureId] = useState<
+    number | null
+  >(null);
+  const [cities, setCities] = useState<City[]>([]);
+  const [newSpotCityId, setNewSpotCityId] = useState<number | null>(null);
   const [newSpotName, setNewSpotName] = useState<string>("");
-  const [newSpotCityId, setNewSpotCityId] = useState<number>(1); // Default to a city ID, will be dynamic later
+
   const [description, setDescription] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const router = useRouter();
 
+  // Fetch existing spots
   useEffect(() => {
     if (spotMode === "existing") {
       const fetchSpots = async () => {
@@ -46,6 +66,57 @@ export default function UploadPage() {
       fetchSpots();
     }
   }, [spotMode]);
+
+  // Fetch prefectures
+  useEffect(() => {
+    const fetchPrefectures = async () => {
+      try {
+        const response = await fetch("/api/master/prefectures");
+        if (!response.ok) {
+          throw new Error("Failed to fetch prefectures.");
+        }
+        const prefecturesData: Prefecture[] = await response.json();
+        setPrefectures(prefecturesData);
+        if (prefecturesData.length > 0) {
+          setSelectedPrefectureId(prefecturesData[0].id);
+        }
+      } catch (err: any) {
+        console.error("Error fetching prefectures:", err);
+        setError("Failed to load prefectures.");
+      }
+    };
+    fetchPrefectures();
+  }, []);
+
+  // Fetch cities based on selected prefecture
+  useEffect(() => {
+    if (selectedPrefectureId !== null) {
+      const fetchCities = async () => {
+        try {
+          const response = await fetch(
+            `/api/master/cities/${selectedPrefectureId}`,
+          );
+          if (!response.ok) {
+            throw new Error("Failed to fetch cities.");
+          }
+          const citiesData: City[] = await response.json();
+          setCities(citiesData);
+          if (citiesData.length > 0) {
+            setNewSpotCityId(citiesData[0].id);
+          } else {
+            setNewSpotCityId(null);
+          }
+        } catch (err: any) {
+          console.error("Error fetching cities:", err);
+          setError("Failed to load cities for the selected prefecture.");
+        }
+      };
+      fetchCities();
+    } else {
+      setCities([]);
+      setNewSpotCityId(null);
+    }
+  }, [selectedPrefectureId]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
@@ -75,8 +146,8 @@ export default function UploadPage() {
     formData.append("userId", "some-user-id"); // TODO: Replace with actual user ID from session
 
     if (spotMode === "new") {
-      if (!newSpotName || !newSpotCityId) {
-        setError("New spot name and city ID are required.");
+      if (!newSpotName || newSpotCityId === null) {
+        setError("New spot name and city are required.");
         setLoading(false);
         return;
       }
@@ -192,20 +263,57 @@ export default function UploadPage() {
 
             <div>
               <label
+                htmlFor="prefecture"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Prefecture
+              </label>
+              <select
+                id="prefecture"
+                name="prefecture"
+                value={selectedPrefectureId || ""}
+                onChange={(e) =>
+                  setSelectedPrefectureId(Number(e.target.value))
+                }
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                required
+              >
+                <option value="" disabled>
+                  Select a Prefecture
+                </option>
+                {prefectures.map((pref) => (
+                  <option key={pref.id} value={pref.id}>
+                    {pref.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label
                 htmlFor="newSpotCityId"
                 className="block text-sm font-medium text-gray-700"
               >
-                New Spot City ID
+                City
               </label>
-              <input
-                type="number"
+              <select
                 id="newSpotCityId"
                 name="newSpotCityId"
-                value={newSpotCityId}
+                value={newSpotCityId || ""}
                 onChange={(e) => setNewSpotCityId(Number(e.target.value))}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                 required
-              />
+                disabled={cities.length === 0}
+              >
+                <option value="" disabled>
+                  Select a City
+                </option>
+                {cities.map((city) => (
+                  <option key={city.id} value={city.id}>
+                    {city.name}
+                  </option>
+                ))}
+              </select>
             </div>
           </>
         ) : (

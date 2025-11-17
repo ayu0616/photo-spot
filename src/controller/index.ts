@@ -5,8 +5,9 @@ import { logger } from "hono/logger";
 import { secureHeaders } from "hono/secure-headers";
 
 import { imageController } from "./imageController";
+import masterController from "./masterController"; // Import the new masterController
 import postController from "./postController";
-import spotController from "./spotController"; // Import the new spotController
+import spotController from "./spotController";
 
 export const app = new Hono()
   .basePath("/api")
@@ -25,4 +26,5 @@ export const app = new Hono()
   })
   .route("/image", imageController)
   .route("/post", postController)
-  .route("/spot", spotController); // Add the new spotController
+  .route("/spot", spotController)
+  .route("/master", masterController); // Add the new masterController
