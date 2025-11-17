@@ -32,12 +32,21 @@ postController.post("/posts", async (c) => {
     const formData = await c.req.formData();
     const imageFile = formData.get("image") as File;
     const description = formData.get("description") as string;
-    const spotName = formData.get("spotName") as string;
-    const cityId = Number(formData.get("cityId")); // Assuming cityId is passed as a number string
     const userId = formData.get("userId") as string; // Assuming userId is passed
 
-    if (!imageFile || !description || !spotName || !cityId || !userId) {
+    // Spot information can be either spotId or spotName + cityId
+    const spotId = formData.get("spotId") as string | null;
+    const spotName = formData.get("spotName") as string | null;
+    const cityId = formData.get("cityId")
+      ? Number(formData.get("cityId"))
+      : null;
+
+    if (!imageFile || !description || !userId) {
       return c.json({ error: "Missing required fields" }, 400);
+    }
+
+    if (!spotId && (!spotName || !cityId)) {
+      return c.json({ error: "Spot information is missing." }, 400);
     }
 
     // 1. 画像をGCSにアップロードし、EXIFデータを抽出
@@ -48,8 +57,6 @@ postController.post("/posts", async (c) => {
     const postEntity = await postService.createPost({
       userId,
       description,
-      spotName,
-      cityId,
       photoUrl,
       exifData: {
         raw: exifData.raw?.value || null,
@@ -67,6 +74,8 @@ postController.post("/posts", async (c) => {
         focalLength35mm: exifData.focalLength35mm?.value || null,
         aperture: exifData.aperture?.value || null,
       },
+      ...(spotId && { spotId }),
+      ...(spotName && cityId && { spotName, cityId }),
     });
 
     // 3. DTOに変換して返す

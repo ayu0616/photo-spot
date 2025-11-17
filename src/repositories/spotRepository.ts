@@ -39,4 +39,9 @@ export class SpotRepository {
     }
     return SpotDtoMapper.toEntity(spotDto);
   }
+
+  async findAll(): Promise<SpotEntity[]> {
+    const spotDtos = await db.query.SpotsTable.findMany();
+    return spotDtos.map((dto) => SpotDtoMapper.toEntity(dto));
+  }
 }

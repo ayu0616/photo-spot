@@ -34,8 +34,6 @@ import type { SpotRepository } from "../repositories/spotRepository";
 interface CreatePostParams {
   userId: string;
   description: string;
-  spotName: string;
-  cityId: number;
   photoUrl: string;
   exifData: {
     raw: string | null;
@@ -53,6 +51,10 @@ interface CreatePostParams {
     focalLength35mm: string | null;
     aperture: string | null;
   };
+  // Optional parameters for spot
+  spotId?: string;
+  spotName?: string;
+  cityId?: number;
 }
 
 export class PostService {
@@ -71,18 +73,32 @@ export class PostService {
   }
 
   async createPost(params: CreatePostParams): Promise<PostEntity> {
-    // 1. SpotEntityの作成または取得
-    let spot = await this.spotRepository.findByNameAndCityId(
-      params.spotName,
-      params.cityId,
-    );
+    let spot: SpotEntity;
 
-    if (!spot) {
-      const spotId = new SpotId(crypto.randomUUID());
-      const spotName = new SpotName(params.spotName);
-      const cityId = new CityId(params.cityId);
-      spot = new SpotEntity(spotId, spotName, cityId);
-      await this.spotRepository.save(spot);
+    if (params.spotId) {
+      // 既存のスポットを選択した場合
+      const foundSpot = await this.spotRepository.findById(params.spotId);
+      if (!foundSpot) {
+        throw new Error("Selected spot not found.");
+      }
+      spot = foundSpot;
+    } else if (params.spotName && params.cityId) {
+      // 新しいスポットを作成または既存のスポットを検索する場合
+      let foundSpot = await this.spotRepository.findByNameAndCityId(
+        params.spotName,
+        params.cityId,
+      );
+
+      if (!foundSpot) {
+        const spotId = new SpotId(crypto.randomUUID());
+        const spotName = new SpotName(params.spotName);
+        const cityId = new CityId(params.cityId);
+        foundSpot = new SpotEntity(spotId, spotName, cityId);
+        await this.spotRepository.save(foundSpot);
+      }
+      spot = foundSpot;
+    } else {
+      throw new Error("Spot information is missing.");
     }
 
     // 2. PhotoEntityの作成
