@@ -5,6 +5,18 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 interface Spot {
   id: string;
@@ -187,20 +199,13 @@ export default function UploadPage() {
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Create New Post</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label
-            htmlFor="image"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Image
-          </label>
-          <input
-            type="file"
+        <div className="grid w-full max-w-sm items-center gap-1.5">
+          <Label htmlFor="image">Image</Label>
+          <Input
             id="image"
-            name="image"
+            type="file"
             accept="image/*"
             onChange={handleFileChange}
-            className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
           />
           {previewUrl && (
             <div className="mt-4">
@@ -216,158 +221,115 @@ export default function UploadPage() {
         </div>
 
         {/* Spot Selection Mode */}
-        <div className="flex items-center space-x-4">
-          <label className="inline-flex items-center">
-            <input
-              type="radio"
-              className="form-radio"
-              name="spotMode"
-              value="new"
-              checked={spotMode === "new"}
-              onChange={() => setSpotMode("new")}
-            />
-            <span className="ml-2">Create New Spot</span>
-          </label>
-          <label className="inline-flex items-center">
-            <input
-              type="radio"
-              className="form-radio"
-              name="spotMode"
-              value="existing"
-              checked={spotMode === "existing"}
-              onChange={() => setSpotMode("existing")}
-            />
-            <span className="ml-2">Select Existing Spot</span>
-          </label>
-        </div>
+        <RadioGroup
+          defaultValue="new"
+          value={spotMode}
+          onValueChange={(value: "new" | "existing") => setSpotMode(value)}
+          className="flex items-center space-x-4"
+        >
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="new" id="newSpot" />
+            <Label htmlFor="newSpot">Create New Spot</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="existing" id="existingSpotRadio" />
+            <Label htmlFor="existingSpotRadio">Select Existing Spot</Label>
+          </div>
+        </RadioGroup>
 
         {spotMode === "new" ? (
           <>
-            <div>
-              <label
-                htmlFor="newSpotName"
-                className="block text-sm font-medium text-gray-700"
-              >
-                New Spot Name
-              </label>
-              <input
-                type="text"
+            <div className="grid w-full max-w-sm items-center gap-1.5">
+              <Label htmlFor="newSpotName">New Spot Name</Label>
+              <Input
                 id="newSpotName"
-                name="newSpotName"
+                type="text"
                 value={newSpotName}
                 onChange={(e) => setNewSpotName(e.target.value)}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                 required
               />
             </div>
 
-            <div>
-              <label
-                htmlFor="prefecture"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Prefecture
-              </label>
-              <select
-                id="prefecture"
-                name="prefecture"
-                value={selectedPrefectureId || ""}
-                onChange={(e) =>
-                  setSelectedPrefectureId(Number(e.target.value))
+            <div className="grid w-full max-w-sm items-center gap-1.5">
+              <Label htmlFor="prefecture">Prefecture</Label>
+              <Select
+                value={selectedPrefectureId?.toString() || ""}
+                onValueChange={(value) =>
+                  setSelectedPrefectureId(Number(value))
                 }
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                 required
               >
-                <option value="" disabled>
-                  Select a Prefecture
-                </option>
-                {prefectures.map((pref) => (
-                  <option key={pref.id} value={pref.id}>
-                    {pref.name}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a Prefecture" />
+                </SelectTrigger>
+                <SelectContent>
+                  {prefectures.map((pref) => (
+                    <SelectItem key={pref.id} value={pref.id.toString()}>
+                      {pref.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
-            <div>
-              <label
-                htmlFor="newSpotCityId"
-                className="block text-sm font-medium text-gray-700"
-              >
-                City
-              </label>
-              <select
-                id="newSpotCityId"
-                name="newSpotCityId"
-                value={newSpotCityId || ""}
-                onChange={(e) => setNewSpotCityId(Number(e.target.value))}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                required
+            <div className="grid w-full max-w-sm items-center gap-1.5">
+              <Label htmlFor="newSpotCityId">City</Label>
+              <Select
+                value={newSpotCityId?.toString() || ""}
+                onValueChange={(value) => setNewSpotCityId(Number(value))}
                 disabled={cities.length === 0}
+                required
               >
-                <option value="" disabled>
-                  Select a City
-                </option>
-                {cities.map((city) => (
-                  <option key={city.id} value={city.id}>
-                    {city.name}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a City" />
+                </SelectTrigger>
+                <SelectContent>
+                  {cities.map((city) => (
+                    <SelectItem key={city.id} value={city.id.toString()}>
+                      {city.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </>
         ) : (
-          <div>
-            <label
-              htmlFor="existingSpot"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Select Existing Spot
-            </label>
-            <select
-              id="existingSpot"
-              name="existingSpot"
+          <div className="grid w-full max-w-sm items-center gap-1.5">
+            <Label htmlFor="existingSpot">Select Existing Spot</Label>
+            <Select
               value={selectedSpotId}
-              onChange={(e) => setSelectedSpotId(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+              onValueChange={(value) => setSelectedSpotId(value)}
               required
             >
-              {existingSpots.map((spot) => (
-                <option key={spot.id} value={spot.id}>
-                  {spot.name} (City ID: {spot.cityId})
-                </option>
-              ))}
-            </select>
+              <SelectTrigger>
+                <SelectValue placeholder="Select an Existing Spot" />
+              </SelectTrigger>
+              <SelectContent>
+                {existingSpots.map((spot) => (
+                  <SelectItem key={spot.id} value={spot.id}>
+                    {spot.name} (City ID: {spot.cityId})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         )}
 
-        <div>
-          <label
-            htmlFor="description"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Description
-          </label>
-          <textarea
+        <div className="grid w-full max-w-sm items-center gap-1.5">
+          <Label htmlFor="description">Description</Label>
+          <Textarea
             id="description"
-            name="description"
-            rows={3}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
             required
-          ></textarea>
+          />
         </div>
 
         {error && <p className="text-red-500 text-sm">{error}</p>}
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-        >
+        <Button type="submit" disabled={loading}>
           {loading ? "Uploading..." : "Create Post"}
-        </button>
+        </Button>
       </form>
     </div>
   );
