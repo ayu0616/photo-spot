@@ -7,6 +7,7 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 
 export const usersTable = pgTable("user", {
   id: varchar("id", { length: 255 })
@@ -18,10 +19,24 @@ export const usersTable = pgTable("user", {
   image: varchar("image", { length: 255 }),
 });
 
+export const usersRelations = relations(usersTable, ({ many }) => ({
+  posts: many(PostsTable),
+  accounts: many(accountsTable),
+  sessions: many(sessionsTable),
+  authenticators: many(authenticatorsTable),
+}));
+
 export const PrefectureMasterTable = pgTable("prefecture_master", {
   id: integer("id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
 });
+
+export const prefectureMasterRelations = relations(
+  PrefectureMasterTable,
+  ({ many }) => ({
+    cities: many(CityMasterTable),
+  }),
+);
 
 export const CityMasterTable = pgTable("city_master", {
   id: integer("id").primaryKey(),
@@ -30,6 +45,17 @@ export const CityMasterTable = pgTable("city_master", {
     .references(() => PrefectureMasterTable.id),
   name: varchar("name", { length: 255 }).notNull(),
 });
+
+export const cityMasterRelations = relations(
+  CityMasterTable,
+  ({ one, many }) => ({
+    prefecture: one(PrefectureMasterTable, {
+      fields: [CityMasterTable.prefectureId],
+      references: [PrefectureMasterTable.id],
+    }),
+    spots: many(SpotsTable),
+  }),
+);
 
 export const SpotsTable = pgTable("spot", {
   id: varchar("id", { length: 255 })
@@ -40,6 +66,14 @@ export const SpotsTable = pgTable("spot", {
     .notNull()
     .references(() => CityMasterTable.id),
 });
+
+export const spotsRelations = relations(SpotsTable, ({ one, many }) => ({
+  city: one(CityMasterTable, {
+    fields: [SpotsTable.cityId],
+    references: [CityMasterTable.id],
+  }),
+  posts: many(PostsTable),
+}));
 
 export const PhotosTable = pgTable("photo", {
   id: varchar("id", { length: 255 })
@@ -88,6 +122,13 @@ export const PhotosTable = pgTable("photo", {
   aperture: varchar("aperture", { length: 255 }),
 });
 
+export const photosRelations = relations(PhotosTable, ({ one }) => ({
+  post: one(PostsTable, {
+    fields: [PhotosTable.id],
+    references: [PostsTable.photoId],
+  }),
+}));
+
 export const PostsTable = pgTable("post", {
   id: varchar("id", { length: 255 })
     .primaryKey()
@@ -105,6 +146,21 @@ export const PostsTable = pgTable("post", {
   createdAt: timestamp("createdAt", { mode: "date" }).notNull(),
   updatedAt: timestamp("updatedAt", { mode: "date" }).notNull(),
 });
+
+export const postsRelations = relations(PostsTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [PostsTable.userId],
+    references: [usersTable.id],
+  }),
+  spot: one(SpotsTable, {
+    fields: [PostsTable.spotId],
+    references: [SpotsTable.id],
+  }),
+  photo: one(PhotosTable, {
+    fields: [PostsTable.photoId],
+    references: [PhotosTable.id],
+  }),
+}));
 
 export const accountsTable = pgTable(
   "account",
@@ -130,6 +186,13 @@ export const accountsTable = pgTable(
   }),
 );
 
+export const accountsRelations = relations(accountsTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [accountsTable.userId],
+    references: [usersTable.id],
+  }),
+}));
+
 export const sessionsTable = pgTable("session", {
   sessionToken: varchar("sessionToken", { length: 255 }).primaryKey(),
   userId: varchar("userId", { length: 255 })
@@ -137,6 +200,13 @@ export const sessionsTable = pgTable("session", {
     .references(() => usersTable.id, { onDelete: "cascade" }),
   expires: timestamp("expires", { mode: "date" }).notNull(),
 });
+
+export const sessionsRelations = relations(sessionsTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [sessionsTable.userId],
+    references: [usersTable.id],
+  }),
+}));
 
 export const verificationTokensTable = pgTable(
   "verificationToken",
@@ -173,6 +243,16 @@ export const authenticatorsTable = pgTable(
   (authenticator) => ({
     compositePK: primaryKey({
       columns: [authenticator.userId, authenticator.credentialID],
+    }),
+  }),
+);
+
+export const authenticatorsRelations = relations(
+  authenticatorsTable,
+  ({ one }) => ({
+    user: one(usersTable, {
+      fields: [authenticatorsTable.userId],
+      references: [usersTable.id],
     }),
   }),
 );
