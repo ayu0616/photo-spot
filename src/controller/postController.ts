@@ -1,6 +1,7 @@
 // src/controller/postController.ts
 
 import { Hono } from "hono";
+import { nextAuth } from "@/app/api/auth/[...nextAuth]/auth";
 import { PostDtoMapper } from "../dto/post-dto";
 import { bucket } from "../lib/gcsClient";
 import { PhotoRepository } from "../repositories/photoRepository";
@@ -9,7 +10,6 @@ import { SpotRepository } from "../repositories/spotRepository";
 import { StorageRepository } from "../repositories/storageRepository";
 import { ImageStorageService } from "../services/imageStorageService";
 import { PostService } from "../services/postService";
-import { nextAuth } from "@/app/api/auth/[...nextAuth]/auth";
 
 const postController = new Hono();
 

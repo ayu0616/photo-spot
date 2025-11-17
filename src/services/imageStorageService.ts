@@ -1,6 +1,6 @@
 import type { Readable } from "node:stream";
-import * as ExifReader from "exifreader";
 import type { ExifTags } from "exifreader";
+import * as ExifReader from "exifreader";
 import { v4 as uuidv4 } from "uuid";
 import { Aperture } from "../domain/photo/value-object/aperture";
 import { CameraMake } from "../domain/photo/value-object/camera-make";
@@ -11,7 +11,7 @@ import { Iso } from "../domain/photo/value-object/iso";
 import { Latitude } from "../domain/photo/value-object/latitude";
 import { LensMake } from "../domain/photo/value-object/lens-make";
 import { LensModel } from "../domain/photo/value-object/lens-model";
-import { LensSerial } from "../domain/photo/value-object/lens-serial";
+import type { LensSerial } from "../domain/photo/value-object/lens-serial";
 import { Longitude } from "../domain/photo/value-object/longitude";
 import { Orientation } from "../domain/photo/value-object/orientation";
 import { PhotoExif } from "../domain/photo/value-object/photo-exif";

@@ -1,6 +1,5 @@
 import { initAuthConfig } from "@hono/auth-js";
 import { Hono } from "hono";
-import { compress } from "hono/compress";
 import { csrf } from "hono/csrf";
 import { logger } from "hono/logger";
 import { secureHeaders } from "hono/secure-headers";

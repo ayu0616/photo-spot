@@ -1,4 +1,3 @@
-import type { AuthConfig } from "@auth/core";
 import Google from "@auth/core/providers/google";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import NextAuth, { type NextAuthConfig } from "next-auth";
@@ -10,7 +9,6 @@ import {
   usersTable,
   verificationTokensTable,
 } from "@/db/schema";
-import { eq } from "drizzle-orm";
 
 export const nextAuthConfig = {
   adapter: DrizzleAdapter(db, {
