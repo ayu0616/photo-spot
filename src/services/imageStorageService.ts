@@ -1,5 +1,5 @@
 import type { Readable } from "node:stream";
-import * as ExifReader from "exif-reader";
+import ExifReader from "exif-reader";
 import { v4 as uuidv4 } from "uuid";
 import { Aperture } from "../domain/photo/value-object/aperture";
 import { CameraMake } from "../domain/photo/value-object/camera-make";
@@ -130,7 +130,7 @@ export class ImageStorageService {
     aperture: Aperture | null;
   } {
     try {
-      const tags = ExifReader.default(imageBuffer);
+      const tags = ExifReader(imageBuffer);
       // console.log("EXIF Tags:", tags); // Removed console.log
 
       const rawExif = new PhotoExif(JSON.stringify(tags));
