@@ -72,7 +72,7 @@ export default function UploadPage() {
           }
         } catch (err: any) {
           console.error("Error fetching spots:", err);
-          setError("Failed to load existing spots.");
+          setError("既存のスポットの読み込みに失敗しました。");
         }
       };
       fetchSpots();
@@ -94,7 +94,7 @@ export default function UploadPage() {
         }
       } catch (err: any) {
         console.error("Error fetching prefectures:", err);
-        setError("Failed to load prefectures.");
+        setError("都道府県の読み込みに失敗しました。");
       }
     };
     fetchPrefectures();
@@ -120,7 +120,7 @@ export default function UploadPage() {
           }
         } catch (err: any) {
           console.error("Error fetching cities:", err);
-          setError("Failed to load cities for the selected prefecture.");
+          setError("選択された都道府県の市町村の読み込みに失敗しました。");
         }
       };
       fetchCities();
@@ -147,7 +147,7 @@ export default function UploadPage() {
     setError(null);
 
     if (!imageFile || !description) {
-      setError("Image and description are required.");
+      setError("画像と説明は必須です。");
       setLoading(false);
       return;
     }
@@ -159,7 +159,7 @@ export default function UploadPage() {
 
     if (spotMode === "new") {
       if (!newSpotName || newSpotCityId === null) {
-        setError("New spot name and city are required.");
+        setError("新しいスポット名と市町村は必須です。");
         setLoading(false);
         return;
       }
@@ -167,7 +167,7 @@ export default function UploadPage() {
       formData.append("cityId", newSpotCityId.toString());
     } else {
       if (!selectedSpotId) {
-        setError("Please select an existing spot.");
+        setError("既存のスポットを選択してください。");
         setLoading(false);
         return;
       }
@@ -182,7 +182,7 @@ export default function UploadPage() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to create post.");
+        throw new Error(errorData.error || "投稿の作成に失敗しました。");
       }
 
       const result = await response.json();
@@ -197,10 +197,10 @@ export default function UploadPage() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Create New Post</h1>
+      <h1 className="text-2xl font-bold mb-4">新規投稿作成</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid w-full max-w-sm items-center gap-1.5">
-          <Label htmlFor="image">Image</Label>
+          <Label htmlFor="image">画像</Label>
           <Input
             id="image"
             type="file"
@@ -211,7 +211,7 @@ export default function UploadPage() {
             <div className="mt-4">
               <Image
                 src={previewUrl}
-                alt="Uploaded image"
+                alt="アップロード画像"
                 width={500} // Specify appropriate width
                 height={300} // Specify appropriate height
                 className="max-w-full h-auto rounded-md"
@@ -229,18 +229,18 @@ export default function UploadPage() {
         >
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="new" id="newSpot" />
-            <Label htmlFor="newSpot">Create New Spot</Label>
+            <Label htmlFor="newSpot">新しいスポットを作成</Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="existing" id="existingSpotRadio" />
-            <Label htmlFor="existingSpotRadio">Select Existing Spot</Label>
+            <Label htmlFor="existingSpotRadio">既存のスポットを選択</Label>
           </div>
         </RadioGroup>
 
         {spotMode === "new" ? (
           <>
             <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Label htmlFor="newSpotName">New Spot Name</Label>
+              <Label htmlFor="newSpotName">新しいスポット名</Label>
               <Input
                 id="newSpotName"
                 type="text"
@@ -251,7 +251,7 @@ export default function UploadPage() {
             </div>
 
             <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Label htmlFor="prefecture">Prefecture</Label>
+              <Label htmlFor="prefecture">都道府県</Label>
               <Select
                 value={selectedPrefectureId?.toString() || ""}
                 onValueChange={(value) =>
@@ -260,7 +260,7 @@ export default function UploadPage() {
                 required
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select a Prefecture" />
+                  <SelectValue placeholder="都道府県を選択" />
                 </SelectTrigger>
                 <SelectContent>
                   {prefectures.map((pref) => (
@@ -273,7 +273,7 @@ export default function UploadPage() {
             </div>
 
             <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Label htmlFor="newSpotCityId">City</Label>
+              <Label htmlFor="newSpotCityId">市町村</Label>
               <Select
                 value={newSpotCityId?.toString() || ""}
                 onValueChange={(value) => setNewSpotCityId(Number(value))}
@@ -281,7 +281,7 @@ export default function UploadPage() {
                 required
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select a City" />
+                  <SelectValue placeholder="市町村を選択" />
                 </SelectTrigger>
                 <SelectContent>
                   {cities.map((city) => (
@@ -295,14 +295,14 @@ export default function UploadPage() {
           </>
         ) : (
           <div className="grid w-full max-w-sm items-center gap-1.5">
-            <Label htmlFor="existingSpot">Select Existing Spot</Label>
+            <Label htmlFor="existingSpot">既存のスポットを選択</Label>
             <Select
               value={selectedSpotId}
               onValueChange={(value) => setSelectedSpotId(value)}
               required
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select an Existing Spot" />
+                <SelectValue placeholder="既存のスポットを選択" />
               </SelectTrigger>
               <SelectContent>
                 {existingSpots.map((spot) => (
@@ -316,7 +316,7 @@ export default function UploadPage() {
         )}
 
         <div className="grid w-full max-w-sm items-center gap-1.5">
-          <Label htmlFor="description">Description</Label>
+          <Label htmlFor="description">説明</Label>
           <Textarea
             id="description"
             value={description}
@@ -328,7 +328,7 @@ export default function UploadPage() {
         {error && <p className="text-red-500 text-sm">{error}</p>}
 
         <Button type="submit" disabled={loading}>
-          {loading ? "Uploading..." : "Create Post"}
+          {loading ? "アップロード中..." : "投稿を作成"}
         </Button>
       </form>
     </div>
