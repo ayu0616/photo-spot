@@ -13,7 +13,8 @@
     "db:push": "bun --bun run db:generate && bun --bun run db:migrate",
     "db:seed": "bun --bun src/db/seed.ts",
     "typecheck": "tsc --noEmit",
-    "test": "vitest",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "coverage": "vitest run --coverage"
   },
   "dependencies": {

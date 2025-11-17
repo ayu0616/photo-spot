@@ -17,6 +17,20 @@ import { PhotoExif } from "../domain/photo/value-object/photo-exif";
 import { TakenAt } from "../domain/photo/value-object/taken-at";
 import type { StorageRepository } from "../repositories/storageRepository";
 
+// Helper function to convert GPS coordinates from array to string
+function convertGpsCoordinate(
+  coordinate: number[] | undefined,
+  ref: string | undefined,
+): string | null {
+  if (!coordinate || coordinate.length < 3 || !ref) {
+    return null;
+  }
+  const degrees = coordinate[0];
+  const minutes = coordinate[1];
+  const seconds = coordinate[2];
+  return `${degrees}°${minutes}'${seconds}" ${ref}`;
+}
+
 export class ImageStorageService {
   private storageRepository: StorageRepository;
   private bucketName: string;
@@ -116,50 +130,59 @@ export class ImageStorageService {
     aperture: Aperture | null;
   } {
     try {
-      const tags = ExifReader.load(imageBuffer);
+      const tags = ExifReader.default(imageBuffer);
+      // console.log("EXIF Tags:", tags); // Removed console.log
+
       const rawExif = new PhotoExif(JSON.stringify(tags));
 
       // 共通のパース済み EXIF フィールド
-      const takenAt = tags.DateTimeOriginal?.value
-        ? new TakenAt(new Date(tags.DateTimeOriginal.value as string))
+      const takenAt = tags.Photo?.DateTimeOriginal
+        ? new TakenAt(tags.Photo.DateTimeOriginal)
         : null;
-      const cameraMake = tags.Make?.value
-        ? new CameraMake(tags.Make.value as string)
+      const cameraMake = tags.Image?.Make
+        ? new CameraMake(tags.Image.Make as string)
         : null;
-      const cameraModel = tags.Model?.value
-        ? new CameraModel(tags.Model.value as string)
+      const cameraModel = tags.Image?.Model
+        ? new CameraModel(tags.Image.Model as string)
         : null;
-      const latitude = tags.GPSLatitude?.description
-        ? new Latitude(tags.GPSLatitude.description as string)
+
+      const gpsLatitude = convertGpsCoordinate(
+        tags.GPSInfo?.GPSLatitude as number[],
+        tags.GPSInfo?.GPSLatitudeRef as string,
+      );
+      const latitude = gpsLatitude ? new Latitude(gpsLatitude) : null;
+
+      const gpsLongitude = convertGpsCoordinate(
+        tags.GPSInfo?.GPSLongitude as number[],
+        tags.GPSInfo?.GPSLongitudeRef as string,
+      );
+      const longitude = gpsLongitude ? new Longitude(gpsLongitude) : null;
+
+      const orientation = tags.Image?.Orientation
+        ? new Orientation(tags.Image.Orientation as number)
         : null;
-      const longitude = tags.GPSLongitude?.description
-        ? new Longitude(tags.GPSLongitude.description as string)
-        : null;
-      const orientation = tags.Orientation?.value
-        ? new Orientation(tags.Orientation.value as number)
-        : null;
-      const iso = tags.ISOSpeedRatings?.value
-        ? new Iso(tags.ISOSpeedRatings.value as number)
+      const iso = tags.Photo?.ISOSpeedRatings
+        ? new Iso(tags.Photo.ISOSpeedRatings as number)
         : null;
 
       // レンズ関連フィールド
-      const lensMake = tags.LensMake?.value
-        ? new LensMake(tags.LensMake.value as string)
+      const lensMake = tags.Photo?.LensMake
+        ? new LensMake(tags.Photo.LensMake as string)
         : null;
-      const lensModel = tags.LensModel?.value
-        ? new LensModel(tags.LensModel.value as string)
+      const lensModel = tags.Photo?.LensModel
+        ? new LensModel(tags.Photo.LensModel as string)
         : null;
-      const lensSerial = tags.LensSerialNumber?.value
-        ? new LensSerial(tags.LensSerialNumber.value as string)
+      const lensSerial = tags.Photo?.LensSerialNumber
+        ? new LensSerial(tags.Photo.LensSerialNumber as string)
         : null;
-      const focalLength = tags.FocalLength?.description
-        ? new FocalLength(tags.FocalLength.description as string)
+      const focalLength = tags.Photo?.FocalLength
+        ? new FocalLength(String(tags.Photo.FocalLength))
         : null;
-      const focalLength35mm = tags.FocalLengthIn35mmFilm?.value
-        ? new FocalLength35mm(tags.FocalLengthIn35mmFilm.value as string)
+      const focalLength35mm = tags.Photo?.FocalLengthIn35mmFilm
+        ? new FocalLength35mm(String(tags.Photo.FocalLengthIn35mmFilm))
         : null;
-      const aperture = tags.FNumber?.description
-        ? new Aperture(tags.FNumber.description as string)
+      const aperture = tags.Photo?.FNumber
+        ? new Aperture(String(tags.Photo.FNumber))
         : null;
 
       return {
