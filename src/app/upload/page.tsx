@@ -155,7 +155,6 @@ export default function UploadPage() {
     const formData = new FormData();
     formData.append("image", imageFile);
     formData.append("description", description);
-    formData.append("userId", "some-user-id"); // TODO: Replace with actual user ID from session
 
     if (spotMode === "new") {
       if (!newSpotName || newSpotCityId === null) {

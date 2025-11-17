@@ -9,6 +9,7 @@ import { SpotRepository } from "../repositories/spotRepository";
 import { StorageRepository } from "../repositories/storageRepository";
 import { ImageStorageService } from "../services/imageStorageService";
 import { PostService } from "../services/postService";
+import { nextAuth } from "@/app/api/auth/[...nextAuth]/auth";
 
 const postController = new Hono();
 
@@ -27,12 +28,18 @@ const postService = new PostService(
   postRepository,
 );
 
-postController.post("/posts", async (c) => {
+postController.post("/", async (c) => {
   try {
+    const auth = await nextAuth.auth();
+    const user = auth?.user;
+    if (!user || !user.id) {
+      return c.json({ error: "Unauthorized" }, 401);
+    }
+    const userId = user.id;
+
     const formData = await c.req.formData();
     const imageFile = formData.get("image") as File;
     const description = formData.get("description") as string;
-    const userId = formData.get("userId") as string; // Assuming userId is passed
 
     // Spot information can be either spotId or spotName + cityId
     const spotId = formData.get("spotId") as string | null;

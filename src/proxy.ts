@@ -6,7 +6,7 @@ import { logger } from "hono/logger";
 import { secureHeaders } from "hono/secure-headers";
 import { handle } from "hono/vercel";
 import { NextResponse } from "next/server";
-import { nextAuthConfig } from "./app/api/auth/[...nextAuth]/auth";
+import { nextAuth, nextAuthConfig } from "./app/api/auth/[...nextAuth]/auth";
 
 const app = new Hono()
   .use(
@@ -16,7 +16,6 @@ const app = new Hono()
     }),
   )
   .use(logger())
-  .use(compress())
   .use(csrf())
   .use(
     "*",
@@ -46,6 +45,13 @@ const app = new Hono()
   //     }
   //     return next();
   //   }) as MiddlewareHandler)
+  .use("/upload", async (c, next) => {
+    const auth = await nextAuth.auth();
+    if (!auth?.user) {
+      return c.json({ error: "Unauthorized" }, 401);
+    }
+    return next();
+  })
   .all("*", async (c) => {
     const req = c.req.raw;
     return NextResponse.next({

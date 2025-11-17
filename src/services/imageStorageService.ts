@@ -1,5 +1,6 @@
 import type { Readable } from "node:stream";
-import ExifReader from "exif-reader";
+import * as ExifReader from "exifreader";
+import type { ExifTags } from "exifreader";
 import { v4 as uuidv4 } from "uuid";
 import { Aperture } from "../domain/photo/value-object/aperture";
 import { CameraMake } from "../domain/photo/value-object/camera-make";
@@ -17,18 +18,28 @@ import { PhotoExif } from "../domain/photo/value-object/photo-exif";
 import { TakenAt } from "../domain/photo/value-object/taken-at";
 import type { StorageRepository } from "../repositories/storageRepository";
 
-// Helper function to convert GPS coordinates from array to string
+// Helper function to convert GPS coordinates from array of arrays to string
 function convertGpsCoordinate(
-  coordinate: number[] | undefined,
+  coordinate:
+    | [[number, number], [number, number], [number, number]]
+    | undefined,
   ref: string | undefined,
 ): string | null {
   if (!coordinate || coordinate.length < 3 || !ref) {
     return null;
   }
-  const degrees = coordinate[0];
-  const minutes = coordinate[1];
-  const seconds = coordinate[2];
+  const degrees = coordinate[0][0] / coordinate[0][1];
+  const minutes = coordinate[1][0] / coordinate[1][1];
+  const seconds = coordinate[2][0] / coordinate[2][1];
   return `${degrees}°${minutes}'${seconds}" ${ref}`;
+}
+
+// Helper function to convert RationalTag to string
+function formatRational(rational: [number, number] | undefined): string | null {
+  if (!rational) {
+    return null;
+  }
+  return `${rational[0]}/${rational[1]}`;
 }
 
 export class ImageStorageService {
@@ -82,7 +93,9 @@ export class ImageStorageService {
     );
 
     // 5. ファイルを公開状態にする
-    await this.storageRepository.makePublic(uniqueFileName);
+    if (process.env.NODE_ENV !== "development") {
+      await this.storageRepository.makePublic(uniqueFileName);
+    }
 
     // 6. 環境に応じた公開URLを生成
     const publicUrl = this.buildPublicUrl(uniqueFileName);
@@ -130,59 +143,64 @@ export class ImageStorageService {
     aperture: Aperture | null;
   } {
     try {
-      const tags = ExifReader(imageBuffer);
+      const tags = ExifReader.load(imageBuffer) as ExifTags;
       // console.log("EXIF Tags:", tags); // Removed console.log
 
       const rawExif = new PhotoExif(JSON.stringify(tags));
 
       // 共通のパース済み EXIF フィールド
-      const takenAt = tags.Photo?.DateTimeOriginal
-        ? new TakenAt(tags.Photo.DateTimeOriginal)
+      const takenAt = tags.DateTimeOriginal?.value?.[0]
+        ? new TakenAt(
+            new Date(
+              tags.DateTimeOriginal.value[0].replace(
+                /(\d{4}):(\d{2}):(\d{2})/,
+                "$1-$2-$3",
+              ),
+            ),
+          )
         : null;
-      const cameraMake = tags.Image?.Make
-        ? new CameraMake(tags.Image.Make as string)
+      const cameraMake = tags.Make?.value?.[0]
+        ? new CameraMake(tags.Make.value[0] as string)
         : null;
-      const cameraModel = tags.Image?.Model
-        ? new CameraModel(tags.Image.Model as string)
+      const cameraModel = tags.Model?.value?.[0]
+        ? new CameraModel(tags.Model.value[0] as string)
         : null;
 
       const gpsLatitude = convertGpsCoordinate(
-        tags.GPSInfo?.GPSLatitude as number[],
-        tags.GPSInfo?.GPSLatitudeRef as string,
+        tags.GPSLatitude?.value,
+        tags.GPSLatitudeRef?.value?.[0],
       );
       const latitude = gpsLatitude ? new Latitude(gpsLatitude) : null;
 
       const gpsLongitude = convertGpsCoordinate(
-        tags.GPSInfo?.GPSLongitude as number[],
-        tags.GPSInfo?.GPSLongitudeRef as string,
+        tags.GPSLongitude?.value,
+        tags.GPSLongitudeRef?.value?.[0],
       );
       const longitude = gpsLongitude ? new Longitude(gpsLongitude) : null;
 
-      const orientation = tags.Image?.Orientation
-        ? new Orientation(tags.Image.Orientation as number)
+      const orientation = tags.Orientation?.value
+        ? new Orientation(tags.Orientation.value as number)
         : null;
-      const iso = tags.Photo?.ISOSpeedRatings
-        ? new Iso(tags.Photo.ISOSpeedRatings as number)
+      const iso = tags.ISOSpeedRatings?.value
+        ? new Iso(tags.ISOSpeedRatings.value as number)
         : null;
 
       // レンズ関連フィールド
-      const lensMake = tags.Photo?.LensMake
-        ? new LensMake(tags.Photo.LensMake as string)
+      const lensMake = tags.LensMake?.value?.[0]
+        ? new LensMake(tags.LensMake.value[0] as string)
         : null;
-      const lensModel = tags.Photo?.LensModel
-        ? new LensModel(tags.Photo.LensModel as string)
+      const lensModel = tags.LensModel?.value?.[0]
+        ? new LensModel(tags.LensModel.value[0] as string)
         : null;
-      const lensSerial = tags.Photo?.LensSerialNumber
-        ? new LensSerial(tags.Photo.LensSerialNumber as string)
+
+      const focalLength = formatRational(tags.FocalLength?.value)
+        ? new FocalLength(formatRational(tags.FocalLength?.value) as string)
         : null;
-      const focalLength = tags.Photo?.FocalLength
-        ? new FocalLength(String(tags.Photo.FocalLength))
+      const focalLength35mm = tags.FocalLengthIn35mmFilm?.value
+        ? new FocalLength35mm(String(tags.FocalLengthIn35mmFilm.value))
         : null;
-      const focalLength35mm = tags.Photo?.FocalLengthIn35mmFilm
-        ? new FocalLength35mm(String(tags.Photo.FocalLengthIn35mmFilm))
-        : null;
-      const aperture = tags.Photo?.FNumber
-        ? new Aperture(String(tags.Photo.FNumber))
+      const aperture = formatRational(tags.FNumber?.value)
+        ? new Aperture(formatRational(tags.FNumber?.value) as string)
         : null;
 
       return {
@@ -196,7 +214,7 @@ export class ImageStorageService {
         iso,
         lensMake,
         lensModel,
-        lensSerial,
+        lensSerial: null,
         focalLength,
         focalLength35mm,
         aperture,
@@ -228,7 +246,7 @@ export class ImageStorageService {
    */
   private buildPublicUrl(fileName: string): string {
     if (process.env.NODE_ENV === "development") {
-      return `${process.env.GCS_EMULATOR_HOST}/${this.bucketName}/${fileName}`;
+      return `${process.env.GCS_URL}/${this.bucketName}/${fileName}`;
     } else {
       return `https://storage.googleapis.com/${this.bucketName}/${fileName}`;
     }

@@ -10,6 +10,7 @@ import {
   usersTable,
   verificationTokensTable,
 } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 export const nextAuthConfig = {
   adapter: DrizzleAdapter(db, {
@@ -22,6 +23,20 @@ export const nextAuthConfig = {
   secret: process.env.AUTH_SECRET,
   providers: [Google],
   session: { strategy: "jwt" },
-} as const satisfies NextAuthConfig | AuthConfig;
+  callbacks: {
+    async session({ session, token: { sub } }) {
+      if (session.user && sub) session.user.id = sub;
+      return session;
+    },
+  },
+} as const satisfies NextAuthConfig;
 
 export const nextAuth = NextAuth(nextAuthConfig);
+
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string | null;
+    };
+  }
+}
