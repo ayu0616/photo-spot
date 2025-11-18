@@ -1,10 +1,9 @@
+import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { inject, injectable } from "inversify";
-import { nextAuth } from "@/app/api/auth/[...nextAuth]/auth";
-import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
+import { nextAuth } from "@/app/api/auth/[...nextAuth]/auth";
 import { TYPES } from "@/constants/types";
-import { container } from "@/inversify.config";
 import { PostDtoMapper } from "../dto/post-dto";
 import type { PostService } from "../services/postService";
 
@@ -13,10 +12,12 @@ const createPostSchema = z.object({
   description: z.string().min(1, { message: "説明は必須です。" }),
   spotId: z.string().optional(),
   spotName: z.string().optional(),
-  cityId: z.preprocess(
-    (a) => parseInt(z.string().parse(a), 10),
-    z.number().int().positive(),
-  ).optional(),
+  cityId: z
+    .preprocess(
+      (a) => parseInt(z.string().parse(a), 10),
+      z.number().int().positive(),
+    )
+    .optional(),
 });
 
 @injectable()
