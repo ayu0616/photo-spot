@@ -1,8 +1,14 @@
 import { Hono } from "hono";
 import { stream } from "hono/streaming";
 import { inject, injectable } from "inversify";
+import { zValidator } from "@hono/zod-validator";
+import { z } from "zod";
 import { TYPES } from "@/constants/types";
 import type { ImageStorageService } from "../services/imageStorageService";
+
+const uploadImageSchema = z.object({
+  image: z.instanceof(File, { message: "画像ファイルが必要です。" }),
+});
 
 @injectable()
 export class ImageController {
@@ -15,27 +21,33 @@ export class ImageController {
   }
 
   public readonly app = new Hono()
-    .post("/upload", async (c) => {
-      try {
-        const body = await c.req.parseBody();
-        const imageFile = body.image as File;
-
-        if (!(imageFile instanceof File) || imageFile.size === 0) {
-          return c.json({ error: "画像ファイルが見つかりません。" }, 400);
+    .post(
+      "/upload",
+      zValidator("form", uploadImageSchema, (result, c) => {
+        if (!result.success) {
+          return c.json({ error: (result.error as z.ZodError).flatten() }, 400);
         }
+      }),
+      async (c) => {
+        try {
+          const { image } = c.req.valid("form");
 
-        const result = await this.imageStorageService.uploadImage(imageFile);
+          const result = await this.imageStorageService.uploadImage(image);
 
-        return c.json({
-          message: "アップロードが成功しました！",
-          fileName: result.fileName,
-          url: result.url,
-        });
-      } catch (error) {
-        console.error("アップロードエラー:", error);
-        return c.json({ error: "アップロード中にエラーが発生しました。" }, 500);
-      }
-    })
+          return c.json({
+            message: "アップロードが成功しました！",
+            fileName: result.fileName,
+            url: result.url,
+          });
+        } catch (error) {
+          console.error("アップロードエラー:", error);
+          return c.json(
+            { error: "アップロード中にエラーが発生しました。" },
+            500,
+          );
+        }
+      },
+    )
     .get("/images/:filename", async (c) => {
       const { filename } = c.req.param();
 

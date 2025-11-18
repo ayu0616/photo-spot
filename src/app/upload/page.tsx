@@ -178,7 +178,13 @@ export default function UploadPage() {
 
     try {
       const response = await honoClient.post.$post({
-        form: formData,
+        form: {
+          image: imageFile,
+          description,
+          spotName: newSpotName,
+          cityId: newSpotCityId?.toString(),
+          spotId: selectedSpotId,
+        },
       });
 
       if (!response.ok) {

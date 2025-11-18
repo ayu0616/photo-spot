@@ -8,6 +8,7 @@
         "@auth/drizzle-adapter": "^1.11.1",
         "@google-cloud/storage": "^7.17.3",
         "@hono/auth-js": "^1.1.0",
+        "@hono/zod-validator": "^0.7.4",
         "@radix-ui/react-label": "^2.1.8",
         "@radix-ui/react-radio-group": "^1.3.8",
         "@radix-ui/react-select": "^2.2.6",
@@ -156,6 +157,8 @@
     "@google-cloud/storage": ["@google-cloud/storage@7.17.3", "", { "dependencies": { "@google-cloud/paginator": "^5.0.0", "@google-cloud/projectify": "^4.0.0", "@google-cloud/promisify": "<4.1.0", "abort-controller": "^3.0.0", "async-retry": "^1.3.3", "duplexify": "^4.1.3", "fast-xml-parser": "^4.4.1", "gaxios": "^6.0.2", "google-auth-library": "^9.6.3", "html-entities": "^2.5.2", "mime": "^3.0.0", "p-limit": "^3.0.1", "retry-request": "^7.0.0", "teeny-request": "^9.0.0", "uuid": "^8.0.0" } }, "sha512-gOnCAbFgAYKRozywLsxagdevTF7Gm+2Ncz5u5CQAuOv/2VCa0rdGJWvJFDOftPx1tc+q8TXiC2pEJfFKu+yeMQ=="],
 
     "@hono/auth-js": ["@hono/auth-js@1.1.0", "", { "peerDependencies": { "@auth/core": ">=0.35.0", "hono": ">=3.0.0", "react": "^18 || ^19 || ^19.0.0-rc" } }, "sha512-GFlycQPDkuSbySTq8hvc73Fb9Wx0TnGff0BdE/v5wwrfC37SoNca5McD+nK94jxA0chggVYvn0CxH68uTylR5A=="],
+
+    "@hono/zod-validator": ["@hono/zod-validator@0.7.4", "", { "peerDependencies": { "hono": ">=3.9.0", "zod": "^3.25.0 || ^4.0.0" } }, "sha512-biKGn3BRJVaftZlIPMyK+HCe/UHAjJ6sH0UyXe3+v0OcgVr9xfImDROTJFLtn9e3XEEAHGZIM9U6evu85abm8Q=="],
 
     "@img/colour": ["@img/colour@1.0.0", "", {}, "sha512-A5P/LfWGFSl6nsckYtjw9da+19jB8hkJ6ACTGcDfEJ0aE+l2n2El7dsVM7UVHZQ9s2lmYMWlrS21YLy2IR1LUw=="],
 
