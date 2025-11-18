@@ -11,12 +11,14 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
@@ -27,7 +29,6 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { honoClient } from "@/lib/hono";
-import { Label } from "@/components/ui/label";
 
 interface Spot {
   id: string;
@@ -49,7 +50,7 @@ interface City {
 const formSchema = z
   .object({
     image: z.custom<File>((val) => val instanceof File, "画像は必須です。"),
-    description: z.string().min(1, { message: "説明は必須です。" }),
+    description: z.string().min(0, { message: "説明は必須です。" }),
     spotMode: z.enum(["new", "existing"]),
     selectedSpotId: z.string().optional(),
     newSpotName: z.string().optional(),
@@ -95,6 +96,7 @@ export default function UploadPage() {
   const [existingSpots, setExistingSpots] = useState<Spot[]>([]);
   const [prefectures, setPrefectures] = useState<Prefecture[]>([]);
   const [cities, setCities] = useState<City[]>([]);
+  const [isFetchingCities, setIsFetchingCities] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -105,6 +107,10 @@ export default function UploadPage() {
     defaultValues: {
       description: "",
       spotMode: "new",
+      selectedPrefectureId: "",
+      newSpotCityId: "",
+      newSpotName: "",
+      selectedSpotId: "",
     },
   });
 
@@ -162,7 +168,9 @@ export default function UploadPage() {
   useEffect(() => {
     if (selectedPrefectureId) {
       const fetchCities = async () => {
+        setIsFetchingCities(true);
         try {
+          form.setValue("newSpotCityId", "");
           const response = await honoClient.master.cities[":prefectureId"].$get(
             {
               param: { prefectureId: selectedPrefectureId },
@@ -173,14 +181,11 @@ export default function UploadPage() {
           }
           const citiesData: City[] = await response.json();
           setCities(citiesData);
-          if (citiesData.length > 0) {
-            form.setValue("newSpotCityId", citiesData[0].id.toString());
-          } else {
-            form.setValue("newSpotCityId", undefined);
-          }
         } catch (err: any) {
           console.error("Error fetching cities:", err);
           setError("選択された都道府県の市町村の読み込みに失敗しました。");
+        } finally {
+          setIsFetchingCities(false);
         }
       };
       fetchCities();
@@ -338,7 +343,11 @@ export default function UploadPage() {
                     <Select
                       onValueChange={field.onChange}
                       value={field.value}
-                      disabled={cities.length === 0}
+                      disabled={
+                        !selectedPrefectureId ||
+                        cities.length === 0 ||
+                        isFetchingCities
+                      }
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -353,6 +362,9 @@ export default function UploadPage() {
                         ))}
                       </SelectContent>
                     </Select>
+                    {isFetchingCities && (
+                      <FormDescription>市町村情報を取得中...</FormDescription>
+                    )}
                     <FormMessage />
                   </FormItem>
                 )}
