@@ -3,11 +3,12 @@ import { compress } from "hono/compress";
 import { csrf } from "hono/csrf";
 import { logger } from "hono/logger";
 import { secureHeaders } from "hono/secure-headers";
-
-import { imageController } from "./imageController";
-import masterController from "./masterController"; // Import the new masterController
-import postController from "./postController";
-import spotController from "./spotController";
+import { TYPES } from "@/constants/types";
+import { container } from "@/inversify.config";
+import type { ImageController } from "./imageController";
+import type { MasterController } from "./masterController";
+import type { PostController } from "./postController";
+import type { SpotController } from "./spotController"; // Import the new SpotController class // Import the new PostController class
 
 export const app = new Hono()
   .basePath("/api")
@@ -24,7 +25,9 @@ export const app = new Hono()
     console.error(err);
     return c.json({ error: err.message }, 500);
   })
-  .route("/image", imageController)
-  .route("/post", postController)
-  .route("/spot", spotController)
-  .route("/master", masterController); // Add the new masterController
+  .route("/image", container.get<ImageController>(TYPES.ImageController).app)
+  .route("/master", container.get<MasterController>(TYPES.MasterController).app)
+  .route("/post", container.get<PostController>(TYPES.PostController).app)
+  .route("/spot", container.get<SpotController>(TYPES.SpotController).app);
+
+export type AppType = typeof app;

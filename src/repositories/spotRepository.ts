@@ -1,11 +1,13 @@
 // src/repositories/spotRepository.ts
 
 import { eq } from "drizzle-orm";
+import { injectable } from "inversify";
 import { db } from "../db";
 import { SpotsTable } from "../db/schema";
 import type { SpotEntity } from "../domain/spot/spot.entity";
 import { SpotDtoMapper } from "../dto/spot-dto";
 
+@injectable()
 export class SpotRepository {
   async save(spot: SpotEntity): Promise<void> {
     const spotDto = SpotDtoMapper.fromEntity(spot);

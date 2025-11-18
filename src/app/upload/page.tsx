@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { honoClient } from "@/lib/hono";
 
 interface Spot {
   id: string;
@@ -61,7 +62,7 @@ export default function UploadPage() {
     if (spotMode === "existing") {
       const fetchSpots = async () => {
         try {
-          const response = await fetch("/api/spot");
+          const response = await honoClient.spot.$get();
           if (!response.ok) {
             throw new Error("Failed to fetch spots.");
           }
@@ -83,7 +84,7 @@ export default function UploadPage() {
   useEffect(() => {
     const fetchPrefectures = async () => {
       try {
-        const response = await fetch("/api/master/prefectures");
+        const response = await honoClient.master.prefectures.$get();
         if (!response.ok) {
           throw new Error("Failed to fetch prefectures.");
         }
@@ -105,8 +106,10 @@ export default function UploadPage() {
     if (selectedPrefectureId !== null) {
       const fetchCities = async () => {
         try {
-          const response = await fetch(
-            `/api/master/cities/${selectedPrefectureId}`,
+          const response = await honoClient.master.cities[":prefectureId"].$get(
+            {
+              param: { prefectureId: selectedPrefectureId.toString() },
+            },
           );
           if (!response.ok) {
             throw new Error("Failed to fetch cities.");
@@ -174,9 +177,8 @@ export default function UploadPage() {
     }
 
     try {
-      const response = await fetch("/api/post", {
-        method: "POST",
-        body: formData,
+      const response = await honoClient.post.$post({
+        form: formData,
       });
 
       if (!response.ok) {

@@ -1,5 +1,7 @@
 // src/services/postService.ts
 
+import { inject, injectable } from "inversify";
+import { TYPES } from "@/constants/types";
 import { PhotoEntity } from "../domain/photo/photo.entity";
 import { Aperture } from "../domain/photo/value-object/aperture";
 import { CameraMake } from "../domain/photo/value-object/camera-make";
@@ -30,46 +32,35 @@ import { UserId } from "../domain/user/value-object/user-id";
 import type { PhotoRepository } from "../repositories/photoRepository";
 import type { PostRepository } from "../repositories/postRepository";
 import type { SpotRepository } from "../repositories/spotRepository";
+import type { ImageStorageService } from "./imageStorageService"; // Import ImageStorageService
 
 interface CreatePostParams {
   userId: string;
   description: string;
-  photoUrl: string;
-  exifData: {
-    raw: string | null;
-    takenAt: Date | null;
-    cameraMake: string | null;
-    cameraModel: string | null;
-    latitude: string | null;
-    longitude: string | null;
-    orientation: number | null;
-    iso: number | null;
-    lensMake: string | null;
-    lensModel: string | null;
-    lensSerial: string | null;
-    focalLength: string | null;
-    focalLength35mm: string | null;
-    aperture: string | null;
-  };
+  imageFile: File; // Changed from photoUrl and exifData
   // Optional parameters for spot
   spotId?: string;
   spotName?: string;
   cityId?: number;
 }
 
+@injectable()
 export class PostService {
   private photoRepository: PhotoRepository;
   private spotRepository: SpotRepository;
   private postRepository: PostRepository;
+  private imageStorageService: ImageStorageService; // Added ImageStorageService
 
   constructor(
-    photoRepository: PhotoRepository,
-    spotRepository: SpotRepository,
-    postRepository: PostRepository,
+    @inject(TYPES.PhotoRepository) photoRepository: PhotoRepository,
+    @inject(TYPES.SpotRepository) spotRepository: SpotRepository,
+    @inject(TYPES.PostRepository) postRepository: PostRepository,
+    @inject(TYPES.ImageStorageService) imageStorageService: ImageStorageService, // Injected ImageStorageService
   ) {
     this.photoRepository = photoRepository;
     this.spotRepository = spotRepository;
     this.postRepository = postRepository;
+    this.imageStorageService = imageStorageService;
   }
 
   async createPost(params: CreatePostParams): Promise<PostEntity> {
@@ -101,53 +92,55 @@ export class PostService {
       throw new Error("Spot information is missing.");
     }
 
+    // 1. 画像をGCSにアップロードし、EXIFデータを抽出
+    const { url: photoUrl, exifData } =
+      await this.imageStorageService.uploadImage(params.imageFile);
+
     // 2. PhotoEntityの作成
     const photoId = new PhotoId(crypto.randomUUID());
-    const photoUrl = new PhotoUrl(params.photoUrl);
-    const photoExif = params.exifData.raw
-      ? new PhotoExif(params.exifData.raw)
+    const photoUrlVo = new PhotoUrl(photoUrl);
+    const photoExif = exifData.raw ? new PhotoExif(exifData.raw.value) : null;
+    const takenAt = exifData.takenAt
+      ? new TakenAt(exifData.takenAt.value)
       : null;
-    const takenAt = params.exifData.takenAt
-      ? new TakenAt(params.exifData.takenAt)
+    const cameraMake = exifData.cameraMake
+      ? new CameraMake(exifData.cameraMake.value)
       : null;
-    const cameraMake = params.exifData.cameraMake
-      ? new CameraMake(params.exifData.cameraMake)
+    const cameraModel = exifData.cameraModel
+      ? new CameraModel(exifData.cameraModel.value)
       : null;
-    const cameraModel = params.exifData.cameraModel
-      ? new CameraModel(params.exifData.cameraModel)
+    const latitude = exifData.latitude
+      ? new Latitude(exifData.latitude.value)
       : null;
-    const latitude = params.exifData.latitude
-      ? new Latitude(params.exifData.latitude)
+    const longitude = exifData.longitude
+      ? new Longitude(exifData.longitude.value)
       : null;
-    const longitude = params.exifData.longitude
-      ? new Longitude(params.exifData.longitude)
+    const orientation = exifData.orientation
+      ? new Orientation(exifData.orientation.value)
       : null;
-    const orientation = params.exifData.orientation
-      ? new Orientation(params.exifData.orientation)
+    const iso = exifData.iso ? new Iso(exifData.iso.value) : null;
+    const lensMake = exifData.lensMake
+      ? new LensMake(exifData.lensMake.value)
       : null;
-    const iso = params.exifData.iso ? new Iso(params.exifData.iso) : null;
-    const lensMake = params.exifData.lensMake
-      ? new LensMake(params.exifData.lensMake)
+    const lensModel = exifData.lensModel
+      ? new LensModel(exifData.lensModel.value)
       : null;
-    const lensModel = params.exifData.lensModel
-      ? new LensModel(params.exifData.lensModel)
+    const lensSerial = exifData.lensSerial
+      ? new LensSerial(exifData.lensSerial.value)
       : null;
-    const lensSerial = params.exifData.lensSerial
-      ? new LensSerial(params.exifData.lensSerial)
+    const focalLength = exifData.focalLength
+      ? new FocalLength(exifData.focalLength.value)
       : null;
-    const focalLength = params.exifData.focalLength
-      ? new FocalLength(params.exifData.focalLength)
+    const focalLength35mm = exifData.focalLength35mm
+      ? new FocalLength35mm(exifData.focalLength35mm.value)
       : null;
-    const focalLength35mm = params.exifData.focalLength35mm
-      ? new FocalLength35mm(params.exifData.focalLength35mm)
-      : null;
-    const aperture = params.exifData.aperture
-      ? new Aperture(params.exifData.aperture)
+    const aperture = exifData.aperture
+      ? new Aperture(exifData.aperture.value)
       : null;
 
     const photo = new PhotoEntity(
       photoId,
-      photoUrl,
+      photoUrlVo,
       photoExif,
       takenAt,
       cameraMake,

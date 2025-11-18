@@ -1,10 +1,13 @@
 import type { Readable } from "node:stream";
 import type { Bucket } from "@google-cloud/storage";
+import { inject, injectable } from "inversify";
+import { TYPES } from "@/constants/types";
 
+@injectable()
 export class StorageRepository {
   private bucket: Bucket;
 
-  constructor(bucket: Bucket) {
+  constructor(@inject(TYPES.Bucket) bucket: Bucket) {
     this.bucket = bucket;
   }
 

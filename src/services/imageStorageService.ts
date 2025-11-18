@@ -1,7 +1,9 @@
 import type { Readable } from "node:stream";
 import type { ExifTags } from "exifreader";
 import * as ExifReader from "exifreader";
+import { inject, injectable } from "inversify";
 import { v4 as uuidv4 } from "uuid";
+import { TYPES } from "@/constants/types";
 import { Aperture } from "../domain/photo/value-object/aperture";
 import { CameraMake } from "../domain/photo/value-object/camera-make";
 import { CameraModel } from "../domain/photo/value-object/camera-model";
@@ -42,11 +44,14 @@ function formatRational(rational: [number, number] | undefined): string | null {
   return `${rational[0]}/${rational[1]}`;
 }
 
+@injectable()
 export class ImageStorageService {
   private storageRepository: StorageRepository;
   private bucketName: string;
 
-  constructor(storageRepository: StorageRepository) {
+  constructor(
+    @inject(TYPES.StorageRepository) storageRepository: StorageRepository,
+  ) {
     this.storageRepository = storageRepository;
     this.bucketName = process.env.GCS_BUCKET_NAME || "";
   }

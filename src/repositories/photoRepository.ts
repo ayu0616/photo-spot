@@ -1,11 +1,13 @@
 // src/repositories/photoRepository.ts
 
 import { eq } from "drizzle-orm";
+import { injectable } from "inversify";
 import { db } from "../db";
 import { PhotosTable } from "../db/schema";
 import type { PhotoEntity } from "../domain/photo/photo.entity";
 import { PhotoDtoMapper } from "../dto/photo-dto";
 
+@injectable()
 export class PhotoRepository {
   async save(photo: PhotoEntity): Promise<void> {
     const photoDto = PhotoDtoMapper.fromEntity(photo);

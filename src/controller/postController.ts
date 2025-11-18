@@ -1,98 +1,68 @@
-// src/controller/postController.ts
-
 import { Hono } from "hono";
+import { inject, injectable } from "inversify";
 import { nextAuth } from "@/app/api/auth/[...nextAuth]/auth";
+import { TYPES } from "@/constants/types";
 import { PostDtoMapper } from "../dto/post-dto";
-import { bucket } from "../lib/gcsClient";
-import { PhotoRepository } from "../repositories/photoRepository";
-import { PostRepository } from "../repositories/postRepository";
-import { SpotRepository } from "../repositories/spotRepository";
-import { StorageRepository } from "../repositories/storageRepository";
-import { ImageStorageService } from "../services/imageStorageService";
-import { PostService } from "../services/postService";
+import type { PostService } from "../services/postService";
 
-const postController = new Hono();
+@injectable()
+export class PostController {
+  private readonly postService: PostService;
 
-const storageRepository = new StorageRepository(bucket);
-const imageStorageService = new ImageStorageService(storageRepository);
-
-// Initialize repositories
-const photoRepository = new PhotoRepository();
-const spotRepository = new SpotRepository();
-const postRepository = new PostRepository();
-
-// Inject repositories into PostService
-const postService = new PostService(
-  photoRepository,
-  spotRepository,
-  postRepository,
-);
-
-postController.post("/", async (c) => {
-  try {
-    const auth = await nextAuth.auth();
-    const user = auth?.user;
-    if (!user || !user.id) {
-      return c.json({ error: "Unauthorized" }, 401);
-    }
-    const userId = user.id;
-
-    const formData = await c.req.formData();
-    const imageFile = formData.get("image") as File;
-    const description = formData.get("description") as string;
-
-    // Spot information can be either spotId or spotName + cityId
-    const spotId = formData.get("spotId") as string | null;
-    const spotName = formData.get("spotName") as string | null;
-    const cityId = formData.get("cityId")
-      ? Number(formData.get("cityId"))
-      : null;
-
-    if (!imageFile || !description || !userId) {
-      return c.json({ error: "Missing required fields" }, 400);
-    }
-
-    if (!spotId && (!spotName || !cityId)) {
-      return c.json({ error: "Spot information is missing." }, 400);
-    }
-
-    // 1. 画像をGCSにアップロードし、EXIFデータを抽出
-    const { url: photoUrl, exifData } =
-      await imageStorageService.uploadImage(imageFile);
-
-    // 2. PostServiceを使って投稿を作成
-    const postEntity = await postService.createPost({
-      userId,
-      description,
-      photoUrl,
-      exifData: {
-        raw: exifData.raw?.value || null,
-        takenAt: exifData.takenAt?.value || null,
-        cameraMake: exifData.cameraMake?.value || null,
-        cameraModel: exifData.cameraModel?.value || null,
-        latitude: exifData.latitude?.value || null,
-        longitude: exifData.longitude?.value || null,
-        orientation: exifData.orientation?.value || null,
-        iso: exifData.iso?.value || null,
-        lensMake: exifData.lensMake?.value || null,
-        lensModel: exifData.lensModel?.value || null,
-        lensSerial: exifData.lensSerial?.value || null,
-        focalLength: exifData.focalLength?.value || null,
-        focalLength35mm: exifData.focalLength35mm?.value || null,
-        aperture: exifData.aperture?.value || null,
-      },
-      ...(spotId && { spotId }),
-      ...(spotName && cityId && { spotName, cityId }),
-    });
-
-    // 3. DTOに変換して返す
-    const postDto = PostDtoMapper.fromEntity(postEntity);
-
-    return c.json(postDto, 201);
-  } catch (error) {
-    console.error("投稿作成中にエラーが発生しました:", error);
-    return c.json({ error: "Failed to create post" }, 500);
+  public constructor(@inject(TYPES.PostService) postService: PostService) {
+    this.postService = postService;
   }
-});
 
-export default postController;
+  public readonly app = new Hono().post("/", async (c) => {
+    try {
+      const auth = await nextAuth.auth();
+      const user = auth?.user;
+      if (!user || !user.id) {
+        return c.json({ error: "Unauthorized" }, 401);
+      }
+      const userId = user.id;
+
+      const formData = await c.req.formData();
+      const imageFile = formData.get("image") as File;
+      const description = formData.get("description") as string;
+
+      // Spot information can be either spotId or spotName + cityId
+      const spotId = formData.get("spotId") as string | null;
+      const spotName = formData.get("spotName") as string | null;
+      const cityId = formData.get("cityId")
+        ? Number(formData.get("cityId"))
+        : null;
+
+      if (!imageFile || !description || !userId) {
+        return c.json({ error: "Missing required fields" }, 400);
+      }
+
+      if (!spotId && (!spotName || !cityId)) {
+        return c.json({ error: "Spot information is missing." }, 400);
+      }
+
+      // 1. 画像をGCSにアップロードし、EXIFデータを抽出
+      // This logic should ideally be moved to a service or handled by the PostService itself
+      // For now, we'll assume postService.createPost handles image upload internally or expects a URL
+      // For this refactor, we'll pass the imageFile directly to the service.
+      // The service will then use ImageStorageService internally.
+
+      // 2. PostServiceを使って投稿を作成
+      const postEntity = await this.postService.createPost({
+        userId,
+        description,
+        imageFile, // Pass imageFile directly
+        ...(spotId && { spotId }),
+        ...(spotName && cityId && { spotName, cityId }),
+      });
+
+      // 3. DTOに変換して返す
+      const postDto = PostDtoMapper.fromEntity(postEntity);
+
+      return c.json(postDto, 201);
+    } catch (error) {
+      console.error("投稿作成中にエラーが発生しました:", error);
+      return c.json({ error: "Failed to create post" }, 500);
+    }
+  });
+}
