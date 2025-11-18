@@ -128,9 +128,6 @@ export default function UploadPage() {
           }
           const spotsData: Spot[] = await response.json();
           setExistingSpots(spotsData);
-          if (spotsData.length > 0) {
-            form.setValue("selectedSpotId", spotsData[0].id);
-          }
         } catch (err: any) {
           console.error("Error fetching spots:", err);
           setError("既存のスポットの読み込みに失敗しました。");
@@ -138,7 +135,7 @@ export default function UploadPage() {
       };
       fetchSpots();
     }
-  }, [spotMode, form]);
+  }, [spotMode]);
 
   // Fetch prefectures
   useEffect(() => {
@@ -150,19 +147,13 @@ export default function UploadPage() {
         }
         const prefecturesData: Prefecture[] = await response.json();
         setPrefectures(prefecturesData);
-        if (prefecturesData.length > 0) {
-          form.setValue(
-            "selectedPrefectureId",
-            prefecturesData[0].id.toString(),
-          );
-        }
       } catch (err: any) {
         console.error("Error fetching prefectures:", err);
         setError("都道府県の読み込みに失敗しました。");
       }
     };
     fetchPrefectures();
-  }, [form]);
+  }, []);
 
   // Fetch cities based on selected prefecture
   useEffect(() => {
