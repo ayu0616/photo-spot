@@ -83,5 +83,20 @@ export class PostController {
         console.error("投稿一覧の取得中にエラーが発生しました:", error);
         return c.json({ error: "Failed to get posts" }, 500);
       }
+    })
+    .get("/:id", async (c) => {
+      try {
+        const id = c.req.param("id");
+        const post = await this.postService.getPostById(id);
+
+        if (!post) {
+          return c.json({ error: "Post not found" }, 404);
+        }
+
+        return c.json(post, 200);
+      } catch (error) {
+        console.error("投稿の取得中にエラーが発生しました:", error);
+        return c.json({ error: "Failed to get post" }, 500);
+      }
     });
 }

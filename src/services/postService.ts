@@ -180,4 +180,8 @@ export class PostService {
   ): Promise<PostWithRelationsDto[]> {
     return this.postRepository.findAllWithRelations(limit, offset);
   }
+
+  async getPostById(id: string): Promise<PostWithRelationsDto | null> {
+    return this.postRepository.findByIdWithRelations(id);
+  }
 }

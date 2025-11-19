@@ -4,6 +4,7 @@ import type { RemotePattern } from "next/dist/shared/lib/image-config";
 const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
+  typedRoutes: true,
   images: {},
 };
 

@@ -65,4 +65,53 @@ export class PostRepository {
 
     return postsWithRelations as PostWithRelationsDto[];
   }
+
+  async findByIdWithRelations(
+    id: string,
+  ): Promise<PostWithRelationsDto | null> {
+    const postWithRelations = await db.query.PostsTable.findFirst({
+      where: eq(PostsTable.id, id),
+      with: {
+        user: {
+          columns: {
+            id: true,
+            name: true,
+            image: true,
+          },
+        },
+        spot: {
+          columns: {
+            id: true,
+            name: true,
+          },
+        },
+        photo: {
+          columns: {
+            id: true,
+            url: true,
+            exif: true,
+            takenAt: true,
+            cameraMake: true,
+            cameraModel: true,
+            latitude: true,
+            longitude: true,
+            orientation: true,
+            iso: true,
+            lensMake: true,
+            lensModel: true,
+            lensSerial: true,
+            focalLength: true,
+            focalLength35mm: true,
+            aperture: true,
+          },
+        },
+      },
+    });
+
+    if (!postWithRelations) {
+      return null;
+    }
+
+    return postWithRelations as unknown as PostWithRelationsDto;
+  }
 }

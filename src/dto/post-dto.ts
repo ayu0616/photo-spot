@@ -76,6 +76,20 @@ export type SpotForPostDto = z.infer<typeof SpotForPostDtoSchema>;
 export const PhotoForPostDtoSchema = z.object({
   id: z.string().uuid(),
   url: z.string(),
+  exif: z.string().nullable(),
+  takenAt: z.date().nullable(),
+  cameraMake: z.string().nullable(),
+  cameraModel: z.string().nullable(),
+  latitude: z.string().nullable(),
+  longitude: z.string().nullable(),
+  orientation: z.number().nullable(),
+  iso: z.number().nullable(),
+  lensMake: z.string().nullable(),
+  lensModel: z.string().nullable(),
+  lensSerial: z.string().nullable(),
+  focalLength: z.string().nullable(),
+  focalLength35mm: z.string().nullable(),
+  aperture: z.string().nullable(),
 });
 
 export type PhotoForPostDto = z.infer<typeof PhotoForPostDtoSchema>;
