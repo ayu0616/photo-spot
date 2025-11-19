@@ -1,14 +1,20 @@
-// src/components/post/post-list.tsx
-
 "use client";
 
+import { Loader2 } from "lucide-react";
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
+import { Button } from "@/components/ui/button";
 import type { PostWithRelationsDto } from "@/dto/post-dto";
 import { PostCard } from "./post-card";
 
 const POSTS_PER_PAGE = 10;
+
+const Spinner: React.FC = () => (
+  <div className="flex justify-center items-center p-4">
+    <Loader2 className="h-6 w-6 animate-spin" />
+  </div>
+);
 
 export const PostList: React.FC = () => {
   const [posts, setPosts] = useState<PostWithRelationsDto[]>([]);
@@ -72,16 +78,15 @@ export const PostList: React.FC = () => {
       {hasMore && (
         <div ref={ref} className="flex justify-center my-8">
           {loading ? (
-            <p className="text-gray-500">Loading more posts...</p>
+            <Spinner />
           ) : (
-            // Intersection Observer が動作しない場合のフォールバックや手動トリガー
-            <button
+            <Button
               type="button"
               onClick={() => fetchPosts(page)}
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              variant="outline"
             >
               Load More
-            </button>
+            </Button>
           )}
         </div>
       )}

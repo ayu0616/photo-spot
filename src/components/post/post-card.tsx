@@ -1,7 +1,14 @@
-// src/components/post/post-card.tsx
-
 import Image from "next/image";
 import type React from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import type { PostWithRelationsDto } from "@/dto/post-dto";
 
 interface PostCardProps {
@@ -10,45 +17,38 @@ interface PostCardProps {
 
 export const PostCard: React.FC<PostCardProps> = ({ post }) => {
   return (
-    <div className="rounded-lg border bg-card text-card-foreground shadow-sm w-full max-w-sm">
-      <div className="flex flex-col space-y-1.5 p-6">
-        <div className="flex items-center gap-2">
-          {/* User Avatar */}
-          <div className="relative h-8 w-8 rounded-full bg-gray-200">
-            {post.user.image && (
-              <Image
-                src={post.user.image}
-                alt={post.user.name || "User Avatar"}
-                fill
-                className="rounded-full object-cover"
-              />
-            )}
+    <Card className="w-full max-w-sm">
+      <CardHeader>
+        <div className="flex items-center gap-4">
+          <Avatar>
+            <AvatarImage
+              src={post.user.image || undefined}
+              alt={post.user.name || "User Avatar"}
+            />
+            <AvatarFallback>{post.user.name?.charAt(0) || "U"}</AvatarFallback>
+          </Avatar>
+          <div className="grid gap-1">
+            <CardTitle>{post.user.name || "匿名ユーザー"}</CardTitle>
+            <CardDescription>
+              {new Date(post.createdAt).toLocaleDateString()}
+            </CardDescription>
           </div>
-          {/* User Name */}
-          <p className="text-sm font-semibold">
-            {post.user.name || "匿名ユーザー"}
-          </p>
         </div>
-      </div>
-      {/* Post Image */}
-      <div className="relative aspect-square w-full">
-        <Image
-          src={post.photo.url}
-          alt={post.description || "Post Image"}
-          fill
-          className="object-cover"
-        />
-      </div>
-      <div className="p-6">
-        {/* Post Description */}
-        <p className="text-sm text-muted-foreground mb-2">{post.description}</p>
-        {/* Spot Name */}
-        <p className="text-xs text-gray-500">{post.spot.name}</p>
-        {/* Created At */}
-        <p className="text-xs text-gray-500">
-          {new Date(post.createdAt).toLocaleDateString()}
-        </p>
-      </div>
-    </div>
+      </CardHeader>
+      <CardContent>
+        <div className="relative aspect-square w-full">
+          <Image
+            src={post.photo.url}
+            alt={post.description || "Post Image"}
+            fill
+            className="rounded-md object-cover"
+          />
+        </div>
+        <p className="mt-4 text-sm text-muted-foreground">{post.description}</p>
+      </CardContent>
+      <CardFooter>
+        <p className="text-xs text-gray-500">📍 {post.spot.name}</p>
+      </CardFooter>
+    </Card>
   );
 };
