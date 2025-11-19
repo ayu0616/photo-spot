@@ -29,16 +29,16 @@ import { CityId } from "../domain/spot/value-object/city-id";
 import { SpotId } from "../domain/spot/value-object/spot-id";
 import { SpotName } from "../domain/spot/value-object/spot-name";
 import { UserId } from "../domain/user/value-object/user-id";
+import type { PostWithRelationsDto } from "../dto/post-dto"; // 追加
 import type { PhotoRepository } from "../repositories/photoRepository";
 import type { PostRepository } from "../repositories/postRepository";
 import type { SpotRepository } from "../repositories/spotRepository";
-import type { ImageStorageService } from "./imageStorageService"; // Import ImageStorageService
+import type { ImageStorageService } from "./imageStorageService";
 
 interface CreatePostParams {
   userId: string;
   description: string;
-  imageFile: File; // Changed from photoUrl and exifData
-  // Optional parameters for spot
+  imageFile: File;
   spotId?: string;
   spotName?: string;
   cityId?: number;
@@ -49,13 +49,13 @@ export class PostService {
   private photoRepository: PhotoRepository;
   private spotRepository: SpotRepository;
   private postRepository: PostRepository;
-  private imageStorageService: ImageStorageService; // Added ImageStorageService
+  private imageStorageService: ImageStorageService;
 
   constructor(
     @inject(TYPES.PhotoRepository) photoRepository: PhotoRepository,
     @inject(TYPES.SpotRepository) spotRepository: SpotRepository,
     @inject(TYPES.PostRepository) postRepository: PostRepository,
-    @inject(TYPES.ImageStorageService) imageStorageService: ImageStorageService, // Injected ImageStorageService
+    @inject(TYPES.ImageStorageService) imageStorageService: ImageStorageService,
   ) {
     this.photoRepository = photoRepository;
     this.spotRepository = spotRepository;
@@ -67,14 +67,12 @@ export class PostService {
     let spot: SpotEntity;
 
     if (params.spotId) {
-      // 既存のスポットを選択した場合
       const foundSpot = await this.spotRepository.findById(params.spotId);
       if (!foundSpot) {
         throw new Error("Selected spot not found.");
       }
       spot = foundSpot;
     } else if (params.spotName && params.cityId) {
-      // 新しいスポットを作成または既存のスポットを検索する場合
       let foundSpot = await this.spotRepository.findByNameAndCityId(
         params.spotName,
         params.cityId,
@@ -92,11 +90,9 @@ export class PostService {
       throw new Error("Spot information is missing.");
     }
 
-    // 1. 画像をGCSにアップロードし、EXIFデータを抽出
     const { url: photoUrl, exifData } =
       await this.imageStorageService.uploadImage(params.imageFile);
 
-    // 2. PhotoEntityの作成
     const photoId = new PhotoId(crypto.randomUUID());
     const photoUrlVo = new PhotoUrl(photoUrl);
     const photoExif = exifData.raw ? new PhotoExif(exifData.raw.value) : null;
@@ -158,7 +154,6 @@ export class PostService {
     );
     await this.photoRepository.save(photo);
 
-    // 3. PostEntityの作成
     const postId = new PostId(crypto.randomUUID());
     const userId = new UserId(params.userId);
     const description = new PostDescription(params.description);
@@ -177,5 +172,12 @@ export class PostService {
     await this.postRepository.save(post);
 
     return post;
+  }
+
+  async getPosts(
+    limit: number,
+    offset: number,
+  ): Promise<PostWithRelationsDto[]> {
+    return this.postRepository.findAllWithRelations(limit, offset);
   }
 }

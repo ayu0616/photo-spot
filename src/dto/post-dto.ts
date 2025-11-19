@@ -54,3 +54,37 @@ export const PostDtoMapper = {
     );
   },
 };
+
+// UserのDTOスキーマを定義
+export const UserForPostDtoSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().nullable(),
+  image: z.string().nullable(),
+});
+
+export type UserForPostDto = z.infer<typeof UserForPostDtoSchema>;
+
+// SpotのDTOスキーマを定義
+export const SpotForPostDtoSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+});
+
+export type SpotForPostDto = z.infer<typeof SpotForPostDtoSchema>;
+
+// PhotoのDTOスキーマを定義
+export const PhotoForPostDtoSchema = z.object({
+  id: z.string().uuid(),
+  url: z.string(),
+});
+
+export type PhotoForPostDto = z.infer<typeof PhotoForPostDtoSchema>;
+
+// 関連情報を含むPostのDTOスキーマを定義
+export const PostWithRelationsDtoSchema = PostDtoSchema.extend({
+  user: UserForPostDtoSchema,
+  spot: SpotForPostDtoSchema,
+  photo: PhotoForPostDtoSchema,
+});
+
+export type PostWithRelationsDto = z.infer<typeof PostWithRelationsDtoSchema>;

@@ -5,7 +5,7 @@ import { injectable } from "inversify";
 import { db } from "../db";
 import { PostsTable } from "../db/schema";
 import type { PostEntity } from "../domain/post/post.entity";
-import { PostDtoMapper } from "../dto/post-dto";
+import { PostDtoMapper, type PostWithRelationsDto } from "../dto/post-dto"; // PostWithRelationsDto を追加
 
 @injectable()
 export class PostRepository {
@@ -30,5 +30,39 @@ export class PostRepository {
       return null;
     }
     return PostDtoMapper.toEntity(postDto);
+  }
+
+  async findAllWithRelations(
+    limit: number,
+    offset: number,
+  ): Promise<PostWithRelationsDto[]> {
+    const postsWithRelations = await db.query.PostsTable.findMany({
+      limit: limit,
+      offset: offset,
+      orderBy: (posts, { desc }) => [desc(posts.createdAt)],
+      with: {
+        user: {
+          columns: {
+            id: true,
+            name: true,
+            image: true,
+          },
+        },
+        spot: {
+          columns: {
+            id: true,
+            name: true,
+          },
+        },
+        photo: {
+          columns: {
+            id: true,
+            url: true,
+          },
+        },
+      },
+    });
+
+    return postsWithRelations as PostWithRelationsDto[];
   }
 }
