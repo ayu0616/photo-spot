@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import type { PostWithRelationsDto } from "@/dto/post-dto";
+import { formatToYYYYMMDD } from "@/lib/format-date";
 
 interface PostCardProps {
   post: PostWithRelationsDto;
@@ -34,7 +35,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
             <div className="grid gap-1">
               <CardTitle>{post.user.name || "匿名ユーザー"}</CardTitle>
               <CardDescription>
-                {new Date(post.createdAt).toLocaleDateString()}
+                {formatToYYYYMMDD(new Date(post.createdAt))}
               </CardDescription>
             </div>
           </div>

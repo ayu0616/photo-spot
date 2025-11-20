@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import type { PostWithRelationsDto } from "@/dto/post-dto";
+import { formatToYYYYMMDD } from "@/lib/format-date";
 import { PhotoExifDisplay } from "./_components/photo-exif-display";
 
 const getPostDetail = async (
@@ -59,7 +60,7 @@ export default async function PostDetailPage({
             <div>
               <CardTitle>{post.user.name || "匿名ユーザー"}</CardTitle>
               <CardDescription>
-                {new Date(post.createdAt).toLocaleDateString()}
+                {formatToYYYYMMDD(new Date(post.createdAt))}
               </CardDescription>
             </div>
           </div>

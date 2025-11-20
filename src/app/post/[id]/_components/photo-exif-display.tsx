@@ -4,6 +4,7 @@ import type React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import type { PhotoForPostDto } from "@/dto/post-dto";
+import { formatDateTime } from "@/lib/format-date";
 
 interface PhotoExifDisplayProps {
   photo: PhotoForPostDto;
@@ -15,7 +16,7 @@ export const PhotoExifDisplay: React.FC<PhotoExifDisplayProps> = ({
   const exifData = [
     {
       label: "撮影日時",
-      value: photo.takenAt ? new Date(photo.takenAt).toLocaleString() : "-",
+      value: photo.takenAt ? formatDateTime(new Date(photo.takenAt)) : "-",
     },
     { label: "カメラメーカー", value: photo.cameraMake || "-" },
     { label: "カメラモデル", value: photo.cameraModel || "-" },
