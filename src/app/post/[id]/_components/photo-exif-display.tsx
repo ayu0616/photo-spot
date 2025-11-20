@@ -23,6 +23,7 @@ export const PhotoExifDisplay: React.FC<PhotoExifDisplayProps> = ({
     { label: "経度", value: photo.longitude || "-" },
     { label: "Orientation", value: photo.orientation || "-" },
     { label: "ISO 感度", value: photo.iso || "-" },
+    { label: "シャッタースピード", value: photo.shutterSpeed || "-" }, // 追加
     { label: "レンズメーカー", value: photo.lensMake || "-" },
     { label: "レンズモデル", value: photo.lensModel || "-" },
     { label: "レンズシリアル", value: photo.lensSerial || "-" },

@@ -29,6 +29,13 @@
       "when": 1763390962335,
       "tag": "0003_keen_mastermind",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1763562919965,
+      "tag": "0004_typical_namora",
+      "breakpoints": true
     }
   ]
 }

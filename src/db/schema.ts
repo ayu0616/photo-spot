@@ -120,6 +120,8 @@ export const PhotosTable = pgTable("photo", {
   focalLength35mm: varchar("focalLength35mm", { length: 255 }),
   /** 絞り値（例: f/1.8 をそのまま保存） */
   aperture: varchar("aperture", { length: 255 }),
+  /** シャッタースピード（例: 1/250, 1s などをそのまま保存） */
+  shutterSpeed: varchar("shutterSpeed", { length: 255 }), // 追加
 });
 
 export const photosRelations = relations(PhotosTable, ({ one }) => ({

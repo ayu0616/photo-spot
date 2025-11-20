@@ -1,0 +1,1 @@
+ALTER TABLE "photo" ADD COLUMN "shutterSpeed" varchar(255);

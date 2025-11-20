@@ -103,6 +103,7 @@ export class PostRepository {
             focalLength: true,
             focalLength35mm: true,
             aperture: true,
+            shutterSpeed: true, // 追加
           },
         },
       },

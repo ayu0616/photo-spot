@@ -146,6 +146,7 @@ export class ImageStorageService {
     focalLength: FocalLength | null;
     focalLength35mm: FocalLength35mm | null;
     aperture: Aperture | null;
+    shutterSpeed: string | null; // 追加: Value Object をまだ作成していないので string で保持
   } {
     try {
       const tags = ExifReader.load(imageBuffer) as ExifTags;
@@ -208,6 +209,14 @@ export class ImageStorageService {
         ? new Aperture(formatRational(tags.FNumber?.value) as string)
         : null;
 
+      // シャッタースピードを抽出
+      let shutterSpeed: string | null = null;
+      if (tags.ExposureTime?.description) {
+        shutterSpeed = tags.ExposureTime.description;
+      } else if (tags.ShutterSpeedValue?.description) {
+        shutterSpeed = tags.ShutterSpeedValue.description;
+      }
+
       return {
         raw: rawExif,
         takenAt,
@@ -223,6 +232,7 @@ export class ImageStorageService {
         focalLength,
         focalLength35mm,
         aperture,
+        shutterSpeed, // 追加
       };
     } catch (error) {
       console.error("EXIFデータの抽出中にエラーが発生しました:", error);
@@ -241,6 +251,7 @@ export class ImageStorageService {
         focalLength: null,
         focalLength35mm: null,
         aperture: null,
+        shutterSpeed: null, // 追加
       };
     }
   }

@@ -90,6 +90,7 @@ export const PhotoForPostDtoSchema = z.object({
   focalLength: z.string().nullable(),
   focalLength35mm: z.string().nullable(),
   aperture: z.string().nullable(),
+  shutterSpeed: z.string().nullable(), // 追加
 });
 
 export type PhotoForPostDto = z.infer<typeof PhotoForPostDtoSchema>;
