@@ -128,7 +128,7 @@ export default function UploadPage() {
           }
           const spotsData: Spot[] = await response.json();
           setExistingSpots(spotsData);
-        } catch (err: any) {
+        } catch (err) {
           console.error("Error fetching spots:", err);
           setError("既存のスポットの読み込みに失敗しました。");
         }
@@ -147,7 +147,7 @@ export default function UploadPage() {
         }
         const prefecturesData: Prefecture[] = await response.json();
         setPrefectures(prefecturesData);
-      } catch (err: any) {
+      } catch (err) {
         console.error("Error fetching prefectures:", err);
         setError("都道府県の読み込みに失敗しました。");
       }
@@ -172,7 +172,7 @@ export default function UploadPage() {
           }
           const citiesData: City[] = await response.json();
           setCities(citiesData);
-        } catch (err: any) {
+        } catch (err) {
           console.error("Error fetching cities:", err);
           setError("選択された都道府県の市町村の読み込みに失敗しました。");
         } finally {
@@ -209,8 +209,14 @@ export default function UploadPage() {
       const result = await response.json();
       console.log("Post created successfully:", result);
       router.push("/"); // Redirect to home or post details page
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      if (
+        err instanceof Object &&
+        "message" in err &&
+        typeof err.message === "string"
+      ) {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
