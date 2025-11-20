@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import { Button } from "@/components/ui/button";
 import type { PostWithRelationsDto } from "@/dto/post-dto";
+import { honoClient } from "@/lib/hono"; // Import honoClient
 import { PostCard } from "./post-card";
 
 const POSTS_PER_PAGE = 10;
@@ -25,13 +26,27 @@ const Spinner: React.FC = () => (
 const fetchPostsData = async ({
   pageParam = 0,
 }: QueryFunctionContext<string[], number>): Promise<PostWithRelationsDto[]> => {
-  const response = await fetch(
-    `/api/post?limit=${POSTS_PER_PAGE}&offset=${pageParam * POSTS_PER_PAGE}`,
-  );
+  const response = await honoClient.post.$get({
+    query: {
+      limit: POSTS_PER_PAGE.toString(),
+      offset: (pageParam * POSTS_PER_PAGE).toString(),
+    },
+  });
+
   if (!response.ok) {
     throw new Error("Failed to fetch posts");
   }
-  return response.json();
+
+  const posts = await response.json();
+  return posts.map((post) => ({
+    ...post,
+    createdAt: new Date(post.createdAt),
+    updatedAt: new Date(post.updatedAt),
+    photo: {
+      ...post.photo,
+      takenAt: post.photo.takenAt ? new Date(post.photo.takenAt) : null,
+    },
+  }));
 };
 
 export const PostList: React.FC = () => {
