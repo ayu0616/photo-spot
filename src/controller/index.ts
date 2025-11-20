@@ -8,7 +8,8 @@ import { container } from "@/inversify.config";
 import type { ImageController } from "./imageController";
 import type { MasterController } from "./masterController";
 import type { PostController } from "./postController";
-import type { SpotController } from "./spotController"; // Import the new SpotController class // Import the new PostController class
+import type { SpotController } from "./spotController";
+import type { UserController } from "./userController"; // Import UserController
 
 export const app = new Hono()
   .basePath("/api")
@@ -28,6 +29,7 @@ export const app = new Hono()
   .route("/image", container.get<ImageController>(TYPES.ImageController).app)
   .route("/master", container.get<MasterController>(TYPES.MasterController).app)
   .route("/post", container.get<PostController>(TYPES.PostController).app)
-  .route("/spot", container.get<SpotController>(TYPES.SpotController).app);
+  .route("/spot", container.get<SpotController>(TYPES.SpotController).app)
+  .route("/user", container.get<UserController>(TYPES.UserController).app); // Register UserController
 
 export type AppType = typeof app;
