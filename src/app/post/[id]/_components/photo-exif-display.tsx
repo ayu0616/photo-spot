@@ -5,6 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import type { PhotoForPostDto } from "@/dto/post-dto";
 import { formatDateTime } from "@/lib/format-date";
+import {
+  formatAperture,
+  formatFocalLength,
+  formatGPSCoordinate,
+  formatISO,
+  formatShutterSpeed,
+} from "@/lib/format-exif";
 
 interface PhotoExifDisplayProps {
   photo: PhotoForPostDto;
@@ -20,17 +27,23 @@ export const PhotoExifDisplay: React.FC<PhotoExifDisplayProps> = ({
     },
     { label: "カメラメーカー", value: photo.cameraMake || "-" },
     { label: "カメラモデル", value: photo.cameraModel || "-" },
-    { label: "緯度", value: photo.latitude || "-" },
-    { label: "経度", value: photo.longitude || "-" },
+    { label: "緯度", value: formatGPSCoordinate(photo.latitude) },
+    { label: "経度", value: formatGPSCoordinate(photo.longitude) },
     { label: "Orientation", value: photo.orientation || "-" },
-    { label: "ISO 感度", value: photo.iso || "-" },
-    { label: "シャッタースピード", value: photo.shutterSpeed || "-" }, // 追加
+    { label: "ISO 感度", value: formatISO(photo.iso) },
+    {
+      label: "シャッタースピード",
+      value: formatShutterSpeed(photo.shutterSpeed),
+    },
     { label: "レンズメーカー", value: photo.lensMake || "-" },
     { label: "レンズモデル", value: photo.lensModel || "-" },
     { label: "レンズシリアル", value: photo.lensSerial || "-" },
-    { label: "焦点距離", value: photo.focalLength || "-" },
-    { label: "35mm 換算焦点距離", value: photo.focalLength35mm || "-" },
-    { label: "絞り値", value: photo.aperture || "-" },
+    { label: "焦点距離", value: formatFocalLength(photo.focalLength) },
+    {
+      label: "35mm 換算焦点距離",
+      value: formatFocalLength(photo.focalLength35mm),
+    },
+    { label: "絞り値", value: formatAperture(photo.aperture) },
   ];
 
   return (
