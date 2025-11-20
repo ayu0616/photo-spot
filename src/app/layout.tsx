@@ -1,10 +1,9 @@
-import { QueryClientProvider } from "@tanstack/react-query";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { queryClient } from "@/lib/query-client";
 import "./globals.css";
 import { Suspense } from "react";
 import { SessionProvider } from "@/provider/session-provider";
+import { TanstackQueryProvider } from "@/provider/tanstack-query-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
-      <QueryClientProvider client={queryClient}>
+      <TanstackQueryProvider>
         <SessionProvider>
           <body
             className={`${geistSans.variable} ${geistMono.variable} antialiased`}
@@ -36,7 +35,7 @@ export default function RootLayout({
             <Suspense fallback="loading...">{children}</Suspense>
           </body>
         </SessionProvider>
-      </QueryClientProvider>
+      </TanstackQueryProvider>
     </html>
   );
 }
