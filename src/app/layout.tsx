@@ -1,5 +1,7 @@
+import { QueryClientProvider } from "@tanstack/react-query";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { queryClient } from "@/lib/query-client";
 import "./globals.css";
 import { Suspense } from "react";
 import { SessionProvider } from "@/provider/session-provider";
@@ -26,13 +28,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
-      <SessionProvider>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
-          <Suspense fallback="loading...">{children}</Suspense>
-        </body>
-      </SessionProvider>
+      <QueryClientProvider client={queryClient}>
+        <SessionProvider>
+          <body
+            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          >
+            <Suspense fallback="loading...">{children}</Suspense>
+          </body>
+        </SessionProvider>
+      </QueryClientProvider>
     </html>
   );
 }
