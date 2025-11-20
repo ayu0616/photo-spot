@@ -77,6 +77,20 @@ export default async function PostDetailPage({
             />
           </div>
 
+          {post.photo.latitude && post.photo.longitude && (
+            <div className="mb-6 text-center">
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${post.photo.latitude},${post.photo.longitude}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 hover:underline"
+              >
+                Google Mapsで表示 ({post.photo.latitude}, {post.photo.longitude}
+                )
+              </a>
+            </div>
+          )}
+
           {/* 撮影情報 (EXIF) */}
           <PhotoExifDisplay photo={post.photo} />
         </CardContent>
