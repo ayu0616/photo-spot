@@ -8,6 +8,24 @@ export const formatAperture = (value: string | null | undefined): string => {
   if (value.startsWith("f/")) {
     return value;
   }
+
+  // Handle fractional values like "9/2"
+  if (value.includes("/")) {
+    const parts = value.split("/");
+    if (parts.length === 2) {
+      const numerator = parseFloat(parts[0]);
+      const denominator = parseFloat(parts[1]);
+      if (
+        !Number.isNaN(numerator) &&
+        !Number.isNaN(denominator) &&
+        denominator !== 0
+      ) {
+        const result = numerator / denominator;
+        return `f/${result.toFixed(1)}`;
+      }
+    }
+  }
+
   // Try to parse as a number and format
   const num = parseFloat(value);
   if (!Number.isNaN(num)) {
