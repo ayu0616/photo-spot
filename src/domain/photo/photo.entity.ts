@@ -15,6 +15,7 @@ import type { Orientation } from "./value-object/orientation";
 import type { PhotoExif } from "./value-object/photo-exif";
 import type { PhotoId } from "./value-object/photo-id";
 import type { PhotoUrl } from "./value-object/photo-url";
+import type { ShutterSpeed } from "./value-object/shutter-speed";
 import type { TakenAt } from "./value-object/taken-at";
 
 export class PhotoEntity {
@@ -34,6 +35,7 @@ export class PhotoEntity {
   focalLength: FocalLength | null;
   focalLength35mm: FocalLength35mm | null;
   aperture: Aperture | null;
+  shutterSpeed: ShutterSpeed | null;
 
   constructor(
     id: PhotoId,
@@ -52,6 +54,7 @@ export class PhotoEntity {
     focalLength: FocalLength | null,
     focalLength35mm: FocalLength35mm | null,
     aperture: Aperture | null,
+    shutterSpeed: ShutterSpeed | null,
   ) {
     this.id = id;
     this.url = url;
@@ -69,6 +72,7 @@ export class PhotoEntity {
     this.focalLength = focalLength;
     this.focalLength35mm = focalLength35mm;
     this.aperture = aperture;
+    this.shutterSpeed = shutterSpeed;
   }
 
   equals(other: PhotoEntity): boolean {
@@ -133,5 +137,9 @@ export class PhotoEntity {
 
   updateAperture(aperture: Aperture | null): void {
     this.aperture = aperture;
+  }
+
+  updateShutterSpeed(shutterSpeed: ShutterSpeed | null): void {
+    this.shutterSpeed = shutterSpeed;
   }
 }

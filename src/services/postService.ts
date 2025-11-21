@@ -133,6 +133,7 @@ export class PostService {
     const aperture = exifData.aperture
       ? new Aperture(exifData.aperture.value)
       : null;
+    const shutterSpeed = exifData.shutterSpeed ? exifData.shutterSpeed : null;
 
     const photo = new PhotoEntity(
       photoId,
@@ -151,6 +152,7 @@ export class PostService {
       focalLength,
       focalLength35mm,
       aperture,
+      shutterSpeed,
     );
     await this.photoRepository.save(photo);
 
