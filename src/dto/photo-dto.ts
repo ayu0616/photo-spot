@@ -1,5 +1,3 @@
-// src/dto/photo-dto.ts
-
 import { z } from "zod";
 import { PhotoEntity } from "../domain/photo/photo.entity";
 import { Aperture } from "../domain/photo/value-object/aperture";

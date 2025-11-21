@@ -1,5 +1,3 @@
-// src/services/postService.ts
-
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/constants/types";
 import { PhotoEntity } from "../domain/photo/photo.entity";
@@ -15,7 +13,7 @@ import { CityId } from "../domain/spot/value-object/city-id";
 import { SpotId } from "../domain/spot/value-object/spot-id";
 import { SpotName } from "../domain/spot/value-object/spot-name";
 import { UserId } from "../domain/user/value-object/user-id";
-import type { PostWithRelationsDto } from "../dto/post-dto"; // 追加
+import type { PostWithRelationsDto } from "../dto/post-dto";
 import type { PhotoRepository } from "../repositories/photoRepository";
 import type { PostRepository } from "../repositories/postRepository";
 import type { SpotRepository } from "../repositories/spotRepository";

@@ -1,5 +1,3 @@
-// src/domain/user/user.entity.ts
-
 import type { EmailVerified } from "./value-object/email-verified";
 import type { UserEmail } from "./value-object/user-email";
 import type { UserId } from "./value-object/user-id";

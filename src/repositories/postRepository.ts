@@ -1,5 +1,3 @@
-// src/repositories/postRepository.ts
-
 import { eq } from "drizzle-orm";
 import { injectable } from "inversify";
 import { db } from "../db";
@@ -103,7 +101,7 @@ export class PostRepository {
             focalLength: true,
             focalLength35mm: true,
             aperture: true,
-            shutterSpeed: true, // 追加
+            shutterSpeed: true,
           },
         },
       },

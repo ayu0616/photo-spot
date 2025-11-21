@@ -1,5 +1,3 @@
-// src/domain/common/value-object/uuid.ts
-
 import { z } from "zod";
 
 export class UUID {

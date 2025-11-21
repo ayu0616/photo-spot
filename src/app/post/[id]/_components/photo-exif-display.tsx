@@ -1,5 +1,3 @@
-// src/app/post/[id]/_components/photo-exif-display.tsx
-
 import type React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";

@@ -1,5 +1,3 @@
-// src/app/post/[id]/page.tsx
-
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";

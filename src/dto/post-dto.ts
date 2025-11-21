@@ -1,5 +1,3 @@
-// src/dto/post-dto.ts
-
 import { z } from "zod";
 import { PhotoId } from "../domain/photo/value-object/photo-id";
 import { PostEntity } from "../domain/post/post.entity";
@@ -90,7 +88,7 @@ export const PhotoForPostDtoSchema = z.object({
   focalLength: z.string().nullable(),
   focalLength35mm: z.string().nullable(),
   aperture: z.string().nullable(),
-  shutterSpeed: z.string().nullable(), // 追加
+  shutterSpeed: z.string().nullable(),
 });
 
 export type PhotoForPostDto = z.infer<typeof PhotoForPostDtoSchema>;

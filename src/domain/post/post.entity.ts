@@ -1,5 +1,3 @@
-// src/domain/post/post.entity.ts
-
 import type { PhotoId } from "../photo/value-object/photo-id";
 import type { SpotId } from "../spot/value-object/spot-id";
 import type { UserId } from "../user/value-object/user-id";

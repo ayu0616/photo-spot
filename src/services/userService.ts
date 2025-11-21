@@ -1,5 +1,3 @@
-// src/services/userService.ts
-
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/constants/types";
 import type { UserEntity } from "@/domain/user/user.entity";

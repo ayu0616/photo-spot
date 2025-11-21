@@ -1,5 +1,3 @@
-// src/domain/common/value-object/url.ts
-
 import { z } from "zod";
 
 export class Url {

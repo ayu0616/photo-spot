@@ -1,5 +1,3 @@
-// src/domain/photo/value-object/photo-exif.ts
-
 export class PhotoExif {
   readonly value: string;
 

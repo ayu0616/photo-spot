@@ -1,5 +1,3 @@
-// src/domain/common/value-object/string.ts
-
 export class StringValue {
   readonly value: string;
 

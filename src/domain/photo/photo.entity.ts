@@ -1,5 +1,3 @@
-// src/domain/photo/photo.entity.ts
-
 import type { Aperture } from "./value-object/aperture";
 import type { CameraMake } from "./value-object/camera-make";
 import type { CameraModel } from "./value-object/camera-model";

@@ -1,5 +1,3 @@
-// src/domain/spot/city-id/city-id.ts
-
 export class CityId {
   readonly value: number;
 

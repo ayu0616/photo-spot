@@ -1,5 +1,3 @@
-// src/domain/spot/spot-name/spot-name.ts
-
 export class SpotName {
   readonly value: string;
 

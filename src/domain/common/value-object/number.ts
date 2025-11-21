@@ -1,5 +1,3 @@
-// src/domain/common/value-object/number.ts
-
 export class NumberValue {
   readonly value: number;
 

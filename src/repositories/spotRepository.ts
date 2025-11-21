@@ -1,5 +1,3 @@
-// src/repositories/spotRepository.ts
-
 import { eq } from "drizzle-orm";
 import { injectable } from "inversify";
 import { db } from "../db";

@@ -1,5 +1,3 @@
-// src/domain/common/value-object/date-time.ts
-
 export class DateTime {
   readonly value: Date;
 

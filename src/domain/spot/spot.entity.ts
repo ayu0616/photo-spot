@@ -1,5 +1,3 @@
-// src/domain/spot/spot.entity.ts
-
 import type { CityId } from "./value-object/city-id";
 import type { SpotId } from "./value-object/spot-id";
 import type { SpotName } from "./value-object/spot-name";

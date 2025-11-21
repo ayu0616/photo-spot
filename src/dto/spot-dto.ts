@@ -1,5 +1,3 @@
-// src/dto/spot-dto.ts
-
 import { z } from "zod";
 import { SpotEntity } from "../domain/spot/spot.entity";
 import { CityId } from "../domain/spot/value-object/city-id";

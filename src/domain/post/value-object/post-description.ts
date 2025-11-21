@@ -1,5 +1,3 @@
-// src/domain/post/post-description/post-description.ts
-
 export class PostDescription {
   readonly value: string;
 

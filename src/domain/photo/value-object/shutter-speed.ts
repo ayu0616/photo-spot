@@ -1,5 +1,3 @@
-// src/domain/photo/value-object/shutter-speed.ts
-
 import { ValueObject } from "../../value-object";
 
 export class ShutterSpeed extends ValueObject<string> {
