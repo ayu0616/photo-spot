@@ -11,7 +11,8 @@ import {
 import type { PostWithRelationsDto } from "@/dto/post-dto";
 import { formatToYYYYMMDD } from "@/lib/format-date";
 import { honoClient } from "@/lib/hono";
-import { PhotoExifDisplay } from "./_components/photo-exif-display";
+import { BasicExifInfo } from "./_components/basic-exif-info";
+import { DetailedExifInfo } from "./_components/detailed-exif-info";
 
 const getPostDetail = async (
   id: string,
@@ -87,24 +88,13 @@ export default async function PostDetailPage({
             />
           </div>
 
-          <p className="text-base mb-6">{post.description}</p>
+          {/* 基本的な撮影情報 */}
+          <BasicExifInfo photo={post.photo} />
 
-          {post.photo.latitude && post.photo.longitude && (
-            <div className="mb-6 text-center">
-              <a
-                href={`https://www.google.com/maps/search/?api=1&query=${post.photo.latitude},${post.photo.longitude}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 hover:underline"
-              >
-                Google Mapsで表示 ({post.photo.latitude}, {post.photo.longitude}
-                )
-              </a>
-            </div>
-          )}
+          <p className="text-base mb-6 mt-6">{post.description}</p>
 
-          {/* 撮影情報 (EXIF) */}
-          <PhotoExifDisplay photo={post.photo} />
+          {/* 詳細な撮影情報 */}
+          <DetailedExifInfo photo={post.photo} />
         </CardContent>
       </Card>
     </div>
