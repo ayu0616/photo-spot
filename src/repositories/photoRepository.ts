@@ -28,6 +28,7 @@ export class PhotoRepository {
       focalLength: photoDto.focalLength,
       focalLength35mm: photoDto.focalLength35mm,
       aperture: photoDto.aperture,
+      shutterSpeed: photoDto.shutterSpeed,
     });
   }
 

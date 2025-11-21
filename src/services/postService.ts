@@ -3,22 +3,8 @@
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/constants/types";
 import { PhotoEntity } from "../domain/photo/photo.entity";
-import { Aperture } from "../domain/photo/value-object/aperture";
-import { CameraMake } from "../domain/photo/value-object/camera-make";
-import { CameraModel } from "../domain/photo/value-object/camera-model";
-import { FocalLength } from "../domain/photo/value-object/focal-length";
-import { FocalLength35mm } from "../domain/photo/value-object/focal-length-35mm";
-import { Iso } from "../domain/photo/value-object/iso";
-import { Latitude } from "../domain/photo/value-object/latitude";
-import { LensMake } from "../domain/photo/value-object/lens-make";
-import { LensModel } from "../domain/photo/value-object/lens-model";
-import { LensSerial } from "../domain/photo/value-object/lens-serial";
-import { Longitude } from "../domain/photo/value-object/longitude";
-import { Orientation } from "../domain/photo/value-object/orientation";
-import { PhotoExif } from "../domain/photo/value-object/photo-exif";
 import { PhotoId } from "../domain/photo/value-object/photo-id";
 import { PhotoUrl } from "../domain/photo/value-object/photo-url";
-import { TakenAt } from "../domain/photo/value-object/taken-at";
 import { PostEntity } from "../domain/post/post.entity";
 import { CreatedAt } from "../domain/post/value-object/created-at";
 import { PostDescription } from "../domain/post/value-object/post-description";
@@ -95,45 +81,21 @@ export class PostService {
 
     const photoId = new PhotoId(crypto.randomUUID());
     const photoUrlVo = new PhotoUrl(photoUrl);
-    const photoExif = exifData.raw ? new PhotoExif(exifData.raw.value) : null;
-    const takenAt = exifData.takenAt
-      ? new TakenAt(exifData.takenAt.value)
-      : null;
-    const cameraMake = exifData.cameraMake
-      ? new CameraMake(exifData.cameraMake.value)
-      : null;
-    const cameraModel = exifData.cameraModel
-      ? new CameraModel(exifData.cameraModel.value)
-      : null;
-    const latitude = exifData.latitude
-      ? new Latitude(exifData.latitude.value)
-      : null;
-    const longitude = exifData.longitude
-      ? new Longitude(exifData.longitude.value)
-      : null;
-    const orientation = exifData.orientation
-      ? new Orientation(exifData.orientation.value)
-      : null;
-    const iso = exifData.iso ? new Iso(exifData.iso.value) : null;
-    const lensMake = exifData.lensMake
-      ? new LensMake(exifData.lensMake.value)
-      : null;
-    const lensModel = exifData.lensModel
-      ? new LensModel(exifData.lensModel.value)
-      : null;
-    const lensSerial = exifData.lensSerial
-      ? new LensSerial(exifData.lensSerial.value)
-      : null;
-    const focalLength = exifData.focalLength
-      ? new FocalLength(exifData.focalLength.value)
-      : null;
-    const focalLength35mm = exifData.focalLength35mm
-      ? new FocalLength35mm(exifData.focalLength35mm.value)
-      : null;
-    const aperture = exifData.aperture
-      ? new Aperture(exifData.aperture.value)
-      : null;
-    const shutterSpeed = exifData.shutterSpeed ? exifData.shutterSpeed : null;
+    const photoExif = exifData.raw;
+    const takenAt = exifData.takenAt;
+    const cameraMake = exifData.cameraMake;
+    const cameraModel = exifData.cameraModel;
+    const latitude = exifData.latitude;
+    const longitude = exifData.longitude;
+    const orientation = exifData.orientation;
+    const iso = exifData.iso;
+    const lensMake = exifData.lensMake;
+    const lensModel = exifData.lensModel;
+    const lensSerial = exifData.lensSerial;
+    const focalLength = exifData.focalLength;
+    const focalLength35mm = exifData.focalLength35mm;
+    const aperture = exifData.aperture;
+    const shutterSpeed = exifData.shutterSpeed;
 
     const photo = new PhotoEntity(
       photoId,
