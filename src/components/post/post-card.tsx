@@ -49,7 +49,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
               className="rounded-md object-cover"
             />
           </div>
-          <p className="mt-4 text-sm text-muted-foreground">
+          <p className="mt-4 text-sm text-muted-foreground line-clamp-2">
             {post.description}
           </p>
         </CardContent>

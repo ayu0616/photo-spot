@@ -74,7 +74,7 @@ export default async function PostDetailPage({
               </CardDescription>
             </div>
           </div>
-          <h1 className="text-3xl font-bold">{post.description}</h1>
+
           <p className="text-sm text-gray-500">📍 {post.spot.name}</p>
         </CardHeader>
         <CardContent>
@@ -86,6 +86,8 @@ export default async function PostDetailPage({
               className="object-contain rounded-lg"
             />
           </div>
+
+          <p className="text-base mb-6">{post.description}</p>
 
           {post.photo.latitude && post.photo.longitude && (
             <div className="mb-6 text-center">
