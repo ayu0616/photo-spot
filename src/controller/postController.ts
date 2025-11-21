@@ -9,7 +9,7 @@ import type { PostService } from "../services/postService";
 
 const createPostSchema = z.object({
   image: z.instanceof(File, { message: "画像ファイルが必要です。" }),
-  description: z.string().min(1, { message: "説明は必須です。" }),
+  description: z.string(),
   spotId: z.string().optional(),
   spotName: z.string().optional(),
   cityId: z
