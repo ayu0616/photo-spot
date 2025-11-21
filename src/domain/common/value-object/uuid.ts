@@ -17,4 +17,8 @@ export class UUID {
   static isValid(value: string): boolean {
     return z.string().uuid().safeParse(value).success;
   }
+
+  static create(): UUID {
+    return new UUID(crypto.randomUUID());
+  }
 }
