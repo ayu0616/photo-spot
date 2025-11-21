@@ -17,6 +17,7 @@ export const usersTable = pgTable("user", {
   email: varchar("email", { length: 255 }).unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: varchar("image", { length: 255 }),
+  role: varchar("role", { length: 20 }).default("USER").notNull(),
 });
 
 export const usersRelations = relations(usersTable, ({ many }) => ({

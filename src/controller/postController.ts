@@ -45,6 +45,15 @@ export class PostController {
           }
           const userId = user.id;
 
+          if (user.role !== "ADMIN") {
+            return c.json(
+              {
+                error: "Forbidden: You do not have permission to create posts.",
+              },
+              403,
+            );
+          }
+
           const { image, description, spotId, spotName, cityId } =
             c.req.valid("form");
 
