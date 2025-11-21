@@ -3,10 +3,11 @@ import { injectable } from "inversify";
 import { db } from "../db";
 import { PhotosTable } from "../db/schema";
 import type { PhotoEntity } from "../domain/photo/photo.entity";
+import type { IPhotoRepository } from "../domain/photo/photo-repository.interface";
 import { PhotoDtoMapper } from "../dto/photo-dto";
 
 @injectable()
-export class PhotoRepository {
+export class PhotoRepository implements IPhotoRepository {
   async save(photo: PhotoEntity): Promise<void> {
     const photoDto = PhotoDtoMapper.fromEntity(photo);
     await db.insert(PhotosTable).values({

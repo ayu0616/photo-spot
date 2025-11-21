@@ -3,10 +3,11 @@ import { injectable } from "inversify";
 import { db } from "../db";
 import { SpotsTable } from "../db/schema";
 import type { SpotEntity } from "../domain/spot/spot.entity";
+import type { ISpotRepository } from "../domain/spot/spot-repository.interface";
 import { SpotDtoMapper } from "../dto/spot-dto";
 
 @injectable()
-export class SpotRepository {
+export class SpotRepository implements ISpotRepository {
   async save(spot: SpotEntity): Promise<void> {
     const spotDto = SpotDtoMapper.fromEntity(spot);
     await db.insert(SpotsTable).values({

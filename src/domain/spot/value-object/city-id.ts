@@ -1,15 +1,19 @@
 export class CityId {
-  readonly value: number;
+  private readonly _value: number;
 
   constructor(value: number) {
     if (!CityId.isValid(value)) {
       throw new Error("Invalid CityId");
     }
-    this.value = value;
+    this._value = value;
+  }
+
+  get value(): number {
+    return this._value;
   }
 
   equals(other: CityId): boolean {
-    return this.value === other.value;
+    return this._value === other.value;
   }
 
   static isValid(value: number): boolean {

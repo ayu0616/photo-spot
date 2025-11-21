@@ -8,6 +8,10 @@ import { MasterController } from "@/controller/masterController";
 import { PostController } from "@/controller/postController";
 import { SpotController } from "@/controller/spotController";
 import { UserController } from "@/controller/userController"; // New
+import type { IPhotoRepository } from "@/domain/photo/photo-repository.interface";
+import type { IPostRepository } from "@/domain/post/post-repository.interface";
+import type { ISpotRepository } from "@/domain/spot/spot-repository.interface";
+import type { IUserRepository } from "@/domain/user/user-repository.interface";
 import { bucket } from "@/lib/gcsClient"; // Import the bucket instance
 // Repositories
 import { MasterRepository } from "@/repositories/masterRepository";
@@ -15,10 +19,7 @@ import { PhotoRepository } from "@/repositories/photoRepository";
 import { PostRepository } from "@/repositories/postRepository";
 import { SpotRepository } from "@/repositories/spotRepository";
 import { StorageRepository } from "@/repositories/storageRepository";
-import {
-  type IUserRepository,
-  UserRepository,
-} from "@/repositories/userRepository"; // New
+import { UserRepository } from "@/repositories/userRepository"; // New
 // Services
 import { ImageStorageService } from "@/services/imageStorageService";
 import { PostService } from "@/services/postService";
@@ -28,9 +29,9 @@ const container = new Container();
 
 // Bind Repositories
 container.bind<MasterRepository>(TYPES.MasterRepository).to(MasterRepository);
-container.bind<PhotoRepository>(TYPES.PhotoRepository).to(PhotoRepository);
-container.bind<PostRepository>(TYPES.PostRepository).to(PostRepository);
-container.bind<SpotRepository>(TYPES.SpotRepository).to(SpotRepository);
+container.bind<IPhotoRepository>(TYPES.PhotoRepository).to(PhotoRepository);
+container.bind<IPostRepository>(TYPES.PostRepository).to(PostRepository);
+container.bind<ISpotRepository>(TYPES.SpotRepository).to(SpotRepository);
 container
   .bind<StorageRepository>(TYPES.StorageRepository)
   .to(StorageRepository);

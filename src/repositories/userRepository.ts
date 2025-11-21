@@ -3,16 +3,12 @@ import { injectable } from "inversify";
 import { db } from "@/db";
 import { usersTable } from "@/db/schema";
 import { UserEntity } from "@/domain/user/user.entity";
+import type { IUserRepository } from "@/domain/user/user-repository.interface";
 import { EmailVerified } from "@/domain/user/value-object/email-verified";
 import { UserEmail } from "@/domain/user/value-object/user-email";
 import { UserId } from "@/domain/user/value-object/user-id";
 import { UserImage } from "@/domain/user/value-object/user-image";
 import { UserName } from "@/domain/user/value-object/user-name";
-
-export interface IUserRepository {
-  findById(id: string): Promise<UserEntity | undefined>;
-  updateName(id: string, name: string): Promise<UserEntity>;
-}
 
 @injectable()
 export class UserRepository implements IUserRepository {

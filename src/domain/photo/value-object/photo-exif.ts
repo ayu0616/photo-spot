@@ -1,15 +1,19 @@
 export class PhotoExif {
-  readonly value: string;
+  private readonly _value: string;
 
   constructor(value: string) {
     if (!PhotoExif.isValid(value)) {
       throw new Error("Invalid PhotoExif");
     }
-    this.value = value;
+    this._value = value;
+  }
+
+  get value(): string {
+    return this._value;
   }
 
   equals(other: PhotoExif): boolean {
-    return this.value === other.value;
+    return this._value === other.value;
   }
 
   static isValid(value: string): boolean {

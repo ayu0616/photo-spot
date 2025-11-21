@@ -3,10 +3,11 @@ import { injectable } from "inversify";
 import { db } from "../db";
 import { PostsTable } from "../db/schema";
 import type { PostEntity } from "../domain/post/post.entity";
-import { PostDtoMapper, type PostWithRelationsDto } from "../dto/post-dto"; // PostWithRelationsDto を追加
+import type { IPostRepository } from "../domain/post/post-repository.interface";
+import { PostDtoMapper, type PostWithRelationsDto } from "../dto/post-dto";
 
 @injectable()
-export class PostRepository {
+export class PostRepository implements IPostRepository {
   async save(post: PostEntity): Promise<void> {
     const postDto = PostDtoMapper.fromEntity(post);
     await db.insert(PostsTable).values({

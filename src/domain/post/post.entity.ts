@@ -7,13 +7,13 @@ import type { PostId } from "./value-object/post-id";
 import { UpdatedAt } from "./value-object/updated-at";
 
 export class PostEntity {
-  readonly id: PostId;
-  userId: UserId;
-  description: PostDescription;
-  spotId: SpotId;
-  photoId: PhotoId;
-  readonly createdAt: CreatedAt;
-  updatedAt: UpdatedAt;
+  private readonly _id: PostId;
+  private _userId: UserId;
+  private _description: PostDescription;
+  private _spotId: SpotId;
+  private _photoId: PhotoId;
+  private readonly _createdAt: CreatedAt;
+  private _updatedAt: UpdatedAt;
 
   constructor(
     id: PostId,
@@ -24,31 +24,59 @@ export class PostEntity {
     createdAt: CreatedAt,
     updatedAt: UpdatedAt,
   ) {
-    this.id = id;
-    this.userId = userId;
-    this.description = description;
-    this.spotId = spotId;
-    this.photoId = photoId;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
+    this._id = id;
+    this._userId = userId;
+    this._description = description;
+    this._spotId = spotId;
+    this._photoId = photoId;
+    this._createdAt = createdAt;
+    this._updatedAt = updatedAt;
+  }
+
+  get id(): PostId {
+    return this._id;
+  }
+
+  get userId(): UserId {
+    return this._userId;
+  }
+
+  get description(): PostDescription {
+    return this._description;
+  }
+
+  get spotId(): SpotId {
+    return this._spotId;
+  }
+
+  get photoId(): PhotoId {
+    return this._photoId;
+  }
+
+  get createdAt(): CreatedAt {
+    return this._createdAt;
+  }
+
+  get updatedAt(): UpdatedAt {
+    return this._updatedAt;
   }
 
   equals(other: PostEntity): boolean {
-    return this.id.equals(other.id);
+    return this._id.equals(other.id);
   }
 
   updateDescription(description: PostDescription): void {
-    this.description = description;
-    this.updatedAt = new UpdatedAt(new Date());
+    this._description = description;
+    this._updatedAt = new UpdatedAt(new Date());
   }
 
   updateSpotId(spotId: SpotId): void {
-    this.spotId = spotId;
-    this.updatedAt = new UpdatedAt(new Date());
+    this._spotId = spotId;
+    this._updatedAt = new UpdatedAt(new Date());
   }
 
   updatePhotoId(photoId: PhotoId): void {
-    this.photoId = photoId;
-    this.updatedAt = new UpdatedAt(new Date());
+    this._photoId = photoId;
+    this._updatedAt = new UpdatedAt(new Date());
   }
 }

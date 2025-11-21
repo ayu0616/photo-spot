@@ -1,22 +1,22 @@
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/constants/types";
 import { PhotoEntity } from "../domain/photo/photo.entity";
+import type { IPhotoRepository } from "../domain/photo/photo-repository.interface";
 import { PhotoId } from "../domain/photo/value-object/photo-id";
 import { PhotoUrl } from "../domain/photo/value-object/photo-url";
 import { PostEntity } from "../domain/post/post.entity";
+import type { IPostRepository } from "../domain/post/post-repository.interface";
 import { CreatedAt } from "../domain/post/value-object/created-at";
 import { PostDescription } from "../domain/post/value-object/post-description";
 import { PostId } from "../domain/post/value-object/post-id";
 import { UpdatedAt } from "../domain/post/value-object/updated-at";
 import { SpotEntity } from "../domain/spot/spot.entity";
+import type { ISpotRepository } from "../domain/spot/spot-repository.interface";
 import { CityId } from "../domain/spot/value-object/city-id";
 import { SpotId } from "../domain/spot/value-object/spot-id";
 import { SpotName } from "../domain/spot/value-object/spot-name";
 import { UserId } from "../domain/user/value-object/user-id";
 import type { PostWithRelationsDto } from "../dto/post-dto";
-import type { PhotoRepository } from "../repositories/photoRepository";
-import type { PostRepository } from "../repositories/postRepository";
-import type { SpotRepository } from "../repositories/spotRepository";
 import type { ImageStorageService } from "./imageStorageService";
 
 interface CreatePostParams {
@@ -30,15 +30,15 @@ interface CreatePostParams {
 
 @injectable()
 export class PostService {
-  private photoRepository: PhotoRepository;
-  private spotRepository: SpotRepository;
-  private postRepository: PostRepository;
+  private photoRepository: IPhotoRepository;
+  private spotRepository: ISpotRepository;
+  private postRepository: IPostRepository;
   private imageStorageService: ImageStorageService;
 
   constructor(
-    @inject(TYPES.PhotoRepository) photoRepository: PhotoRepository,
-    @inject(TYPES.SpotRepository) spotRepository: SpotRepository,
-    @inject(TYPES.PostRepository) postRepository: PostRepository,
+    @inject(TYPES.PhotoRepository) photoRepository: IPhotoRepository,
+    @inject(TYPES.SpotRepository) spotRepository: ISpotRepository,
+    @inject(TYPES.PostRepository) postRepository: IPostRepository,
     @inject(TYPES.ImageStorageService) imageStorageService: ImageStorageService,
   ) {
     this.photoRepository = photoRepository;
