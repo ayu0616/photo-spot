@@ -1,3 +1,4 @@
+import { MapPin } from "lucide-react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -76,7 +77,9 @@ export default async function PostDetailPage({
             </div>
           </div>
 
-          <p className="text-sm text-gray-500">📍 {post.spot.name}</p>
+          <p className="text-sm flex items-center text-gray-500">
+            <MapPin className="w-4 h-4 mr-1" /> {post.spot.name}
+          </p>
         </CardHeader>
         <CardContent>
           <div className="relative w-full aspect-video mb-6">

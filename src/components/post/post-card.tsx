@@ -1,3 +1,4 @@
+import { MapPin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import type React from "react";
@@ -54,7 +55,9 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
           </p>
         </CardContent>
         <CardFooter>
-          <p className="text-xs text-gray-500">📍 {post.spot.name}</p>
+          <p className="text-xs flex items-center text-gray-500">
+            <MapPin className="w-4 h-4 mr-1" /> {post.spot.name}
+          </p>
         </CardFooter>
       </Card>
     </Link>
