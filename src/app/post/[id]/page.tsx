@@ -10,16 +10,16 @@ import {
 } from "@/components/ui/card";
 import type { PostWithRelationsDto } from "@/dto/post-dto";
 import { formatToYYYYMMDD } from "@/lib/format-date";
+import { honoClient } from "@/lib/hono";
 import { PhotoExifDisplay } from "./_components/photo-exif-display";
 
 const getPostDetail = async (
   id: string,
 ): Promise<PostWithRelationsDto | null> => {
-  // NEXT_PUBLIC_API_BASE_URL が設定されていない場合、開発環境では localhost:3000 を使用する
-  const apiBaseUrl =
-    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
-  const res = await fetch(`${apiBaseUrl}/api/post/${id}`, {
-    cache: "no-store", // SSRのためにキャッシュしない
+  const res = await honoClient.post[":id"].$get({
+    param: {
+      id,
+    },
   });
 
   if (res.status === 404) {
@@ -29,12 +29,24 @@ const getPostDetail = async (
     throw new Error("Failed to fetch post detail");
   }
 
-  return res.json();
+  const postWithRelation = await res.json();
+  return {
+    ...postWithRelation,
+    photo: {
+      ...postWithRelation.photo,
+      takenAt: postWithRelation.photo.takenAt
+        ? new Date(postWithRelation.photo.takenAt)
+        : null,
+    },
+    createdAt: new Date(postWithRelation.createdAt),
+    updatedAt: new Date(postWithRelation.updatedAt),
+  };
 };
 
 export default async function PostDetailPage({
   params,
 }: PageProps<"/post/[id]">) {
+  "use cache";
   const post = await getPostDetail((await params).id);
 
   if (!post) {
