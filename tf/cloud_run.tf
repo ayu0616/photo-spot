@@ -14,23 +14,23 @@ resource "google_cloud_run_v2_service" "default" {
         value = "production"
       }
       env {
-        name = "GCP_PROJECT_ID"
+        name  = "GCP_PROJECT_ID"
         value = var.project_id
       }
       env {
-        name = "GCS_BUCKET_NAME"
+        name  = "GCS_BUCKET_NAME"
         value = var.cloud_storage_bucket_name
       }
       env {
-        name = "NEXTAUTH_SECRET"
+        name  = "NEXTAUTH_SECRET"
         value = var.next_auth_secret
       }
       env {
-        name = "DATABASE_URL"
-        value = "postgresql://${var.db_user}:${var.db_password}@/${var.db_name}?host=/cloudsql/${var.db_connection_name}"
+        name  = "DATABASE_URL"
+        value = var.db_url
       }
       env {
-        name = "NEXT_PUBLIC_API_BASE_URL"
+        name  = "NEXT_PUBLIC_API_BASE_URL"
         value = "https://${var.service_name}-${var.region}.run.app"
       }
     }

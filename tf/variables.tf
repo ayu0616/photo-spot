@@ -28,25 +28,10 @@ variable "cloud_storage_bucket_name" {
   type        = string
 }
 
-variable "db_connection_name" {
-  description = "The connection name of the Cloud SQL instance (e.g., project:region:instance-name)."
-  type        = string
-}
-
-variable "db_user" {
-  description = "The username for the Cloud SQL database."
-  type        = string
-}
-
-variable "db_password" {
-  description = "The password for the Cloud SQL database user."
+variable "db_url" {
+  description = "The database connection URL, including user, password, host, and database name. Example: 'mysql://user:password@unix(/cloudsql/project:region:instance-name)/dbname' or 'postgres://user:password@/cloudsql/project:region:instance-name/dbname'."
   type        = string
   sensitive   = true
-}
-
-variable "db_name" {
-  description = "The name of the Cloud SQL database."
-  type        = string
 }
 
 variable "next_auth_secret" {

@@ -10,9 +10,9 @@ resource "google_artifact_registry_repository" "docker_repo" {
 
 # Cloud Build Trigger
 resource "google_cloudbuild_trigger" "cloud_run_trigger" {
-  project     = var.project_id
+  project = var.project_id
   trigger_template {
-    branch_name = "main" # Adjust if your main branch has a different name
+    branch_name = "main"       # Adjust if your main branch has a different name
     repo_name   = "photo-spot" # Replace with your repository name
     project_id  = var.project_id
   }
