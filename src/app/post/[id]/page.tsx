@@ -1,4 +1,4 @@
-import { MapPin } from "lucide-react";
+import { MapPin, PlaneIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -88,7 +88,8 @@ export default async function PostDetailPage({
                 href={`/trip/${post.trip.id}`}
                 className="text-sm text-blue-600 hover:underline flex items-center gap-1"
               >
-                <span>関連する旅行: {post.trip.title}</span>
+                <PlaneIcon className="w-4 h-4" />
+                <span>{post.trip.title}</span>
               </Link>
             </div>
           )}
