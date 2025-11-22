@@ -93,6 +93,21 @@ export class PostController {
         return c.json({ error: "Failed to get posts" }, 500);
       }
     })
+    .get("/all", async (c) => {
+      try {
+        // Fetch all posts without pagination (or with a very large limit)
+        // For now, reusing getPosts with a large limit.
+        // Ideal: Implement getAllPosts in service/repo.
+        const posts: PostWithRelationsDto[] = await this.postService.getPosts(
+          1000,
+          0,
+        );
+        return c.json(posts, 200);
+      } catch (error) {
+        console.error("全投稿の取得中にエラーが発生しました:", error);
+        return c.json({ error: "Failed to get all posts" }, 500);
+      }
+    })
     .get("/:id", async (c) => {
       try {
         const id = c.req.param("id");

@@ -1,11 +1,13 @@
 import type { CreatedAt } from "../common/value-object/created-at";
 import type { UpdatedAt } from "../common/value-object/updated-at";
+import type { UserId } from "../user/value-object/user-id";
 import type { TripDescription } from "./value-object/trip-description";
 import type { TripId } from "./value-object/trip-id";
 import type { TripTitle } from "./value-object/trip-title";
 
 export class TripEntity {
   private readonly _id: TripId;
+  private readonly _userId: UserId;
   private _title: TripTitle;
   private _description: TripDescription;
   private readonly _createdAt: CreatedAt;
@@ -13,12 +15,14 @@ export class TripEntity {
 
   constructor(
     id: TripId,
+    userId: UserId,
     title: TripTitle,
     description: TripDescription,
     createdAt: CreatedAt,
     updatedAt: UpdatedAt,
   ) {
     this._id = id;
+    this._userId = userId;
     this._title = title;
     this._description = description;
     this._createdAt = createdAt;
@@ -27,6 +31,10 @@ export class TripEntity {
 
   get id(): TripId {
     return this._id;
+  }
+
+  get userId(): UserId {
+    return this._userId;
   }
 
   get title(): TripTitle {

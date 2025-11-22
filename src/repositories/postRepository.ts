@@ -221,4 +221,11 @@ export class PostRepository implements IPostRepository {
 
     return sortedPosts as unknown as PostWithRelationsDto[];
   }
+
+  async updateTripId(postId: string, tripId: string | null): Promise<void> {
+    await db
+      .update(PostsTable)
+      .set({ tripId: tripId })
+      .where(eq(PostsTable.id, postId));
+  }
 }

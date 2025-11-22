@@ -10,4 +10,5 @@ export interface IPostRepository {
   ): Promise<PostWithRelationsDto[]>;
   findByIdWithRelations(id: string): Promise<PostWithRelationsDto | null>;
   findByTripId(tripId: string): Promise<PostWithRelationsDto[]>;
+  updateTripId(postId: string, tripId: string | null): Promise<void>;
 }

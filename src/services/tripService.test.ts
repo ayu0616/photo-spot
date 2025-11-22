@@ -6,6 +6,7 @@ import { TripEntity } from "@/domain/trip/trip.entity";
 import { TripDescription } from "@/domain/trip/value-object/trip-description";
 import { TripId } from "@/domain/trip/value-object/trip-id";
 import { TripTitle } from "@/domain/trip/value-object/trip-title";
+import { UserId } from "@/domain/user/value-object/user-id";
 import { TripService } from "./tripService";
 
 describe("TripService", () => {
@@ -22,23 +23,29 @@ describe("TripService", () => {
     tripService = new TripService(mockTripRepository);
   });
 
+  // ...
+
   it("should create a trip", async () => {
+    const userId = crypto.randomUUID();
     const title = "Test Trip";
     const description = "Test Description";
 
-    await tripService.createTrip(title, description);
+    await tripService.createTrip(userId, title, description);
 
     expect(mockTripRepository.save).toHaveBeenCalledTimes(1);
     const savedTrip = mockTripRepository.save.mock.calls[0][0];
     expect(savedTrip).toBeInstanceOf(TripEntity);
+    expect(savedTrip.userId.value).toBe(userId);
     expect(savedTrip.title.value).toBe(title);
     expect(savedTrip.description.value).toBe(description);
   });
 
   it("should get a trip by id", async () => {
-    const id = "test-id";
+    const id = crypto.randomUUID();
+    const userId = crypto.randomUUID();
     const trip = new TripEntity(
       new TripId(id),
+      new UserId(userId),
       new TripTitle("Test Trip"),
       new TripDescription("Test Description"),
       new CreatedAt(new Date()),
@@ -53,9 +60,11 @@ describe("TripService", () => {
   });
 
   it("should update a trip", async () => {
-    const id = "test-id";
+    const id = crypto.randomUUID();
+    const userId = crypto.randomUUID();
     const trip = new TripEntity(
       new TripId(id),
+      new UserId(userId),
       new TripTitle("Old Title"),
       new TripDescription("Old Description"),
       new CreatedAt(new Date()),
@@ -72,7 +81,7 @@ describe("TripService", () => {
   });
 
   it("should delete a trip", async () => {
-    const id = "test-id";
+    const id = crypto.randomUUID();
     await tripService.deleteTrip(id);
     expect(mockTripRepository.delete).toHaveBeenCalledWith(id);
   });

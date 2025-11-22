@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { honoClient } from "@/lib/hono";
 
+interface PostSummary {
+  id: string;
+  spot: { name: string };
+  createdAt: string;
+  photo: { url: string };
+}
+
 export default function EditTripPage() {
   const router = useRouter();
   const params = useParams();
@@ -26,29 +34,40 @@ export default function EditTripPage() {
     title: string;
     description: string;
   } | null>(null);
+  const [allPosts, setAllPosts] = useState<PostSummary[]>([]);
+  const [selectedPostIds, setSelectedPostIds] = useState<string[]>([]);
 
   useEffect(() => {
-    async function fetchTrip() {
+    async function fetchData() {
       try {
-        const res = await honoClient.trip[":id"].$get({
-          param: { id },
-        });
-        if (!res.ok) {
-          throw new Error("Failed to fetch trip");
-        }
-        const trip = await res.json();
+        const [tripRes, postsRes] = await Promise.all([
+          honoClient.trip[":id"].$get({ param: { id } }),
+          honoClient.post.all.$get(),
+        ]);
+
+        if (!tripRes.ok) throw new Error("Failed to fetch trip");
+        if (!postsRes.ok) throw new Error("Failed to fetch posts");
+
+        const trip = await tripRes.json();
+        const posts = await postsRes.json();
+
         setDefaultValues({
           title: trip.title,
           description: trip.description || "",
         });
+        setAllPosts(posts);
+
+        if (trip.posts) {
+          setSelectedPostIds(trip.posts.map((p: any) => p.id));
+        }
       } catch (e) {
-        setError("Failed to load trip details.");
+        setError("Failed to load data.");
         console.error(e);
       } finally {
         setIsFetching(false);
       }
     }
-    fetchTrip();
+    fetchData();
   }, [id]);
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -66,6 +85,7 @@ export default function EditTripPage() {
         json: {
           title,
           description,
+          postIds: selectedPostIds,
         },
       });
 
@@ -105,6 +125,14 @@ export default function EditTripPage() {
     }
   }
 
+  const togglePostSelection = (postId: string) => {
+    setSelectedPostIds((prev) =>
+      prev.includes(postId)
+        ? prev.filter((id) => id !== postId)
+        : [...prev, postId],
+    );
+  };
+
   if (isFetching)
     return <div className="container mx-auto py-10">Loading...</div>;
   if (!defaultValues)
@@ -138,6 +166,48 @@ export default function EditTripPage() {
                 placeholder="Trip Description"
               />
             </div>
+
+            <div className="space-y-2">
+              <Label>Select Posts</Label>
+              <div className="grid grid-cols-2 gap-4 border p-4 rounded-md max-h-96 overflow-y-auto">
+                {allPosts.map((post) => (
+                  <button
+                    key={post.id}
+                    type="button"
+                    className={`flex items-start space-x-2 p-2 rounded border cursor-pointer hover:bg-gray-50 text-left w-full ${
+                      selectedPostIds.includes(post.id)
+                        ? "border-blue-500 bg-blue-50"
+                        : "border-gray-200"
+                    }`}
+                    onClick={() => togglePostSelection(post.id)}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedPostIds.includes(post.id)}
+                      onChange={() => {}} // Handled by button click
+                      className="mt-1 pointer-events-none"
+                    />
+                    <div className="text-sm w-full">
+                      <p className="font-medium truncate">{post.spot.name}</p>
+                      <p className="text-gray-500 text-xs">
+                        {new Date(post.createdAt).toLocaleDateString()}
+                      </p>
+                      {post.photo?.url && (
+                        <div className="relative w-full h-24 mt-1">
+                          <Image
+                            src={post.photo.url}
+                            alt="Post"
+                            fill
+                            className="object-cover rounded"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {error && <p className="text-red-500 text-sm">{error}</p>}
             <div className="flex justify-between">
               <Button

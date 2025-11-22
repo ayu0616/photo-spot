@@ -10,6 +10,8 @@ import { TripDescription } from "@/domain/trip/value-object/trip-description";
 import { TripId } from "@/domain/trip/value-object/trip-id";
 import { TripTitle } from "@/domain/trip/value-object/trip-title";
 
+import { UserId } from "@/domain/user/value-object/user-id";
+
 @injectable()
 export class TripRepository implements ITripRepository {
   async save(trip: TripEntity): Promise<void> {
@@ -17,6 +19,7 @@ export class TripRepository implements ITripRepository {
       .insert(TripsTable)
       .values({
         id: trip.id.value,
+        userId: trip.userId.value,
         title: trip.title.value,
         description: trip.description.value,
         createdAt: trip.createdAt.value,
@@ -43,6 +46,7 @@ export class TripRepository implements ITripRepository {
 
     return new TripEntity(
       new TripId(trip.id),
+      new UserId(trip.userId),
       new TripTitle(trip.title),
       new TripDescription(trip.description),
       new CreatedAt(trip.createdAt),
@@ -59,6 +63,7 @@ export class TripRepository implements ITripRepository {
       (trip) =>
         new TripEntity(
           new TripId(trip.id),
+          new UserId(trip.userId),
           new TripTitle(trip.title),
           new TripDescription(trip.description),
           new CreatedAt(trip.createdAt),

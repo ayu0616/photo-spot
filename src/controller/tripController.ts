@@ -15,6 +15,7 @@ const createTripSchema = z.object({
 const updateTripSchema = z.object({
   title: z.string().min(1).max(255),
   description: z.string().max(255).optional(),
+  postIds: z.array(z.string()).optional(),
 });
 
 @injectable()
@@ -84,7 +85,10 @@ export class TripController {
         }
 
         const { title, description } = c.req.valid("json");
-        await this.tripService.createTrip(title, description ?? null);
+        if (!user.id) {
+          return c.json({ error: "User ID is missing" }, 400);
+        }
+        await this.tripService.createTrip(user.id, title, description ?? null);
         return c.json({ message: "Trip created" }, 201);
       } catch (error) {
         console.error("Failed to create trip:", error);
@@ -100,8 +104,13 @@ export class TripController {
         }
 
         const id = c.req.param("id");
-        const { title, description } = c.req.valid("json");
+        const { title, description, postIds } = c.req.valid("json");
         await this.tripService.updateTrip(id, title, description ?? null);
+
+        if (postIds) {
+          await this.postService.updatePostsTrip(id, postIds);
+        }
+
         return c.json({ message: "Trip updated" }, 200);
       } catch (error) {
         console.error("Failed to update trip:", error);

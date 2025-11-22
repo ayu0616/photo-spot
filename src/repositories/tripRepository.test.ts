@@ -8,6 +8,7 @@ import { TripEntity } from "@/domain/trip/trip.entity";
 import { TripDescription } from "@/domain/trip/value-object/trip-description";
 import { TripId } from "@/domain/trip/value-object/trip-id";
 import { TripTitle } from "@/domain/trip/value-object/trip-title";
+import { UserId } from "@/domain/user/value-object/user-id";
 import { TripRepository } from "./tripRepository";
 
 // Mock db
@@ -38,9 +39,12 @@ describe("TripRepository", () => {
     vi.clearAllMocks();
   });
 
+  // ...
+
   it("should save a trip", async () => {
     const trip = new TripEntity(
-      new TripId("test-id"),
+      new TripId(crypto.randomUUID()),
+      new UserId(crypto.randomUUID()),
       new TripTitle("Test Trip"),
       new TripDescription("Test Description"),
       new CreatedAt(new Date()),
@@ -53,9 +57,11 @@ describe("TripRepository", () => {
   });
 
   it("should find a trip by id", async () => {
-    const id = "test-id";
+    const id = crypto.randomUUID();
+    const userId = crypto.randomUUID();
     const mockDbTrip = {
-      id: "test-id",
+      id: id,
+      userId: userId,
       title: "Test Trip",
       description: "Test Description",
       createdAt: new Date(),
@@ -71,7 +77,7 @@ describe("TripRepository", () => {
   });
 
   it("should delete a trip", async () => {
-    const id = "test-id";
+    const id = crypto.randomUUID();
     await tripRepository.delete(id);
     expect(db.delete).toHaveBeenCalledWith(TripsTable);
   });

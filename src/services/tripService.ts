@@ -8,21 +8,40 @@ import { TripDescription } from "@/domain/trip/value-object/trip-description";
 import { TripId } from "@/domain/trip/value-object/trip-id";
 import { TripTitle } from "@/domain/trip/value-object/trip-title";
 
+import { UserId } from "@/domain/user/value-object/user-id";
+
 @injectable()
 export class TripService {
-  constructor(
-    @inject(TYPES.TripRepository) private tripRepository: ITripRepository,
-  ) {}
+  private tripRepository: ITripRepository;
 
-  async createTrip(title: string, description: string | null): Promise<void> {
+  constructor(@inject(TYPES.TripRepository) tripRepository: ITripRepository) {
+    this.tripRepository = tripRepository;
+  }
+
+  async createTrip(
+    userId: string,
+    title: string,
+    description: string | null,
+  ): Promise<TripEntity> {
+    const tripId = new TripId(crypto.randomUUID());
+    const userIdVo = new UserId(userId);
+    const tripTitle = new TripTitle(title);
+    const tripDescription = new TripDescription(description);
+    const createdAt = new CreatedAt(new Date());
+    const updatedAt = new UpdatedAt(new Date());
+
     const trip = new TripEntity(
-      TripId.generate(),
-      new TripTitle(title),
-      new TripDescription(description),
-      new CreatedAt(new Date()),
-      new UpdatedAt(new Date()),
+      tripId,
+      userIdVo,
+      tripTitle,
+      tripDescription,
+      createdAt,
+      updatedAt,
     );
+
     await this.tripRepository.save(trip);
+
+    return trip;
   }
 
   async updateTrip(
