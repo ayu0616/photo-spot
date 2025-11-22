@@ -56,7 +56,8 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
         </CardContent>
         <CardFooter>
           <p className="text-xs flex items-center text-gray-500">
-            <MapPin className="w-4 h-4 mr-1" /> {post.spot.name}
+            <MapPin className="w-4 h-4 mr-1" /> {post.spot.name} (
+            {post.spot.city.prefecture.name} {post.spot.city.name})
           </p>
         </CardFooter>
       </Card>

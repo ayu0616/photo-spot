@@ -62,10 +62,28 @@ export const UserForPostDtoSchema = z.object({
 
 export type UserForPostDto = z.infer<typeof UserForPostDtoSchema>;
 
+// PrefectureのDTOスキーマを定義
+export const PrefectureForPostDtoSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+});
+
+export type PrefectureForPostDto = z.infer<typeof PrefectureForPostDtoSchema>;
+
+// CityのDTOスキーマを定義
+export const CityForPostDtoSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  prefecture: PrefectureForPostDtoSchema,
+});
+
+export type CityForPostDto = z.infer<typeof CityForPostDtoSchema>;
+
 // SpotのDTOスキーマを定義
 export const SpotForPostDtoSchema = z.object({
   id: z.string().uuid(),
   name: z.string(),
+  city: CityForPostDtoSchema,
 });
 
 export type SpotForPostDto = z.infer<typeof SpotForPostDtoSchema>;

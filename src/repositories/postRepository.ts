@@ -52,6 +52,22 @@ export class PostRepository implements IPostRepository {
             id: true,
             name: true,
           },
+          with: {
+            city: {
+              columns: {
+                id: true,
+                name: true,
+              },
+              with: {
+                prefecture: {
+                  columns: {
+                    id: true,
+                    name: true,
+                  },
+                },
+              },
+            },
+          },
         },
         photo: {
           columns: {
@@ -82,6 +98,22 @@ export class PostRepository implements IPostRepository {
           columns: {
             id: true,
             name: true,
+          },
+          with: {
+            city: {
+              columns: {
+                id: true,
+                name: true,
+              },
+              with: {
+                prefecture: {
+                  columns: {
+                    id: true,
+                    name: true,
+                  },
+                },
+              },
+            },
           },
         },
         photo: {

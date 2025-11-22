@@ -78,7 +78,8 @@ export default async function PostDetailPage({
           </div>
 
           <p className="text-sm flex items-center text-gray-500">
-            <MapPin className="w-4 h-4 mr-1" /> {post.spot.name}
+            <MapPin className="w-4 h-4 mr-1" /> {post.spot.name} (
+            {post.spot.city.prefecture.name} {post.spot.city.name})
           </p>
         </CardHeader>
         <CardContent>
