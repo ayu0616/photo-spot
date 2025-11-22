@@ -11,6 +11,7 @@ import { TripService } from "./tripService";
 
 describe("TripService", () => {
   let tripService: TripService;
+  // biome-ignore lint/suspicious/noExplicitAny: テストのため
   let mockTripRepository: any;
 
   beforeEach(() => {

@@ -52,7 +52,7 @@ export default async function TripPage({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {trip.posts?.map((post: any) => (
+        {trip.posts.map((post) => (
           <Link href={`/post/${post.id}`} key={post.id} className="block group">
             <Card className="h-full overflow-hidden transition-shadow hover:shadow-lg">
               <div className="relative aspect-video">
@@ -80,7 +80,7 @@ export default async function TripPage({
             </Card>
           </Link>
         ))}
-        {!trip.posts?.length && (
+        {!trip.posts.length && (
           <p className="text-gray-500 col-span-full text-center py-10">
             No posts in this trip yet.
           </p>

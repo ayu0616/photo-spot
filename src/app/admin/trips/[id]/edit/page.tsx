@@ -59,7 +59,7 @@ export default function EditTripPage() {
         setAllPosts(posts);
 
         if (trip.posts) {
-          setSelectedPostIds(trip.posts.map((p: any) => p.id));
+          setSelectedPostIds(trip.posts.map((p) => p.id));
         }
       } catch (e) {
         setError("データの読み込みに失敗しました。");

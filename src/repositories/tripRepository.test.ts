@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 import { db } from "@/db";
 import { TripsTable } from "@/db/schema";
 import { CreatedAt } from "@/domain/common/value-object/created-at";
@@ -67,7 +67,7 @@ describe("TripRepository", () => {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    (db.query.TripsTable.findFirst as any).mockResolvedValue(mockDbTrip);
+    (db.query.TripsTable.findFirst as Mock).mockResolvedValue(mockDbTrip);
 
     const result = await tripRepository.findById(id);
 
