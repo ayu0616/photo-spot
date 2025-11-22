@@ -1,11 +1,17 @@
 # @tf/cloud_run.tf
 
+resource "google_service_account" "cloud_run_sa" {
+  account_id   = "cloud-run-sa"
+  display_name = "Cloud Run Service Account"
+}
+
 resource "google_cloud_run_v2_service" "default" {
   project  = var.project_id
   location = var.region
   name     = var.service_name
 
   template {
+    service_account = google_service_account.cloud_run_sa.email
     containers {
       image = "${var.region}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.docker_repo.repository_id}/${var.image_name}:latest"
 

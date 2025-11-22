@@ -31,5 +31,5 @@ resource "google_project_service" "cloud_storage_api" {
 resource "google_storage_bucket_iam_member" "cloud_run_storage_access" {
   bucket = google_storage_bucket.image_bucket.name
   role   = "roles/storage.objectViewer" # Read-only access
-  member = "serviceAccount:${google_cloud_run_v2_service.default.id}"
+  member = "serviceAccount:${google_service_account.cloud_run_sa.email}"
 }
