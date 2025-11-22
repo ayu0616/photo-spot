@@ -22,10 +22,44 @@ resource "google_cloudbuild_trigger" "cloud_run_trigger" {
     }
   }
 
-  filename = "cloudbuild.yaml" # Cloud Build configuration file
-
-  substitutions = {
-    _NEXT_PUBLIC_API_BASE_URL = var.next_public_api_base_url
+  build {
+    step {
+      name = "gcr.io/cloud-builders/docker"
+      args = [
+        "build",
+        "-t", "${var.region}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.docker_repo.repository_id}/${var.image_name}:$COMMIT_SHA",
+        "-t", "${var.region}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.docker_repo.repository_id}/${var.image_name}:latest",
+        "--build-arg", "DATABASE_URL=${var.db_url}",
+        "--build-arg", "AUTH_SECRET=${var.auth_secret}",
+        "--build-arg", "AUTH_GOOGLE_ID=${var.auth_google_id}",
+        "--build-arg", "AUTH_GOOGLE_SECRET=${var.auth_google_secret}",
+        "--build-arg", "AUTH_URL=${var.auth_url}",
+        "--build-arg", "GCS_URL=${var.gcs_url}",
+        "--build-arg", "GCP_PROJECT_ID=${var.project_id}",
+        "--build-arg", "GCS_BUCKET_NAME=${var.cloud_storage_bucket_name}",
+        "--build-arg", "NEXT_PUBLIC_API_BASE_URL=${var.next_public_api_base_url}",
+        "."
+      ]
+    }
+    step {
+      name = "gcr.io/cloud-builders/docker"
+      args = ["push", "${var.region}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.docker_repo.repository_id}/${var.image_name}:$COMMIT_SHA"]
+    }
+    step {
+      name = "gcr.io/cloud-builders/gcloud"
+      args = [
+        "run", "deploy", var.service_name,
+        "--image", "${var.region}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.docker_repo.repository_id}/${var.image_name}:$COMMIT_SHA",
+        "--region", var.region,
+        "--platform", "managed",
+        "--allow-unauthenticated"
+      ]
+      entrypoint = "gcloud"
+    }
+    images = ["${var.region}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.docker_repo.repository_id}/${var.image_name}:$COMMIT_SHA"]
+    options {
+      logging = "CLOUD_LOGGING_ONLY"
+    }
   }
 }
 
