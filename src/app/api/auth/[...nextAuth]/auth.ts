@@ -41,6 +41,8 @@ export const nextAuthConfig = {
 
 export const nextAuth = NextAuth(nextAuthConfig);
 
+export const { handlers, signIn, signOut, auth } = nextAuth;
+
 import "next-auth/jwt";
 
 declare module "next-auth" {
