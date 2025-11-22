@@ -20,22 +20,15 @@ WORKDIR /app
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 
-# Copy only necessary files from the build stage
-COPY --from=base /app/.next ./.next
-COPY --from=base /app/node_modules ./node_modules
+# Copy standalone output
+COPY --from=base /app/.next/standalone ./
+COPY --from=base /app/.next/static ./.next/static
+
+# Copy public folder (if needed at runtime)
 COPY --from=base /app/public ./public
-COPY --from=base /app/src ./src
-COPY --from=base /app/package.json ./package.json
-COPY --from=base /app/bun.lock ./bun.lock
-COPY --from=base /app/next.config.ts ./next.config.ts
-COPY --from=base /app/tsconfig.json ./tsconfig.json
-COPY --from=base /app/postcss.config.mjs ./postcss.config.mjs
-COPY --from=base /app/biome.json ./biome.json
-COPY --from=base /app/components.json ./components.json
-COPY --from=base /app/drizzle.config.ts ./drizzle.config.ts
 
 # Expose the port Next.js listens on
 EXPOSE 3000
 
-# Start the Next.js application
-CMD ["bun", "run", "start"]
+# Start the Next.js application using the standalone server
+CMD ["bun", "run", "server.js"]

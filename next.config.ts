@@ -3,6 +3,7 @@ import type { RemotePattern } from "next/dist/shared/lib/image-config";
 
 const nextConfig: NextConfig = {
   /* config options here */
+  output: "standalone",
   reactCompiler: true,
   typedRoutes: true,
   cacheComponents: true,
