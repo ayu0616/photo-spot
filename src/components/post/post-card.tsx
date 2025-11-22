@@ -20,8 +20,8 @@ interface PostCardProps {
 
 export const PostCard: React.FC<PostCardProps> = ({ post }) => {
   return (
-    <Link href={`/post/${post.id}`}>
-      <Card className="w-full max-w-sm cursor-pointer hover:shadow-lg transition-shadow">
+    <Link href={`/post/${post.id}`} className="block h-full">
+      <Card className="w-full cursor-pointer hover:shadow-lg transition-shadow h-full flex flex-col">
         <CardHeader>
           <div className="flex items-center gap-4">
             <Avatar>
@@ -33,15 +33,17 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
                 {post.user.name?.charAt(0) || "U"}
               </AvatarFallback>
             </Avatar>
-            <div className="grid gap-1">
-              <CardTitle>{post.user.name || "匿名ユーザー"}</CardTitle>
+            <div className="grid gap-1 min-w-0">
+              <CardTitle className="truncate">
+                {post.user.name || "匿名ユーザー"}
+              </CardTitle>
               <CardDescription>
                 {formatToYYYYMMDD(new Date(post.createdAt))}
               </CardDescription>
             </div>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="grow">
           <div className="relative aspect-square w-full">
             <Image
               src={post.photo.url}
