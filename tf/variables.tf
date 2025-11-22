@@ -40,6 +40,29 @@ variable "next_auth_secret" {
   sensitive   = true
 }
 
+variable "auth_secret" {
+  description = "Secret for Auth.js (v5)."
+  type        = string
+  sensitive   = true
+}
+
+variable "auth_google_id" {
+  description = "Google Client ID for Auth.js."
+  type        = string
+  sensitive   = true
+}
+
+variable "auth_google_secret" {
+  description = "Google Client Secret for Auth.js."
+  type        = string
+  sensitive   = true
+}
+
+variable "auth_url" {
+  description = "URL for Auth.js."
+  type        = string
+}
+
 variable "gcs_url" {
   description = "The base URL for Google Cloud Storage."
   type        = string

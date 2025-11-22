@@ -30,6 +30,26 @@ resource "google_cloud_run_v2_service" "default" {
         value = var.db_url
       }
       env {
+        name  = "AUTH_SECRET"
+        value = var.auth_secret
+      }
+      env {
+        name  = "AUTH_GOOGLE_ID"
+        value = var.auth_google_id
+      }
+      env {
+        name  = "AUTH_GOOGLE_SECRET"
+        value = var.auth_google_secret
+      }
+      env {
+        name  = "AUTH_URL"
+        value = var.auth_url
+      }
+      env {
+        name  = "GCS_URL"
+        value = var.gcs_url
+      }
+      env {
         name  = "NEXT_PUBLIC_API_BASE_URL"
         value = "https://${var.service_name}-${var.region}.run.app"
       }

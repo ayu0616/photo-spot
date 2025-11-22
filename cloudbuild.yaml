@@ -2,7 +2,27 @@
 steps:
   # Build the Docker image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO_NAME}/${_IMAGE_NAME}:$COMMIT_SHA', '.']
+    args:
+      - 'build'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO_NAME}/${_IMAGE_NAME}:$COMMIT_SHA'
+      - '--build-arg'
+      - 'DATABASE_URL=postgresql://${_DB_USER}:${_DB_PASSWORD}@/${_DB_NAME}?host=/cloudsql/${_DB_CONNECTION_NAME}'
+      - '--build-arg'
+      - 'AUTH_SECRET=${_AUTH_SECRET}'
+      - '--build-arg'
+      - 'AUTH_GOOGLE_ID=${_AUTH_GOOGLE_ID}'
+      - '--build-arg'
+      - 'AUTH_GOOGLE_SECRET=${_AUTH_GOOGLE_SECRET}'
+      - '--build-arg'
+      - 'AUTH_URL=${_AUTH_URL}'
+      - '--build-arg'
+      - 'GCS_URL=${_GCS_URL}'
+      - '--build-arg'
+      - 'GCP_PROJECT_ID=${PROJECT_ID}'
+      - '--build-arg'
+      - 'GCS_BUCKET_NAME=${_CLOUD_STORAGE_BUCKET_NAME}'
+      - '.'
   # Push the Docker image to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO_NAME}/${_IMAGE_NAME}:$COMMIT_SHA']
@@ -22,7 +42,11 @@ steps:
       - '--set-env-vars=DATABASE_URL=postgresql://${_DB_USER}:${_DB_PASSWORD}@/${_DB_NAME}?host=/cloudsql/${_DB_CONNECTION_NAME}' # Example for Cloud SQL
       - '--set-env-vars=GCP_PROJECT_ID=${PROJECT_ID}'
       - '--set-env-vars=GCS_BUCKET_NAME=${_CLOUD_STORAGE_BUCKET_NAME}'
-      - '--set-env-vars=NEXTAUTH_SECRET=${_NEXTAUTH_SECRET}'
+      - '--set-env-vars=AUTH_SECRET=${_AUTH_SECRET}'
+      - '--set-env-vars=AUTH_GOOGLE_ID=${_AUTH_GOOGLE_ID}'
+      - '--set-env-vars=AUTH_GOOGLE_SECRET=${_AUTH_GOOGLE_SECRET}'
+      - '--set-env-vars=AUTH_URL=${_AUTH_URL}'
+      - '--set-env-vars=GCS_URL=${_GCS_URL}'
       - '--set-env-vars=NEXT_PUBLIC_API_BASE_URL=https://${_SERVICE_NAME}-${_REGION}.run.app' # Cloud Run URL will be set by Cloud Build
       # Add other environment variables here as needed
     entrypoint: gcloud
@@ -36,7 +60,11 @@ substitutions:
   _SERVICE_NAME: 'photo-spot-app'
   _REGION: 'asia-northeast1'
   _CLOUD_STORAGE_BUCKET_NAME: 'your-gcs-bucket-name' # Replace with your GCS bucket name
-  _NEXTAUTH_SECRET: 'your-nextauth-secret' # Replace with your NextAuth secret
+  _AUTH_SECRET: 'your-auth-secret' # Replace with your Auth secret
+  _AUTH_GOOGLE_ID: 'your-google-client-id'
+  _AUTH_GOOGLE_SECRET: 'your-google-client-secret'
+  _AUTH_URL: 'your-auth-url'
+  _GCS_URL: 'https://storage.googleapis.com'
   _DB_USER: 'your-db-user' # Replace with your DB user
   _DB_PASSWORD: 'your-db-password' # Replace with your DB password
   _DB_NAME: 'your-db-name' # Replace with your DB name
