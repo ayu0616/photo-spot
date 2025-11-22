@@ -132,6 +132,20 @@ export const photosRelations = relations(PhotosTable, ({ one }) => ({
   }),
 }));
 
+export const TripsTable = pgTable("trip", {
+  id: varchar("id", { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: varchar("description", { length: 255 }),
+  createdAt: timestamp("createdAt", { mode: "date" }).notNull(),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).notNull(),
+});
+
+export const tripsRelations = relations(TripsTable, ({ many }) => ({
+  posts: many(PostsTable),
+}));
+
 export const PostsTable = pgTable("post", {
   id: varchar("id", { length: 255 })
     .primaryKey()
@@ -146,6 +160,9 @@ export const PostsTable = pgTable("post", {
   photoId: varchar("photo_id", { length: 255 }) // Renamed from 'photoId' to 'photo_id'
     .notNull()
     .references(() => PhotosTable.id, { onDelete: "cascade" }), // Added onDelete
+  tripId: varchar("trip_id", { length: 255 }).references(() => TripsTable.id, {
+    onDelete: "set null",
+  }),
   createdAt: timestamp("createdAt", { mode: "date" }).notNull(),
   updatedAt: timestamp("updatedAt", { mode: "date" }).notNull(),
 });
@@ -162,6 +179,10 @@ export const postsRelations = relations(PostsTable, ({ one }) => ({
   photo: one(PhotosTable, {
     fields: [PostsTable.photoId],
     references: [PhotosTable.id],
+  }),
+  trip: one(TripsTable, {
+    fields: [PostsTable.tripId],
+    references: [TripsTable.id],
   }),
 }));
 

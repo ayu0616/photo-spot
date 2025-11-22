@@ -1,5 +1,6 @@
 import { MapPin } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -81,6 +82,16 @@ export default async function PostDetailPage({
             <MapPin className="w-4 h-4 mr-1" /> {post.spot.name} (
             {post.spot.city.prefecture.name} {post.spot.city.name})
           </p>
+          {post.trip && (
+            <div className="mt-2">
+              <Link
+                href={`/trip/${post.trip.id}`}
+                className="text-sm text-blue-600 hover:underline flex items-center gap-1"
+              >
+                <span>Part of trip: {post.trip.title}</span>
+              </Link>
+            </div>
+          )}
         </CardHeader>
         <CardContent>
           <div className="relative w-full aspect-video mb-6">

@@ -1,5 +1,6 @@
 import type { PhotoId } from "../photo/value-object/photo-id";
 import type { SpotId } from "../spot/value-object/spot-id";
+import type { TripId } from "../trip/value-object/trip-id";
 import type { UserId } from "../user/value-object/user-id";
 import type { CreatedAt } from "./value-object/created-at";
 import type { PostDescription } from "./value-object/post-description";
@@ -12,6 +13,7 @@ export class PostEntity {
   private _description: PostDescription;
   private _spotId: SpotId;
   private _photoId: PhotoId;
+  private _tripId: TripId | null;
   private readonly _createdAt: CreatedAt;
   private _updatedAt: UpdatedAt;
 
@@ -21,6 +23,7 @@ export class PostEntity {
     description: PostDescription,
     spotId: SpotId,
     photoId: PhotoId,
+    tripId: TripId | null,
     createdAt: CreatedAt,
     updatedAt: UpdatedAt,
   ) {
@@ -29,6 +32,7 @@ export class PostEntity {
     this._description = description;
     this._spotId = spotId;
     this._photoId = photoId;
+    this._tripId = tripId;
     this._createdAt = createdAt;
     this._updatedAt = updatedAt;
   }
@@ -51,6 +55,10 @@ export class PostEntity {
 
   get photoId(): PhotoId {
     return this._photoId;
+  }
+
+  get tripId(): TripId | null {
+    return this._tripId;
   }
 
   get createdAt(): CreatedAt {
@@ -77,6 +85,11 @@ export class PostEntity {
 
   updatePhotoId(photoId: PhotoId): void {
     this._photoId = photoId;
+    this._updatedAt = new UpdatedAt(new Date());
+  }
+
+  updateTripId(tripId: TripId | null): void {
+    this._tripId = tripId;
     this._updatedAt = new UpdatedAt(new Date());
   }
 }

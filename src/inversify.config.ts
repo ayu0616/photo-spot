@@ -52,4 +52,16 @@ container.bind<PostController>(TYPES.PostController).to(PostController);
 container.bind<SpotController>(TYPES.SpotController).to(SpotController);
 container.bind<UserController>(TYPES.UserController).to(UserController); // New
 
+// Bind Trip
+import type { ITripRepository } from "@/domain/trip/trip-repository.interface";
+import { TripRepository } from "@/repositories/tripRepository";
+import { TripService } from "@/services/tripService";
+
+container.bind<ITripRepository>(TYPES.TripRepository).to(TripRepository);
+container.bind<TripService>(TYPES.TripService).to(TripService);
+
+import { TripController } from "@/controller/tripController";
+
+container.bind<TripController>(TYPES.TripController).to(TripController);
+
 export { container };

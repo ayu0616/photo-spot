@@ -6,6 +6,7 @@ import { PostDescription } from "../domain/post/value-object/post-description";
 import { PostId } from "../domain/post/value-object/post-id";
 import { UpdatedAt } from "../domain/post/value-object/updated-at";
 import { SpotId } from "../domain/spot/value-object/spot-id";
+import { TripId } from "../domain/trip/value-object/trip-id";
 import { UserId } from "../domain/user/value-object/user-id";
 
 export const PostDtoSchema = z.object({
@@ -14,6 +15,7 @@ export const PostDtoSchema = z.object({
   description: z.string().min(1).max(255),
   spotId: z.string().uuid(),
   photoId: z.string().uuid(),
+  tripId: z.string().uuid().nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });
@@ -28,6 +30,7 @@ export const PostDtoMapper = {
       description: entity.description.value,
       spotId: entity.spotId.value,
       photoId: entity.photoId.value,
+      tripId: entity.tripId ? entity.tripId.value : null,
       createdAt: entity.createdAt.value,
       updatedAt: entity.updatedAt.value,
     };
@@ -39,6 +42,7 @@ export const PostDtoMapper = {
     const description = new PostDescription(dto.description);
     const spotId = new SpotId(dto.spotId);
     const photoId = new PhotoId(dto.photoId);
+    const tripId = dto.tripId ? new TripId(dto.tripId) : null;
     const createdAt = new CreatedAt(dto.createdAt);
     const updatedAt = new UpdatedAt(dto.updatedAt);
     return new PostEntity(
@@ -47,6 +51,7 @@ export const PostDtoMapper = {
       description,
       spotId,
       photoId,
+      tripId,
       createdAt,
       updatedAt,
     );
@@ -111,11 +116,20 @@ export const PhotoForPostDtoSchema = z.object({
 
 export type PhotoForPostDto = z.infer<typeof PhotoForPostDtoSchema>;
 
+// TripのDTOスキーマを定義
+export const TripForPostDtoSchema = z.object({
+  id: z.string().uuid(),
+  title: z.string(),
+});
+
+export type TripForPostDto = z.infer<typeof TripForPostDtoSchema>;
+
 // 関連情報を含むPostのDTOスキーマを定義
 export const PostWithRelationsDtoSchema = PostDtoSchema.extend({
   user: UserForPostDtoSchema,
   spot: SpotForPostDtoSchema,
   photo: PhotoForPostDtoSchema,
+  trip: TripForPostDtoSchema.nullable(),
 });
 
 export type PostWithRelationsDto = z.infer<typeof PostWithRelationsDtoSchema>;

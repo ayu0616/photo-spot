@@ -128,6 +128,7 @@ export class PostService {
       description,
       spot.id,
       photo.id,
+      null, // tripId
       createdAt,
       updatedAt,
     );
@@ -144,6 +145,10 @@ export class PostService {
   }
 
   async getPostById(id: string): Promise<PostWithRelationsDto | null> {
-    return this.postRepository.findByIdWithRelations(id);
+    return await this.postRepository.findByIdWithRelations(id);
+  }
+
+  async getPostsByTripId(tripId: string): Promise<PostWithRelationsDto[]> {
+    return await this.postRepository.findByTripId(tripId);
   }
 }
