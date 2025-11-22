@@ -6,6 +6,8 @@ steps:
       - 'build'
       - '-t'
       - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO_NAME}/${_IMAGE_NAME}:$COMMIT_SHA'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO_NAME}/${_IMAGE_NAME}:latest'
       - '--build-arg'
       - 'DATABASE_URL=postgresql://${_DB_USER}:${_DB_PASSWORD}@/${_DB_NAME}?host=/cloudsql/${_DB_CONNECTION_NAME}'
       - '--build-arg'
