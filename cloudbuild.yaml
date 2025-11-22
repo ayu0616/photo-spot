@@ -24,6 +24,8 @@ steps:
       - 'GCP_PROJECT_ID=${PROJECT_ID}'
       - '--build-arg'
       - 'GCS_BUCKET_NAME=${_CLOUD_STORAGE_BUCKET_NAME}'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_API_BASE_URL=${_NEXT_PUBLIC_API_BASE_URL}'
       - '.'
   # Push the Docker image to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
@@ -41,16 +43,6 @@ steps:
       - '--platform'
       - 'managed'
       - '--allow-unauthenticated' # Adjust if authentication is required
-      - '--set-env-vars=DATABASE_URL=postgresql://${_DB_USER}:${_DB_PASSWORD}@/${_DB_NAME}?host=/cloudsql/${_DB_CONNECTION_NAME}' # Example for Cloud SQL
-      - '--set-env-vars=GCP_PROJECT_ID=${PROJECT_ID}'
-      - '--set-env-vars=GCS_BUCKET_NAME=${_CLOUD_STORAGE_BUCKET_NAME}'
-      - '--set-env-vars=AUTH_SECRET=${_AUTH_SECRET}'
-      - '--set-env-vars=AUTH_GOOGLE_ID=${_AUTH_GOOGLE_ID}'
-      - '--set-env-vars=AUTH_GOOGLE_SECRET=${_AUTH_GOOGLE_SECRET}'
-      - '--set-env-vars=AUTH_URL=${_AUTH_URL}'
-      - '--set-env-vars=GCS_URL=${_GCS_URL}'
-      - '--set-env-vars=NEXT_PUBLIC_API_BASE_URL=https://${_SERVICE_NAME}-${_REGION}.run.app' # Cloud Run URL will be set by Cloud Build
-      # Add other environment variables here as needed
     entrypoint: gcloud
 images:
   - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO_NAME}/${_IMAGE_NAME}:$COMMIT_SHA'
@@ -61,14 +53,10 @@ substitutions:
   _IMAGE_NAME: 'photo-spot-image'
   _SERVICE_NAME: 'photo-spot-app'
   _REGION: 'asia-northeast1'
-  _CLOUD_STORAGE_BUCKET_NAME: 'your-gcs-bucket-name' # Replace with your GCS bucket name
-  _AUTH_SECRET: 'your-auth-secret' # Replace with your Auth secret
+  _CLOUD_STORAGE_BUCKET_NAME: 'photo-spot-image-bucket'
+  _AUTH_SECRET: 'your-auth-secret'
   _AUTH_GOOGLE_ID: 'your-google-client-id'
   _AUTH_GOOGLE_SECRET: 'your-google-client-secret'
   _AUTH_URL: 'your-auth-url'
   _GCS_URL: 'https://storage.googleapis.com'
-  _DB_USER: 'your-db-user' # Replace with your DB user
-  _DB_PASSWORD: 'your-db-password' # Replace with your DB password
-  _DB_NAME: 'your-db-name' # Replace with your DB name
-  _DB_CONNECTION_NAME: 'your-project-id:your-region:your-cloudsql-instance-name' # Replace with your Cloud SQL instance connection name
-  _SERVICE_URL: 'https://photo-spot-app-xxxxxxxx-an.a.run.app' # Cloud Run URL, will be set by Cloud Build upon deployment
+  _NEXT_PUBLIC_API_BASE_URL: 'http://localhost:3000' # Default value, override in trigger

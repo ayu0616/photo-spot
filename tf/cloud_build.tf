@@ -23,6 +23,10 @@ resource "google_cloudbuild_trigger" "cloud_run_trigger" {
   }
 
   filename = "cloudbuild.yaml" # Cloud Build configuration file
+
+  substitutions = {
+    _NEXT_PUBLIC_API_BASE_URL = var.next_public_api_base_url
+  }
 }
 
 # Cloud Build Service Account permissions

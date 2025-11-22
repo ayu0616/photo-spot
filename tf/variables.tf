@@ -80,3 +80,9 @@ variable "github_repo" {
   type        = string
   default     = "photo-spot"
 }
+
+variable "next_public_api_base_url" {
+  description = "The base URL for the API."
+  type        = string
+  default     = "http://localhost:3000"
+}
