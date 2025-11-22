@@ -1,6 +1,6 @@
-// src/app/post/[id]/page.tsx
-
+import { MapPin, PlaneIcon } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -12,16 +12,17 @@ import {
 } from "@/components/ui/card";
 import type { PostWithRelationsDto } from "@/dto/post-dto";
 import { formatToYYYYMMDD } from "@/lib/format-date";
-import { PhotoExifDisplay } from "./_components/photo-exif-display";
+import { honoClient } from "@/lib/hono";
+import { BasicExifInfo } from "./_components/basic-exif-info";
+import { DetailedExifInfo } from "./_components/detailed-exif-info";
 
 const getPostDetail = async (
   id: string,
 ): Promise<PostWithRelationsDto | null> => {
-  // NEXT_PUBLIC_API_BASE_URL が設定されていない場合、開発環境では localhost:3000 を使用する
-  const apiBaseUrl =
-    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
-  const res = await fetch(`${apiBaseUrl}/api/post/${id}`, {
-    cache: "no-store", // SSRのためにキャッシュしない
+  const res = await honoClient.post[":id"].$get({
+    param: {
+      id,
+    },
   });
 
   if (res.status === 404) {
@@ -31,12 +32,24 @@ const getPostDetail = async (
     throw new Error("Failed to fetch post detail");
   }
 
-  return res.json();
+  const postWithRelation = await res.json();
+  return {
+    ...postWithRelation,
+    photo: {
+      ...postWithRelation.photo,
+      takenAt: postWithRelation.photo.takenAt
+        ? new Date(postWithRelation.photo.takenAt)
+        : null,
+    },
+    createdAt: new Date(postWithRelation.createdAt),
+    updatedAt: new Date(postWithRelation.updatedAt),
+  };
 };
 
 export default async function PostDetailPage({
   params,
 }: PageProps<"/post/[id]">) {
+  "use cache";
   const post = await getPostDetail((await params).id);
 
   if (!post) {
@@ -64,8 +77,22 @@ export default async function PostDetailPage({
               </CardDescription>
             </div>
           </div>
-          <h1 className="text-3xl font-bold">{post.description}</h1>
-          <p className="text-sm text-gray-500">📍 {post.spot.name}</p>
+
+          <p className="text-sm flex items-center text-gray-500">
+            <MapPin className="w-4 h-4 mr-1" /> {post.spot.name} (
+            {post.spot.city.prefecture.name} {post.spot.city.name})
+          </p>
+          {post.trip && (
+            <div className="mt-2">
+              <Link
+                href={`/trip/${post.trip.id}?postId=${post.id}`}
+                className="text-sm text-blue-600 hover:underline flex items-center gap-1"
+              >
+                <PlaneIcon className="w-4 h-4" />
+                <span>{post.trip.title}</span>
+              </Link>
+            </div>
+          )}
         </CardHeader>
         <CardContent>
           <div className="relative w-full aspect-video mb-6">
@@ -77,22 +104,13 @@ export default async function PostDetailPage({
             />
           </div>
 
-          {post.photo.latitude && post.photo.longitude && (
-            <div className="mb-6 text-center">
-              <a
-                href={`https://www.google.com/maps/search/?api=1&query=${post.photo.latitude},${post.photo.longitude}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 hover:underline"
-              >
-                Google Mapsで表示 ({post.photo.latitude}, {post.photo.longitude}
-                )
-              </a>
-            </div>
-          )}
+          {/* 基本的な撮影情報 */}
+          <BasicExifInfo photo={post.photo} />
 
-          {/* 撮影情報 (EXIF) */}
-          <PhotoExifDisplay photo={post.photo} />
+          <p className="text-base mb-6 mt-6">{post.description}</p>
+
+          {/* 詳細な撮影情報 */}
+          <DetailedExifInfo photo={post.photo} />
         </CardContent>
       </Card>
     </div>

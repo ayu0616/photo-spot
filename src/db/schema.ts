@@ -17,6 +17,7 @@ export const usersTable = pgTable("user", {
   email: varchar("email", { length: 255 }).unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: varchar("image", { length: 255 }),
+  role: varchar("role", { length: 20 }).default("USER").notNull(),
 });
 
 export const usersRelations = relations(usersTable, ({ many }) => ({
@@ -121,7 +122,7 @@ export const PhotosTable = pgTable("photo", {
   /** 絞り値（例: f/1.8 をそのまま保存） */
   aperture: varchar("aperture", { length: 255 }),
   /** シャッタースピード（例: 1/250, 1s などをそのまま保存） */
-  shutterSpeed: varchar("shutterSpeed", { length: 255 }), // 追加
+  shutterSpeed: varchar("shutterSpeed", { length: 255 }),
 });
 
 export const photosRelations = relations(PhotosTable, ({ one }) => ({
@@ -129,6 +130,27 @@ export const photosRelations = relations(PhotosTable, ({ one }) => ({
     fields: [PhotosTable.id],
     references: [PostsTable.photoId],
   }),
+}));
+
+export const TripsTable = pgTable("trip", {
+  id: varchar("id", { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: varchar("userId", { length: 255 })
+    .notNull()
+    .references(() => usersTable.id, { onDelete: "cascade" }),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: varchar("description", { length: 255 }),
+  createdAt: timestamp("createdAt", { mode: "date" }).notNull(),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).notNull(),
+});
+
+export const tripsRelations = relations(TripsTable, ({ one, many }) => ({
+  user: one(usersTable, {
+    fields: [TripsTable.userId],
+    references: [usersTable.id],
+  }),
+  posts: many(PostsTable),
 }));
 
 export const PostsTable = pgTable("post", {
@@ -145,6 +167,9 @@ export const PostsTable = pgTable("post", {
   photoId: varchar("photo_id", { length: 255 }) // Renamed from 'photoId' to 'photo_id'
     .notNull()
     .references(() => PhotosTable.id, { onDelete: "cascade" }), // Added onDelete
+  tripId: varchar("trip_id", { length: 255 }).references(() => TripsTable.id, {
+    onDelete: "set null",
+  }),
   createdAt: timestamp("createdAt", { mode: "date" }).notNull(),
   updatedAt: timestamp("updatedAt", { mode: "date" }).notNull(),
 });
@@ -161,6 +186,10 @@ export const postsRelations = relations(PostsTable, ({ one }) => ({
   photo: one(PhotosTable, {
     fields: [PostsTable.photoId],
     references: [PhotosTable.id],
+  }),
+  trip: one(TripsTable, {
+    fields: [PostsTable.tripId],
+    references: [TripsTable.id],
   }),
 }));
 

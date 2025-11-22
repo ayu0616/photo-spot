@@ -17,6 +17,7 @@ import type { LensSerial } from "../domain/photo/value-object/lens-serial";
 import { Longitude } from "../domain/photo/value-object/longitude";
 import { Orientation } from "../domain/photo/value-object/orientation";
 import { PhotoExif } from "../domain/photo/value-object/photo-exif";
+import { ShutterSpeed } from "../domain/photo/value-object/shutter-speed";
 import { TakenAt } from "../domain/photo/value-object/taken-at";
 import type { StorageRepository } from "../repositories/storageRepository";
 
@@ -44,6 +45,25 @@ function formatRational(rational: [number, number] | undefined): string | null {
   return `${rational[0]}/${rational[1]}`;
 }
 
+// ExifData 型を定義し、エクスポート
+export type ExifData = {
+  raw: PhotoExif | null;
+  takenAt: TakenAt | null;
+  cameraMake: CameraMake | null;
+  cameraModel: CameraModel | null;
+  latitude: Latitude | null;
+  longitude: Longitude | null;
+  orientation: Orientation | null;
+  iso: Iso | null;
+  lensMake: LensMake | null;
+  lensModel: LensModel | null;
+  lensSerial: LensSerial | null;
+  focalLength: FocalLength | null;
+  focalLength35mm: FocalLength35mm | null;
+  aperture: Aperture | null;
+  shutterSpeed: ShutterSpeed | null;
+};
+
 @injectable()
 export class ImageStorageService {
   private storageRepository: StorageRepository;
@@ -64,22 +84,7 @@ export class ImageStorageService {
   async uploadImage(imageFile: File): Promise<{
     fileName: string;
     url: string;
-    exifData: {
-      raw: PhotoExif | null;
-      takenAt: TakenAt | null;
-      cameraMake: CameraMake | null;
-      cameraModel: CameraModel | null;
-      latitude: Latitude | null;
-      longitude: Longitude | null;
-      orientation: Orientation | null;
-      iso: Iso | null;
-      lensMake: LensMake | null;
-      lensModel: LensModel | null;
-      lensSerial: LensSerial | null;
-      focalLength: FocalLength | null;
-      focalLength35mm: FocalLength35mm | null;
-      aperture: Aperture | null;
-    };
+    exifData: ExifData;
   }> {
     // 1. ユニークなファイル名を生成
     const uniqueFileName = `${uuidv4()}-${imageFile.name}`;
@@ -102,7 +107,7 @@ export class ImageStorageService {
       await this.storageRepository.makePublic(uniqueFileName);
     }
 
-    // 6. 環境に応じた公開URLを生成
+    // 6. 環境に応じて公開URLを生成
     const publicUrl = this.buildPublicUrl(uniqueFileName);
 
     console.log(`ファイルがアップロードされました: ${publicUrl}`);
@@ -131,26 +136,9 @@ export class ImageStorageService {
    * @param imageBuffer - 画像ファイルのバッファ
    * @returns 抽出されたEXIFデータ
    */
-  private extractExifData(imageBuffer: Buffer): {
-    raw: PhotoExif | null;
-    takenAt: TakenAt | null;
-    cameraMake: CameraMake | null;
-    cameraModel: CameraModel | null;
-    latitude: Latitude | null;
-    longitude: Longitude | null;
-    orientation: Orientation | null;
-    iso: Iso | null;
-    lensMake: LensMake | null;
-    lensModel: LensModel | null;
-    lensSerial: LensSerial | null;
-    focalLength: FocalLength | null;
-    focalLength35mm: FocalLength35mm | null;
-    aperture: Aperture | null;
-    shutterSpeed: string | null; // 追加: Value Object をまだ作成していないので string で保持
-  } {
+  private extractExifData(imageBuffer: Buffer): ExifData {
     try {
       const tags = ExifReader.load(imageBuffer) as ExifTags;
-      // console.log("EXIF Tags:", tags); // Removed console.log
 
       const rawExif = new PhotoExif(JSON.stringify(tags));
 
@@ -210,11 +198,11 @@ export class ImageStorageService {
         : null;
 
       // シャッタースピードを抽出
-      let shutterSpeed: string | null = null;
+      let shutterSpeed: ShutterSpeed | null = null;
       if (tags.ExposureTime?.description) {
-        shutterSpeed = tags.ExposureTime.description;
+        shutterSpeed = ShutterSpeed.of(tags.ExposureTime.description);
       } else if (tags.ShutterSpeedValue?.description) {
-        shutterSpeed = tags.ShutterSpeedValue.description;
+        shutterSpeed = ShutterSpeed.of(tags.ShutterSpeedValue.description);
       }
 
       return {
@@ -232,7 +220,7 @@ export class ImageStorageService {
         focalLength,
         focalLength35mm,
         aperture,
-        shutterSpeed, // 追加
+        shutterSpeed,
       };
     } catch (error) {
       console.error("EXIFデータの抽出中にエラーが発生しました:", error);
@@ -251,7 +239,7 @@ export class ImageStorageService {
         focalLength: null,
         focalLength35mm: null,
         aperture: null,
-        shutterSpeed: null, // 追加
+        shutterSpeed: null,
       };
     }
   }

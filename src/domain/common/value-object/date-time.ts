@@ -1,13 +1,15 @@
-// src/domain/common/value-object/date-time.ts
-
 export class DateTime {
-  readonly value: Date;
+  private readonly _value: Date;
 
   constructor(value: Date) {
-    this.value = value;
+    this._value = value;
+  }
+
+  get value(): Date {
+    return this._value;
   }
 
   equals(other: DateTime): boolean {
-    return this.value.getTime() === other.value.getTime();
+    return this._value.getTime() === other.value.getTime();
   }
 }

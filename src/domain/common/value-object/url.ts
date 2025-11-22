@@ -1,19 +1,21 @@
-// src/domain/common/value-object/url.ts
-
 import { z } from "zod";
 
 export class Url {
-  readonly value: string;
+  private readonly _value: string;
 
   constructor(value: string) {
     if (!Url.isValid(value)) {
       throw new Error("Invalid URL");
     }
-    this.value = value;
+    this._value = value;
+  }
+
+  get value(): string {
+    return this._value;
   }
 
   equals(other: Url): boolean {
-    return this.value === other.value;
+    return this._value === other.value;
   }
 
   static isValid(value: string): boolean {

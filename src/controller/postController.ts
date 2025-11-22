@@ -9,15 +9,13 @@ import type { PostService } from "../services/postService";
 
 const createPostSchema = z.object({
   image: z.instanceof(File, { message: "画像ファイルが必要です。" }),
-  description: z.string().min(1, { message: "説明は必須です。" }),
+  description: z.string(),
   spotId: z.string().optional(),
   spotName: z.string().optional(),
   cityId: z
-    .preprocess(
-      (a) => parseInt(z.string().parse(a), 10),
-      z.number().int().positive(),
-    )
-    .optional(),
+    .string()
+    .optional()
+    .transform((val) => (val ? parseInt(val, 10) : undefined)),
 });
 
 @injectable()
@@ -44,6 +42,15 @@ export class PostController {
             return c.json({ error: "Unauthorized" }, 401);
           }
           const userId = user.id;
+
+          if (user.role !== "ADMIN") {
+            return c.json(
+              {
+                error: "Forbidden: You do not have permission to create posts.",
+              },
+              403,
+            );
+          }
 
           const { image, description, spotId, spotName, cityId } =
             c.req.valid("form");
@@ -82,6 +89,21 @@ export class PostController {
       } catch (error) {
         console.error("投稿一覧の取得中にエラーが発生しました:", error);
         return c.json({ error: "Failed to get posts" }, 500);
+      }
+    })
+    .get("/all", async (c) => {
+      try {
+        // Fetch all posts without pagination (or with a very large limit)
+        // For now, reusing getPosts with a large limit.
+        // Ideal: Implement getAllPosts in service/repo.
+        const posts: PostWithRelationsDto[] = await this.postService.getPosts(
+          1000,
+          0,
+        );
+        return c.json(posts, 200);
+      } catch (error) {
+        console.error("全投稿の取得中にエラーが発生しました:", error);
+        return c.json({ error: "Failed to get all posts" }, 500);
       }
     })
     .get("/:id", async (c) => {

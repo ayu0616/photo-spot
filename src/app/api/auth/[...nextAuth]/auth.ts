@@ -22,8 +22,18 @@ export const nextAuthConfig = {
   providers: [Google],
   session: { strategy: "jwt" },
   callbacks: {
-    async session({ session, token: { sub } }) {
-      if (session.user && sub) session.user.id = sub;
+    async jwt({ token, user }) {
+      if (user) {
+        token.role = user.role;
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user && token.sub) {
+        session.user.id = token.sub;
+        session.user.role = token.role as string;
+      }
       return session;
     },
   },
@@ -31,10 +41,22 @@ export const nextAuthConfig = {
 
 export const nextAuth = NextAuth(nextAuthConfig);
 
+import "next-auth/jwt";
+
 declare module "next-auth" {
   interface Session {
     user: {
       id: string | null;
+      role?: string;
     };
+  }
+  interface User {
+    role?: string;
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    role?: string;
   }
 }

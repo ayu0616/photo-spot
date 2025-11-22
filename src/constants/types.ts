@@ -19,6 +19,11 @@ const TYPES = {
   PostController: Symbol.for("PostController"),
   SpotController: Symbol.for("SpotController"),
   UserController: Symbol.for("UserController"), // New
+
+  // Trip
+  TripRepository: Symbol.for("TripRepository"),
+  TripService: Symbol.for("TripService"),
+  TripController: Symbol.for("TripController"),
 };
 
 export { TYPES };

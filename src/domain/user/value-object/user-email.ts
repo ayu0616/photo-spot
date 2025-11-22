@@ -1,5 +1,3 @@
-// src/domain/user/value-object/user-email.ts
-
 import { z } from "zod";
 import { StringValue } from "../../common/value-object/string";
 

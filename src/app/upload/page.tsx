@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -28,24 +27,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useCities } from "@/hooks/use-cities";
+import { usePrefectures } from "@/hooks/use-prefectures";
+import { useSpots } from "@/hooks/use-spots";
 import { honoClient } from "@/lib/hono";
-
-interface Spot {
-  id: string;
-  name: string;
-  cityId: number;
-}
-
-interface Prefecture {
-  id: number;
-  name: string;
-}
-
-interface City {
-  id: number;
-  name: string;
-  prefectureId: number;
-}
 
 const formSchema = z
   .object({
@@ -93,10 +78,6 @@ const formSchema = z
   });
 
 export default function UploadPage() {
-  const [existingSpots, setExistingSpots] = useState<Spot[]>([]);
-  const [prefectures, setPrefectures] = useState<Prefecture[]>([]);
-  const [cities, setCities] = useState<City[]>([]);
-  const [isFetchingCities, setIsFetchingCities] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -117,71 +98,17 @@ export default function UploadPage() {
   const spotMode = form.watch("spotMode");
   const selectedPrefectureId = form.watch("selectedPrefectureId");
 
-  // Fetch existing spots
-  useEffect(() => {
-    if (spotMode === "existing") {
-      const fetchSpots = async () => {
-        try {
-          const response = await honoClient.spot.$get();
-          if (!response.ok) {
-            throw new Error("Failed to fetch spots.");
-          }
-          const spotsData: Spot[] = await response.json();
-          setExistingSpots(spotsData);
-        } catch (err) {
-          console.error("Error fetching spots:", err);
-          setError("既存のスポットの読み込みに失敗しました。");
-        }
-      };
-      fetchSpots();
-    }
-  }, [spotMode]);
+  // Fetch data using TanStack Query
+  const { data: existingSpots = [] } = useSpots(spotMode === "existing");
+  const { data: prefectures = [] } = usePrefectures();
+  const { data: cities = [], isFetching: isFetchingCities } =
+    useCities(selectedPrefectureId);
 
-  // Fetch prefectures
-  useEffect(() => {
-    const fetchPrefectures = async () => {
-      try {
-        const response = await honoClient.master.prefectures.$get();
-        if (!response.ok) {
-          throw new Error("Failed to fetch prefectures.");
-        }
-        const prefecturesData: Prefecture[] = await response.json();
-        setPrefectures(prefecturesData);
-      } catch (err) {
-        console.error("Error fetching prefectures:", err);
-        setError("都道府県の読み込みに失敗しました。");
-      }
-    };
-    fetchPrefectures();
-  }, []);
-
-  // Fetch cities based on selected prefecture
+  // Reset city selection when prefecture changes
   useEffect(() => {
     if (selectedPrefectureId) {
-      const fetchCities = async () => {
-        setIsFetchingCities(true);
-        try {
-          form.setValue("newSpotCityId", "");
-          const response = await honoClient.master.cities[":prefectureId"].$get(
-            {
-              param: { prefectureId: selectedPrefectureId },
-            },
-          );
-          if (!response.ok) {
-            throw new Error("Failed to fetch cities.");
-          }
-          const citiesData: City[] = await response.json();
-          setCities(citiesData);
-        } catch (err) {
-          console.error("Error fetching cities:", err);
-          setError("選択された都道府県の市町村の読み込みに失敗しました。");
-        } finally {
-          setIsFetchingCities(false);
-        }
-      };
-      fetchCities();
+      form.setValue("newSpotCityId", "");
     } else {
-      setCities([]);
       form.setValue("newSpotCityId", undefined);
     }
   }, [selectedPrefectureId, form]);
@@ -189,6 +116,17 @@ export default function UploadPage() {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
     setError(null);
+
+    switch (values.spotMode) {
+      case "new": {
+        values.selectedSpotId = undefined;
+        break;
+      }
+      case "existing": {
+        values.newSpotCityId = undefined;
+        values.newSpotName = undefined;
+      }
+    }
 
     try {
       const response = await honoClient.post.$post({

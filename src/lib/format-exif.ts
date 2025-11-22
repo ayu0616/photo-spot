@@ -1,5 +1,3 @@
-// src/lib/format-exif.ts
-
 export const formatAperture = (value: string | null | undefined): string => {
   if (value === null || value === undefined) {
     return "-";

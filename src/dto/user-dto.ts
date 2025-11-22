@@ -1,5 +1,3 @@
-// src/dto/user-dto.ts
-
 import { z } from "zod";
 import { UserEntity } from "../domain/user/user.entity";
 import { EmailVerified } from "../domain/user/value-object/email-verified";

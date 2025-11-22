@@ -1,5 +1,3 @@
-// src/controller/userController.ts
-
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { inject, injectable } from "inversify";

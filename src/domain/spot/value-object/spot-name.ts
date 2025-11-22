@@ -1,17 +1,19 @@
-// src/domain/spot/spot-name/spot-name.ts
-
 export class SpotName {
-  readonly value: string;
+  private readonly _value: string;
 
   constructor(value: string) {
     if (!SpotName.isValid(value)) {
       throw new Error("Invalid SpotName");
     }
-    this.value = value;
+    this._value = value;
+  }
+
+  get value(): string {
+    return this._value;
   }
 
   equals(other: SpotName): boolean {
-    return this.value === other.value;
+    return this._value === other.value;
   }
 
   static isValid(value: string): boolean {

@@ -8,6 +8,10 @@ import { MasterController } from "@/controller/masterController";
 import { PostController } from "@/controller/postController";
 import { SpotController } from "@/controller/spotController";
 import { UserController } from "@/controller/userController"; // New
+import type { IPhotoRepository } from "@/domain/photo/photo-repository.interface";
+import type { IPostRepository } from "@/domain/post/post-repository.interface";
+import type { ISpotRepository } from "@/domain/spot/spot-repository.interface";
+import type { IUserRepository } from "@/domain/user/user-repository.interface";
 import { bucket } from "@/lib/gcsClient"; // Import the bucket instance
 // Repositories
 import { MasterRepository } from "@/repositories/masterRepository";
@@ -15,10 +19,7 @@ import { PhotoRepository } from "@/repositories/photoRepository";
 import { PostRepository } from "@/repositories/postRepository";
 import { SpotRepository } from "@/repositories/spotRepository";
 import { StorageRepository } from "@/repositories/storageRepository";
-import {
-  type IUserRepository,
-  UserRepository,
-} from "@/repositories/userRepository"; // New
+import { UserRepository } from "@/repositories/userRepository"; // New
 // Services
 import { ImageStorageService } from "@/services/imageStorageService";
 import { PostService } from "@/services/postService";
@@ -28,9 +29,9 @@ const container = new Container();
 
 // Bind Repositories
 container.bind<MasterRepository>(TYPES.MasterRepository).to(MasterRepository);
-container.bind<PhotoRepository>(TYPES.PhotoRepository).to(PhotoRepository);
-container.bind<PostRepository>(TYPES.PostRepository).to(PostRepository);
-container.bind<SpotRepository>(TYPES.SpotRepository).to(SpotRepository);
+container.bind<IPhotoRepository>(TYPES.PhotoRepository).to(PhotoRepository);
+container.bind<IPostRepository>(TYPES.PostRepository).to(PostRepository);
+container.bind<ISpotRepository>(TYPES.SpotRepository).to(SpotRepository);
 container
   .bind<StorageRepository>(TYPES.StorageRepository)
   .to(StorageRepository);
@@ -50,5 +51,17 @@ container.bind<MasterController>(TYPES.MasterController).to(MasterController);
 container.bind<PostController>(TYPES.PostController).to(PostController);
 container.bind<SpotController>(TYPES.SpotController).to(SpotController);
 container.bind<UserController>(TYPES.UserController).to(UserController); // New
+
+// Bind Trip
+import type { ITripRepository } from "@/domain/trip/trip-repository.interface";
+import { TripRepository } from "@/repositories/tripRepository";
+import { TripService } from "@/services/tripService";
+
+container.bind<ITripRepository>(TYPES.TripRepository).to(TripRepository);
+container.bind<TripService>(TYPES.TripService).to(TripService);
+
+import { TripController } from "@/controller/tripController";
+
+container.bind<TripController>(TYPES.TripController).to(TripController);
 
 export { container };

@@ -1,3 +1,4 @@
+import { MapPin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import type React from "react";
@@ -19,8 +20,8 @@ interface PostCardProps {
 
 export const PostCard: React.FC<PostCardProps> = ({ post }) => {
   return (
-    <Link href={`/post/${post.id}`}>
-      <Card className="w-full max-w-sm cursor-pointer hover:shadow-lg transition-shadow">
+    <Link href={`/post/${post.id}`} className="block h-full">
+      <Card className="w-full cursor-pointer hover:shadow-lg transition-shadow h-full flex flex-col">
         <CardHeader>
           <div className="flex items-center gap-4">
             <Avatar>
@@ -32,15 +33,17 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
                 {post.user.name?.charAt(0) || "U"}
               </AvatarFallback>
             </Avatar>
-            <div className="grid gap-1">
-              <CardTitle>{post.user.name || "匿名ユーザー"}</CardTitle>
+            <div className="grid gap-1 min-w-0">
+              <CardTitle className="truncate">
+                {post.user.name || "匿名ユーザー"}
+              </CardTitle>
               <CardDescription>
                 {formatToYYYYMMDD(new Date(post.createdAt))}
               </CardDescription>
             </div>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="grow">
           <div className="relative aspect-square w-full">
             <Image
               src={post.photo.url}
@@ -49,12 +52,15 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
               className="rounded-md object-cover"
             />
           </div>
-          <p className="mt-4 text-sm text-muted-foreground">
+          <p className="mt-4 text-sm text-muted-foreground line-clamp-2">
             {post.description}
           </p>
         </CardContent>
         <CardFooter>
-          <p className="text-xs text-gray-500">📍 {post.spot.name}</p>
+          <p className="text-xs flex items-center text-gray-500">
+            <MapPin className="w-4 h-4 mr-1" /> {post.spot.name} (
+            {post.spot.city.prefecture.name} {post.spot.city.name})
+          </p>
         </CardFooter>
       </Card>
     </Link>

@@ -1,20 +1,24 @@
-// src/domain/post/post-description/post-description.ts
+import z from "zod";
 
 export class PostDescription {
-  readonly value: string;
+  private readonly _value: string;
 
   constructor(value: string) {
     if (!PostDescription.isValid(value)) {
       throw new Error("Invalid PostDescription");
     }
-    this.value = value;
+    this._value = value;
+  }
+
+  get value(): string {
+    return this._value;
   }
 
   equals(other: PostDescription): boolean {
-    return this.value === other.value;
+    return this._value === other.value;
   }
 
   static isValid(value: string): boolean {
-    return value.length > 0 && value.length <= 255;
+    return z.string().min(0).max(255).safeParse(value).success;
   }
 }

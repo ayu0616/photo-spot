@@ -1,9 +1,7 @@
-// src/services/userService.ts
-
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/constants/types";
 import type { UserEntity } from "@/domain/user/user.entity";
-import type { IUserRepository } from "@/repositories/userRepository";
+import type { IUserRepository } from "@/domain/user/user-repository.interface";
 
 export interface IUserService {
   updateUserName(userId: string, name: string): Promise<UserEntity>;

@@ -1,5 +1,3 @@
-// src/dto/photo-dto.ts
-
 import { z } from "zod";
 import { PhotoEntity } from "../domain/photo/photo.entity";
 import { Aperture } from "../domain/photo/value-object/aperture";
@@ -17,6 +15,7 @@ import { Orientation } from "../domain/photo/value-object/orientation";
 import { PhotoExif } from "../domain/photo/value-object/photo-exif";
 import { PhotoId } from "../domain/photo/value-object/photo-id";
 import { PhotoUrl } from "../domain/photo/value-object/photo-url";
+import { ShutterSpeed } from "../domain/photo/value-object/shutter-speed";
 import { TakenAt } from "../domain/photo/value-object/taken-at";
 
 export const PhotoDtoSchema = z.object({
@@ -36,6 +35,7 @@ export const PhotoDtoSchema = z.object({
   focalLength: z.string().nullable(),
   focalLength35mm: z.string().nullable(),
   aperture: z.string().nullable(),
+  shutterSpeed: z.string().nullable(),
 });
 
 export type PhotoDto = z.infer<typeof PhotoDtoSchema>;
@@ -61,6 +61,7 @@ export const PhotoDtoMapper = {
         ? entity.focalLength35mm.value
         : null,
       aperture: entity.aperture ? entity.aperture.value : null,
+      shutterSpeed: entity.shutterSpeed ? entity.shutterSpeed.value : null,
     };
   },
 
@@ -89,6 +90,9 @@ export const PhotoDtoMapper = {
       ? new FocalLength35mm(dto.focalLength35mm)
       : null;
     const aperture = dto.aperture ? new Aperture(dto.aperture) : null;
+    const shutterSpeed = dto.shutterSpeed
+      ? ShutterSpeed.of(dto.shutterSpeed)
+      : null;
 
     return new PhotoEntity(
       id,
@@ -107,6 +111,7 @@ export const PhotoDtoMapper = {
       focalLength,
       focalLength35mm,
       aperture,
+      shutterSpeed,
     );
   },
 };

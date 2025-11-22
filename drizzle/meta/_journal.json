@@ -36,6 +36,27 @@
       "when": 1763562919965,
       "tag": "0004_typical_namora",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1763739645214,
+      "tag": "0005_wandering_skreet",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1763794026178,
+      "tag": "0006_lowly_randall_flagg",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1763795066492,
+      "tag": "0007_massive_zombie",
+      "breakpoints": true
     }
   ]
 }
