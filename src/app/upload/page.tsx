@@ -117,6 +117,17 @@ export default function UploadPage() {
     setLoading(true);
     setError(null);
 
+    switch (values.spotMode) {
+      case "new": {
+        values.selectedSpotId = undefined;
+        break;
+      }
+      case "existing": {
+        values.newSpotCityId = undefined;
+        values.newSpotName = undefined;
+      }
+    }
+
     try {
       const response = await honoClient.post.$post({
         form: {
