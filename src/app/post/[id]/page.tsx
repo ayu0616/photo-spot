@@ -88,7 +88,7 @@ export default async function PostDetailPage({
                 href={`/trip/${post.trip.id}`}
                 className="text-sm text-blue-600 hover:underline flex items-center gap-1"
               >
-                <span>Part of trip: {post.trip.title}</span>
+                <span>関連する旅行: {post.trip.title}</span>
               </Link>
             </div>
           )}

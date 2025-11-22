@@ -38,13 +38,13 @@ export default function NewTripPage() {
       });
 
       if (!res.ok) {
-        throw new Error("Failed to create trip");
+        throw new Error("旅行の作成に失敗しました");
       }
 
       router.push("/admin/trips");
       router.refresh();
     } catch (e) {
-      setError("Failed to create trip. Please try again.");
+      setError("旅行の作成に失敗しました。もう一度お試しください。");
       console.error(e);
     } finally {
       setIsLoading(false);
@@ -55,26 +55,28 @@ export default function NewTripPage() {
     <div className="container mx-auto py-10 max-w-2xl">
       <Card>
         <CardHeader>
-          <CardTitle>Create New Trip</CardTitle>
-          <CardDescription>Add a new trip to group your posts.</CardDescription>
+          <CardTitle>旅行の新規作成</CardTitle>
+          <CardDescription>
+            新しい旅行を作成して投稿をグループ化します。
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={onSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
+              <Label htmlFor="title">タイトル</Label>
               <Input
                 id="title"
                 name="title"
                 required
-                placeholder="Trip Title"
+                placeholder="旅行のタイトル"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">説明</Label>
               <Textarea
                 id="description"
                 name="description"
-                placeholder="Trip Description"
+                placeholder="旅行の説明"
               />
             </div>
             {error && <p className="text-red-500 text-sm">{error}</p>}
@@ -85,10 +87,10 @@ export default function NewTripPage() {
                 onClick={() => router.back()}
                 disabled={isLoading}
               >
-                Cancel
+                キャンセル
               </Button>
               <Button type="submit" disabled={isLoading}>
-                {isLoading ? "Creating..." : "Create Trip"}
+                {isLoading ? "作成中..." : "作成する"}
               </Button>
             </div>
           </form>

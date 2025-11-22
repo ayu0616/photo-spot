@@ -22,34 +22,34 @@ import { honoClient } from "@/lib/hono";
 export default async function AdminTripsPage() {
   const res = await honoClient.trip.$get();
   if (!res.ok) {
-    throw new Error("Failed to fetch trips");
+    throw new Error("旅行の取得に失敗しました");
   }
   const trips = await res.json();
 
   return (
     <div className="container mx-auto py-10">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Trip Management</h1>
+        <h1 className="text-3xl font-bold">旅行管理</h1>
         <Button asChild>
           <Link href="/admin/trips/new">
-            <Plus className="mr-2 h-4 w-4" /> Create Trip
+            <Plus className="mr-2 h-4 w-4" /> 新規作成
           </Link>
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Trips</CardTitle>
-          <CardDescription>Manage your trips here.</CardDescription>
+          <CardTitle>旅行一覧</CardTitle>
+          <CardDescription>登録されている旅行を管理します。</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Created At</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead>タイトル</TableHead>
+                <TableHead>説明</TableHead>
+                <TableHead>作成日</TableHead>
+                <TableHead>操作</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -62,7 +62,7 @@ export default async function AdminTripsPage() {
                   </TableCell>
                   <TableCell>
                     <Button variant="outline" size="sm" asChild>
-                      <Link href={`/admin/trips/${trip.id}/edit`}>Edit</Link>
+                      <Link href={`/admin/trips/${trip.id}/edit`}>編集</Link>
                     </Button>
                   </TableCell>
                 </TableRow>

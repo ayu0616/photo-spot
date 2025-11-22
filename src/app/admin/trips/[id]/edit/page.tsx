@@ -1,5 +1,6 @@
 "use client";
 
+import { Check } from "lucide-react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -45,8 +46,8 @@ export default function EditTripPage() {
           honoClient.post.all.$get(),
         ]);
 
-        if (!tripRes.ok) throw new Error("Failed to fetch trip");
-        if (!postsRes.ok) throw new Error("Failed to fetch posts");
+        if (!tripRes.ok) throw new Error("旅行の取得に失敗しました");
+        if (!postsRes.ok) throw new Error("投稿の取得に失敗しました");
 
         const trip = await tripRes.json();
         const posts = await postsRes.json();
@@ -61,7 +62,7 @@ export default function EditTripPage() {
           setSelectedPostIds(trip.posts.map((p: any) => p.id));
         }
       } catch (e) {
-        setError("Failed to load data.");
+        setError("データの読み込みに失敗しました。");
         console.error(e);
       } finally {
         setIsFetching(false);
@@ -90,13 +91,13 @@ export default function EditTripPage() {
       });
 
       if (!res.ok) {
-        throw new Error("Failed to update trip");
+        throw new Error("旅行の更新に失敗しました");
       }
 
       router.push("/admin/trips");
       router.refresh();
     } catch (e) {
-      setError("Failed to update trip. Please try again.");
+      setError("旅行の更新に失敗しました。もう一度お試しください。");
       console.error(e);
     } finally {
       setIsLoading(false);
@@ -104,7 +105,7 @@ export default function EditTripPage() {
   }
 
   async function onDelete() {
-    if (!confirm("Are you sure you want to delete this trip?")) return;
+    if (!confirm("本当にこの旅行を削除しますか？")) return;
 
     setIsLoading(true);
     try {
@@ -113,13 +114,13 @@ export default function EditTripPage() {
       });
 
       if (!res.ok) {
-        throw new Error("Failed to delete trip");
+        throw new Error("旅行の削除に失敗しました");
       }
 
       router.push("/admin/trips");
       router.refresh();
     } catch (e) {
-      setError("Failed to delete trip. Please try again.");
+      setError("旅行の削除に失敗しました。もう一度お試しください。");
       console.error(e);
       setIsLoading(false);
     }
@@ -134,89 +135,107 @@ export default function EditTripPage() {
   };
 
   if (isFetching)
-    return <div className="container mx-auto py-10">Loading...</div>;
+    return <div className="container mx-auto py-10">読み込み中...</div>;
   if (!defaultValues)
-    return <div className="container mx-auto py-10">Trip not found</div>;
+    return <div className="container mx-auto py-10">旅行が見つかりません</div>;
 
   return (
     <div className="container mx-auto py-10 max-w-2xl">
       <Card>
         <CardHeader>
-          <CardTitle>Edit Trip</CardTitle>
-          <CardDescription>Update trip details.</CardDescription>
+          <CardTitle>旅行の編集</CardTitle>
+          <CardDescription>旅行の詳細を更新します。</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={onSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
+              <Label htmlFor="title">タイトル</Label>
               <Input
                 id="title"
                 name="title"
                 required
                 defaultValue={defaultValues.title}
-                placeholder="Trip Title"
+                placeholder="旅行のタイトル"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">説明</Label>
               <Textarea
                 id="description"
                 name="description"
                 defaultValue={defaultValues.description}
-                placeholder="Trip Description"
+                placeholder="旅行の説明"
               />
             </div>
 
             <div className="space-y-2">
-              <Label>Select Posts</Label>
-              <div className="grid grid-cols-2 gap-4 border p-4 rounded-md max-h-96 overflow-y-auto">
-                {allPosts.map((post) => (
-                  <button
-                    key={post.id}
-                    type="button"
-                    className={`flex items-start space-x-2 p-2 rounded border cursor-pointer hover:bg-gray-50 text-left w-full ${
-                      selectedPostIds.includes(post.id)
-                        ? "border-blue-500 bg-blue-50"
-                        : "border-gray-200"
-                    }`}
-                    onClick={() => togglePostSelection(post.id)}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={selectedPostIds.includes(post.id)}
-                      onChange={() => {}} // Handled by button click
-                      className="mt-1 pointer-events-none"
-                    />
-                    <div className="text-sm w-full">
-                      <p className="font-medium truncate">{post.spot.name}</p>
-                      <p className="text-gray-500 text-xs">
-                        {new Date(post.createdAt).toLocaleDateString()}
-                      </p>
+              <Label>投稿の選択</Label>
+              <div className="grid grid-cols-2 gap-4 border p-4 rounded-md max-h-96 overflow-y-auto bg-gray-50/50">
+                {allPosts.length === 0 ? (
+                  <div className="col-span-2 text-center text-gray-500 py-4">
+                    投稿がありません
+                  </div>
+                ) : (
+                  allPosts.map((post) => (
+                    <button
+                      key={post.id}
+                      type="button"
+                      className={`group relative flex flex-col items-start space-y-2 p-3 rounded-lg border transition-all hover:shadow-sm ${
+                        selectedPostIds.includes(post.id)
+                          ? "border-primary bg-primary/5 ring-1 ring-primary"
+                          : "border-border bg-card hover:bg-accent hover:text-accent-foreground"
+                      }`}
+                      onClick={() => togglePostSelection(post.id)}
+                    >
+                      <div className="flex w-full justify-between items-start">
+                        <div className="space-y-1 text-left">
+                          <p className="font-medium leading-none truncate w-32">
+                            {post.spot.name}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(post.createdAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <div
+                          className={`h-4 w-4 rounded-sm border border-primary flex items-center justify-center ${
+                            selectedPostIds.includes(post.id)
+                              ? "bg-primary text-primary-foreground"
+                              : "opacity-50"
+                          }`}
+                        >
+                          {selectedPostIds.includes(post.id) && (
+                            <Check className="h-3.5 w-3.5" />
+                          )}
+                        </div>
+                      </div>
                       {post.photo?.url && (
-                        <div className="relative w-full h-24 mt-1">
+                        <div className="relative w-full aspect-video mt-2 rounded-md overflow-hidden bg-muted">
                           <Image
                             src={post.photo.url}
                             alt="Post"
                             fill
-                            className="object-cover rounded"
+                            className="object-cover transition-transform group-hover:scale-105"
                           />
                         </div>
                       )}
-                    </div>
-                  </button>
-                ))}
+                    </button>
+                  ))
+                )}
               </div>
+              <p className="text-xs text-muted-foreground text-right">
+                選択中: {selectedPostIds.length} 件
+              </p>
             </div>
 
             {error && <p className="text-red-500 text-sm">{error}</p>}
-            <div className="flex justify-between">
+            <div className="flex justify-between pt-4 border-t">
               <Button
                 type="button"
                 variant="destructive"
                 onClick={onDelete}
                 disabled={isLoading}
               >
-                Delete Trip
+                削除する
               </Button>
               <div className="flex gap-4">
                 <Button
@@ -225,10 +244,10 @@ export default function EditTripPage() {
                   onClick={() => router.back()}
                   disabled={isLoading}
                 >
-                  Cancel
+                  キャンセル
                 </Button>
                 <Button type="submit" disabled={isLoading}>
-                  {isLoading ? "Updating..." : "Update Trip"}
+                  {isLoading ? "更新中..." : "更新する"}
                 </Button>
               </div>
             </div>
