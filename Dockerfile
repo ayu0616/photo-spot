@@ -1,5 +1,7 @@
+FROM oven/bun:slim AS base
+
 # Stage 1: Install dependencies and build the Next.js application
-FROM oven/bun:1.1.20 as base
+FROM base AS builder
 
 WORKDIR /app
 
@@ -12,20 +14,20 @@ COPY . .
 RUN bun run build
 
 # Stage 2: Create the production-ready image
-FROM oven/bun:1.1.20 as runner
+FROM base AS runner
 
 WORKDIR /app
 
 # Set environment variables for Next.js production
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 
 # Copy standalone output
-COPY --from=base /app/.next/standalone ./
-COPY --from=base /app/.next/static ./.next/static
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 
 # Copy public folder (if needed at runtime)
-COPY --from=base /app/public ./public
+COPY --from=builder /app/public ./public
 
 # Expose the port Next.js listens on
 EXPOSE 3000
