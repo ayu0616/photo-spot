@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Suspense } from "react";
+import { Header } from "@/components/header";
 import { SessionProvider } from "@/provider/session-provider";
 import { TanstackQueryProvider } from "@/provider/tanstack-query-provider";
 
@@ -32,7 +33,10 @@ export default function RootLayout({
           <body
             className={`${geistSans.variable} ${geistMono.variable} antialiased`}
           >
-            <Suspense fallback="loading...">{children}</Suspense>
+            <Header />
+            <Suspense fallback="loading...">
+              <main>{children}</main>
+            </Suspense>
           </body>
         </SessionProvider>
       </TanstackQueryProvider>
