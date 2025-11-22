@@ -13,11 +13,9 @@ const createPostSchema = z.object({
   spotId: z.string().optional(),
   spotName: z.string().optional(),
   cityId: z
-    .preprocess(
-      (a) => parseInt(z.string().parse(a), 10),
-      z.number().int().positive(),
-    )
-    .optional(),
+    .string()
+    .optional()
+    .transform((val) => (val ? parseInt(val, 10) : undefined)),
 });
 
 @injectable()

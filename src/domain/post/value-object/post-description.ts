@@ -1,3 +1,5 @@
+import z from "zod";
+
 export class PostDescription {
   private readonly _value: string;
 
@@ -17,6 +19,6 @@ export class PostDescription {
   }
 
   static isValid(value: string): boolean {
-    return value.length > 0 && value.length <= 255;
+    return z.string().min(0).max(255).safeParse(value).success;
   }
 }
