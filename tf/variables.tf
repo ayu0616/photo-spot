@@ -45,3 +45,15 @@ variable "gcs_url" {
   type        = string
   default     = "https://storage.googleapis.com"
 }
+
+variable "github_owner" {
+  description = "The GitHub repository owner (username or organization)."
+  type        = string
+  default     = "ayu0616"
+}
+
+variable "github_repo" {
+  description = "The GitHub repository name."
+  type        = string
+  default     = "photo-spot"
+}

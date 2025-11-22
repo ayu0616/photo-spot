@@ -22,8 +22,8 @@ resource "google_storage_bucket" "image_bucket" {
 }
 
 resource "google_project_service" "cloud_storage_api" {
-  project = var.project_id
-  service = "storage.googleapis.com"
+  project            = var.project_id
+  service            = "storage.googleapis.com"
   disable_on_destroy = false
 }
 
@@ -31,5 +31,5 @@ resource "google_project_service" "cloud_storage_api" {
 resource "google_storage_bucket_iam_member" "cloud_run_storage_access" {
   bucket = google_storage_bucket.image_bucket.name
   role   = "roles/storage.objectViewer" # Read-only access
-  member = "serviceAccount:${google_cloud_run_v2_service.default.service_account_email}"
+  member = "serviceAccount:${google_cloud_run_v2_service.default.id}"
 }
