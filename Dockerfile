@@ -32,6 +32,11 @@ WORKDIR /app
 COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
 
+# Run DB migrations
+COPY src/db ./src/db
+COPY drizzle.config.ts ./drizzle.config.ts
+RUN bun run db:push
+
 # Copy source code and build
 COPY . .
 RUN bun run build
