@@ -103,9 +103,10 @@ export class ImageStorageService {
     );
 
     // 5. ファイルを公開状態にする
-    if (process.env.NODE_ENV !== "development") {
-      await this.storageRepository.makePublic(uniqueFileName);
-    }
+    // 5. ファイルを公開状態にする (Uniform Bucket Level Accessのため不要)
+    // if (process.env.NODE_ENV !== "development") {
+    //   await this.storageRepository.makePublic(uniqueFileName);
+    // }
 
     // 6. 環境に応じて公開URLを生成
     const publicUrl = this.buildPublicUrl(uniqueFileName);

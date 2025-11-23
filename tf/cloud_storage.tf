@@ -30,6 +30,13 @@ resource "google_project_service" "cloud_storage_api" {
 # Grant Cloud Run service account permission to access the bucket
 resource "google_storage_bucket_iam_member" "cloud_run_storage_access" {
   bucket = google_storage_bucket.image_bucket.name
-  role   = "roles/storage.objectViewer" # Read-only access
+  role   = "roles/storage.objectAdmin" # Read/Write access
   member = "serviceAccount:${google_service_account.cloud_run_sa.email}"
+}
+
+# Make the bucket public (readable by allUsers)
+resource "google_storage_bucket_iam_member" "public_read_access" {
+  bucket = google_storage_bucket.image_bucket.name
+  role   = "roles/storage.objectViewer"
+  member = "allUsers"
 }
