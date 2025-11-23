@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
   typedRoutes: true,
   cacheComponents: true,
   images: {
+    dangerouslyAllowLocalIP: process.env.NODE_ENV === "development",
     remotePatterns: [
       {
         protocol: "https",
