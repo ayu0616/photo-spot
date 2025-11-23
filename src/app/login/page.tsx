@@ -1,15 +1,15 @@
+"use client";
+
+import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { signIn } from "../api/auth/[...nextAuth]/auth";
 
 export default function Page() {
   return (
-    <form
-      action={async () => {
-        "use server";
-        await signIn("google");
-      }}
+    <Button
+      type="button"
+      onClick={() => signIn("google", { redirect: true, redirectTo: "/" })}
     >
-      <Button type="submit">Signin with Google</Button>
-    </form>
+      Signin with Google
+    </Button>
   );
 }
