@@ -119,12 +119,13 @@ export default function UploadPage() {
 
     switch (values.spotMode) {
       case "new": {
-        values.selectedSpotId = undefined;
+        values.selectedSpotId = "";
         break;
       }
       case "existing": {
-        values.newSpotCityId = undefined;
-        values.newSpotName = undefined;
+        values.newSpotCityId = "";
+        values.newSpotName = "";
+        break;
       }
     }
 
