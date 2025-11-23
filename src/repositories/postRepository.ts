@@ -10,16 +10,27 @@ import { PostDtoMapper, type PostWithRelationsDto } from "../dto/post-dto";
 export class PostRepository implements IPostRepository {
   async save(post: PostEntity): Promise<void> {
     const postDto = PostDtoMapper.fromEntity(post);
-    await db.insert(PostsTable).values({
-      id: postDto.id,
-      userId: postDto.userId,
-      description: postDto.description,
-      spotId: postDto.spotId,
-      photoId: postDto.photoId,
-      tripId: postDto.tripId,
-      createdAt: postDto.createdAt,
-      updatedAt: postDto.updatedAt,
-    });
+    await db
+      .insert(PostsTable)
+      .values({
+        id: postDto.id,
+        userId: postDto.userId,
+        description: postDto.description,
+        spotId: postDto.spotId,
+        photoId: postDto.photoId,
+        tripId: postDto.tripId,
+        createdAt: postDto.createdAt,
+        updatedAt: postDto.updatedAt,
+      })
+      .onConflictDoUpdate({
+        target: PostsTable.id,
+        set: {
+          description: postDto.description,
+          spotId: postDto.spotId,
+          tripId: postDto.tripId,
+          updatedAt: postDto.updatedAt,
+        },
+      });
   }
 
   async findById(id: string): Promise<PostEntity | null> {
@@ -219,7 +230,7 @@ export class PostRepository implements IPostRepository {
       return dateA - dateB;
     });
 
-    return sortedPosts as unknown as PostWithRelationsDto[];
+    return sortedPosts as PostWithRelationsDto[];
   }
 
   async updateTripId(postId: string, tripId: string | null): Promise<void> {
@@ -227,5 +238,9 @@ export class PostRepository implements IPostRepository {
       .update(PostsTable)
       .set({ tripId: tripId })
       .where(eq(PostsTable.id, postId));
+  }
+
+  async delete(id: string): Promise<void> {
+    await db.delete(PostsTable).where(eq(PostsTable.id, id));
   }
 }

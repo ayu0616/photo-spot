@@ -2,6 +2,7 @@ import { MapPin, PlaneIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { nextAuth } from "@/app/api/auth/[...nextAuth]/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Card,
@@ -15,10 +16,12 @@ import { formatToYYYYMMDD } from "@/lib/format-date";
 import { honoClient } from "@/lib/hono";
 import { BasicExifInfo } from "./_components/basic-exif-info";
 import { DetailedExifInfo } from "./_components/detailed-exif-info";
+import { PostActionsMenu } from "./_components/post-actions-menu";
 
 const getPostDetail = async (
   id: string,
 ): Promise<PostWithRelationsDto | null> => {
+  "use cache";
   const res = await honoClient.post[":id"].$get({
     param: {
       id,
@@ -49,8 +52,8 @@ const getPostDetail = async (
 export default async function PostDetailPage({
   params,
 }: PageProps<"/post/[id]">) {
-  "use cache";
   const post = await getPostDetail((await params).id);
+  const session = await nextAuth.auth();
 
   if (!post) {
     notFound();
@@ -60,22 +63,28 @@ export default async function PostDetailPage({
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <Card className="mb-8">
         <CardHeader>
-          <div className="flex items-center gap-4 mb-4">
-            <Avatar className="h-10 w-10">
-              <AvatarImage
-                src={post.user.image || undefined}
-                alt={post.user.name || "User Avatar"}
-              />
-              <AvatarFallback>
-                {post.user.name?.charAt(0) || "U"}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <CardTitle>{post.user.name || "匿名ユーザー"}</CardTitle>
-              <CardDescription>
-                {formatToYYYYMMDD(new Date(post.createdAt))}
-              </CardDescription>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-4">
+              <Avatar className="h-10 w-10">
+                <AvatarImage
+                  src={post.user.image || undefined}
+                  alt={post.user.name || "User Avatar"}
+                />
+                <AvatarFallback>
+                  {post.user.name?.charAt(0) || "U"}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <CardTitle>{post.user.name || "匿名ユーザー"}</CardTitle>
+                <CardDescription>
+                  {formatToYYYYMMDD(new Date(post.createdAt))}
+                </CardDescription>
+              </div>
             </div>
+            <PostActionsMenu
+              post={post}
+              currentUserId={session?.user?.id || undefined}
+            />
           </div>
 
           <p className="text-sm flex items-center text-gray-500">

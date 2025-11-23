@@ -28,6 +28,15 @@ interface CreatePostParams {
   cityId?: number;
 }
 
+interface UpdatePostParams {
+  id: string;
+  userId: string;
+  description: string;
+  spotId?: string;
+  spotName?: string;
+  cityId?: number;
+}
+
 @injectable()
 export class PostService {
   private photoRepository: IPhotoRepository;
@@ -163,5 +172,81 @@ export class PostService {
     for (const postId of postIds) {
       await this.postRepository.updateTripId(postId, tripId);
     }
+  }
+
+  async deletePost(id: string): Promise<void> {
+    await this.postRepository.delete(id);
+  }
+
+  async updatePost(params: UpdatePostParams): Promise<PostEntity> {
+    const post = await this.postRepository.findById(params.id);
+    if (!post) {
+      throw new Error("Post not found");
+    }
+
+    if (post.userId.value !== params.userId) {
+      throw new Error("Unauthorized");
+    }
+
+    let spot: SpotEntity;
+
+    if (params.spotId) {
+      const foundSpot = await this.spotRepository.findById(params.spotId);
+      if (!foundSpot) {
+        throw new Error("Selected spot not found.");
+      }
+      spot = foundSpot;
+    } else if (params.spotName && params.cityId) {
+      let foundSpot = await this.spotRepository.findByNameAndCityId(
+        params.spotName,
+        params.cityId,
+      );
+
+      if (!foundSpot) {
+        const spotId = new SpotId(crypto.randomUUID());
+        const spotName = new SpotName(params.spotName);
+        const cityId = new CityId(params.cityId);
+        foundSpot = new SpotEntity(spotId, spotName, cityId);
+        await this.spotRepository.save(foundSpot);
+      }
+      spot = foundSpot;
+    } else {
+      // Keep existing spot if no new spot info provided?
+      // Or throw error if spot info is mandatory for update?
+      // Assuming spot info is mandatory for update as per create logic
+      // But if user doesn't want to change spot, they might send existing spotId.
+      // Let's assume if neither is provided, we keep the old spot.
+      // However, the UI form will likely send the current values.
+      // Let's stick to the logic: if provided, update.
+      // But wait, post entity is immutable-ish.
+      // We need to create a new PostEntity or update the existing one.
+      // Since we are using DDD, we should probably have a method on PostEntity to update details.
+      // But for now, let's just reconstruct it or update fields.
+      // Actually, I can just fetch the existing spot if no new info is provided.
+      const existingSpot = await this.spotRepository.findById(
+        post.spotId.value,
+      );
+      if (!existingSpot) {
+        throw new Error("Existing spot not found"); // Should not happen
+      }
+      spot = existingSpot;
+    }
+
+    const description = new PostDescription(params.description);
+    const updatedAt = new UpdatedAt(new Date());
+
+    const updatedPost = new PostEntity(
+      post.id,
+      post.userId,
+      description,
+      spot.id,
+      post.photoId,
+      post.tripId,
+      post.createdAt,
+      updatedAt,
+    );
+
+    await this.postRepository.save(updatedPost);
+    return updatedPost;
   }
 }

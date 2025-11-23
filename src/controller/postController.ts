@@ -18,6 +18,16 @@ const createPostSchema = z.object({
     .transform((val) => (val ? parseInt(val, 10) : undefined)),
 });
 
+const updatePostSchema = z.object({
+  description: z.string(),
+  spotId: z.string().optional(),
+  spotName: z.string().optional(),
+  cityId: z
+    .string()
+    .optional()
+    .transform((val) => (val ? parseInt(val, 10) : undefined)),
+});
+
 @injectable()
 export class PostController {
   private readonly postService: PostService;
@@ -120,5 +130,90 @@ export class PostController {
         console.error("投稿の取得中にエラーが発生しました:", error);
         return c.json({ error: "Failed to get post" }, 500);
       }
-    });
+    })
+    .delete("/:id", async (c) => {
+      try {
+        const auth = await nextAuth.auth();
+        const user = auth?.user;
+        if (!user || !user.id) {
+          return c.json({ error: "Unauthorized" }, 401);
+        }
+
+        const id = c.req.param("id");
+        const post = await this.postService.getPostById(id);
+
+        if (!post) {
+          return c.json({ error: "Post not found" }, 404);
+        }
+
+        if (post.user.id !== user.id && user.role !== "ADMIN") {
+          return c.json(
+            {
+              error:
+                "Forbidden: You do not have permission to delete this post.",
+            },
+            403,
+          );
+        }
+
+        await this.postService.deletePost(id);
+        return c.json({ message: "Post deleted successfully" }, 200);
+      } catch (error) {
+        console.error("投稿の削除中にエラーが発生しました:", error);
+        return c.json({ error: "Failed to delete post" }, 500);
+      }
+    })
+    .put(
+      "/:id",
+      zValidator("form", updatePostSchema, (result, c) => {
+        if (!result.success) {
+          return c.json({ error: (result.error as z.ZodError).flatten() }, 400);
+        }
+      }),
+      async (c) => {
+        try {
+          const auth = await nextAuth.auth();
+          const user = auth?.user;
+          if (!user || !user.id) {
+            return c.json({ error: "Unauthorized" }, 401);
+          }
+
+          const id = c.req.param("id");
+          const { description, spotId, spotName, cityId } = c.req.valid("form");
+
+          // Check permission inside service or here?
+          // Service checks it, but good to fail early if possible.
+          // But service needs to fetch post anyway to update it.
+          // Let's rely on service check or do it here.
+          // Service check:
+          // if (post.userId.value !== params.userId) { throw new Error("Unauthorized"); }
+          // So we just pass userId.
+
+          // However, for admin role, we might want to allow it.
+          // The service currently checks `post.userId.value !== params.userId`.
+          // If we want to allow ADMIN, we should probably handle that logic.
+          // For now, let's assume only the author can edit.
+          // If ADMIN needs to edit, we'd need to update service logic or pass a flag.
+          // Let's stick to author only for edit as per requirement "投稿者本人が...".
+
+          const updatedPost = await this.postService.updatePost({
+            id,
+            userId: user.id,
+            description,
+            spotId,
+            spotName,
+            cityId,
+          });
+
+          const postDto = PostDtoMapper.fromEntity(updatedPost);
+          return c.json(postDto, 200);
+        } catch (error) {
+          console.error("投稿の更新中にエラーが発生しました:", error);
+          if (error instanceof Error && error.message === "Unauthorized") {
+            return c.json({ error: "Forbidden" }, 403);
+          }
+          return c.json({ error: "Failed to update post" }, 500);
+        }
+      },
+    );
 }
