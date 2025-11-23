@@ -35,6 +35,7 @@ RUN bun install --frozen-lockfile
 # Run DB migrations
 COPY src/db ./src/db
 COPY drizzle.config.ts ./drizzle.config.ts
+COPY drizzle ./drizzle
 RUN bun run db:push
 
 # Copy source code and build
