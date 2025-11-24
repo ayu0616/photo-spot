@@ -16,6 +16,7 @@ import { formatToYYYYMMDD } from "@/lib/format-date";
 import { honoClient } from "@/lib/hono";
 import { BasicExifInfo } from "./_components/basic-exif-info";
 import { DetailedExifInfo } from "./_components/detailed-exif-info";
+import { LocationInfo } from "./_components/location-info";
 import { PostActionsMenu } from "./_components/post-actions-menu";
 
 const getPostDetail = async (
@@ -115,6 +116,14 @@ export default async function PostDetailPage({
 
           {/* 基本的な撮影情報 */}
           <BasicExifInfo photo={post.photo} />
+
+          {/* 位置情報 */}
+          <div className="mt-6">
+            <LocationInfo
+              latitude={post.photo.latitude}
+              longitude={post.photo.longitude}
+            />
+          </div>
 
           <p className="text-base mb-6 mt-6">{post.description}</p>
 

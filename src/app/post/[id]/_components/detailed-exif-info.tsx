@@ -2,7 +2,13 @@ import type React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import type { PhotoForPostDto } from "@/dto/post-dto";
-import { formatFocalLength } from "@/lib/format-exif";
+import { formatDateTime } from "@/lib/format-date";
+import {
+  formatAperture,
+  formatFocalLength,
+  formatISO,
+  formatShutterSpeed,
+} from "@/lib/format-exif";
 
 interface DetailedExifInfoProps {
   photo: PhotoForPostDto;
@@ -12,14 +18,36 @@ export const DetailedExifInfo: React.FC<DetailedExifInfoProps> = ({
   photo,
 }) => {
   const detailedInfo = [
+    {
+      label: "撮影日時",
+      value: photo.takenAt ? formatDateTime(new Date(photo.takenAt)) : "-",
+    },
     { label: "カメラメーカー", value: photo.cameraMake || "-" },
-    { label: "Orientation", value: photo.orientation || "-" },
+    { label: "カメラモデル", value: photo.cameraModel || "-" },
     { label: "レンズメーカー", value: photo.lensMake || "-" },
+    { label: "レンズモデル", value: photo.lensModel || "-" },
     { label: "レンズシリアル", value: photo.lensSerial || "-" },
+    {
+      label: "焦点距離",
+      value: formatFocalLength(photo.focalLength),
+    },
     {
       label: "35mm 換算焦点距離",
       value: formatFocalLength(photo.focalLength35mm),
     },
+    {
+      label: "絞り",
+      value: formatAperture(photo.aperture),
+    },
+    {
+      label: "ISO",
+      value: formatISO(photo.iso),
+    },
+    {
+      label: "シャッター速度",
+      value: formatShutterSpeed(photo.shutterSpeed),
+    },
+    { label: "Orientation", value: photo.orientation || "-" },
   ];
 
   // 全ての値が "-" の場合は表示しない
