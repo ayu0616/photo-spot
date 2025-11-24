@@ -18,7 +18,7 @@ export const LocationInfo: React.FC<LocationInfoProps> = ({
 
   return (
     <div className="relative overflow-hidden rounded-lg border border-border bg-card p-4">
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-start gap-3 min-w-0 flex-1">
           <MapPin className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5" />
           <div className="flex flex-col space-y-1 min-w-0">
@@ -30,14 +30,14 @@ export const LocationInfo: React.FC<LocationInfoProps> = ({
             </div>
           </div>
         </div>
-        <Button asChild size="default">
+        <Button asChild size="default" className="w-full sm:w-auto sm:shrink-0">
           <a
             href={`https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`}
             target="_blank"
             rel="noopener noreferrer"
           >
             地図で表示
-            <ExternalLink />
+            <ExternalLink className="ml-2 h-4 w-4" />
           </a>
         </Button>
       </div>
