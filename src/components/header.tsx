@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetHeader,
   SheetTitle,
@@ -150,34 +151,39 @@ export function Header() {
               {/* Navigation Links */}
               <nav className="flex flex-col space-y-2 mt-2 px-4">
                 {visibleLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="flex items-center space-x-3 px-3 py-4 rounded-lg text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
-                  >
-                    {link.icon && <link.icon className="h-5 w-5" />}
-                    <span>{link.label}</span>
-                  </Link>
+                  <SheetClose asChild key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="flex items-center space-x-3 px-3 py-4 rounded-lg text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
+                    >
+                      {link.icon && <link.icon className="h-5 w-5" />}
+                      <span>{link.label}</span>
+                    </Link>
+                  </SheetClose>
                 ))}
               </nav>
 
               {/* User Actions (if authenticated) */}
               {isAuthenticated && (
                 <div className="flex flex-col space-y-2 mt-8 pt-8 px-4 border-t">
-                  <Link
-                    href="/user/profile/edit"
-                    className="flex items-center space-x-3 px-3 py-4 rounded-lg text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
-                  >
-                    <User className="h-5 w-5" />
-                    <span>プロフィール</span>
-                  </Link>
-                  <Link
-                    href="/api/auth/signout"
-                    className="flex items-center space-x-3 px-3 py-4 rounded-lg text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
-                  >
-                    <LogOut className="h-5 w-5" />
-                    <span>ログアウト</span>
-                  </Link>
+                  <SheetClose asChild>
+                    <Link
+                      href="/user/profile/edit"
+                      className="flex items-center space-x-3 px-3 py-4 rounded-lg text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
+                    >
+                      <User className="h-5 w-5" />
+                      <span>プロフィール</span>
+                    </Link>
+                  </SheetClose>
+                  <SheetClose asChild>
+                    <Link
+                      href="/api/auth/signout"
+                      className="flex items-center space-x-3 px-3 py-4 rounded-lg text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
+                    >
+                      <LogOut className="h-5 w-5" />
+                      <span>ログアウト</span>
+                    </Link>
+                  </SheetClose>
                 </div>
               )}
             </SheetContent>
