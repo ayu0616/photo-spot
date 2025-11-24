@@ -63,20 +63,37 @@ export const DetailedExifInfo: React.FC<DetailedExifInfoProps> = ({
         <CardTitle>詳細な撮影情報</CardTitle>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableBody>
-            {detailedInfo
-              .filter((item) => item.value !== "-")
-              .map((item) => (
-                <TableRow key={item.label}>
-                  <TableCell className="font-medium w-1/3">
-                    {item.label}
-                  </TableCell>
-                  <TableCell className="w-2/3">{item.value}</TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
+        {/* Desktop View */}
+        <div className="hidden md:block">
+          <Table>
+            <TableBody>
+              {detailedInfo
+                .filter((item) => item.value !== "-")
+                .map((item) => (
+                  <TableRow key={item.label}>
+                    <TableCell className="font-medium w-1/3">
+                      {item.label}
+                    </TableCell>
+                    <TableCell className="w-2/3">{item.value}</TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </div>
+
+        {/* Mobile View */}
+        <div className="block md:hidden space-y-4">
+          {detailedInfo
+            .filter((item) => item.value !== "-")
+            .map((item) => (
+              <div key={item.label} className="border-b pb-2 last:border-0">
+                <div className="text-xs text-muted-foreground mb-1">
+                  {item.label}
+                </div>
+                <div className="text-sm ml-2">{item.value}</div>
+              </div>
+            ))}
+        </div>
       </CardContent>
     </Card>
   );
