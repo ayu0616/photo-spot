@@ -7,14 +7,8 @@ import { formatToYYYYMMDD } from "@/lib/format-date";
 import { honoClient } from "@/lib/hono";
 import { TripScroller } from "./_components/trip-scroller";
 
-export default async function TripPage({
-  params,
-  searchParams,
-}: PageProps<"/trip/[id]">) {
-  const { id } = await params;
-  const { postId: rawPostId } = await searchParams;
-  const postId = Array.isArray(rawPostId) ? rawPostId[0] : rawPostId;
-
+const getTrip = async (id: string) => {
+  "use cache";
   const res = await honoClient.trip[":id"].$get({
     param: { id },
   });
@@ -26,7 +20,18 @@ export default async function TripPage({
     throw new Error("Failed to fetch trip");
   }
 
-  const trip = await res.json();
+  return res.json();
+};
+
+export default async function TripPage({
+  params,
+  searchParams,
+}: PageProps<"/trip/[id]">) {
+  const { id } = await params;
+  const { postId: rawPostId } = await searchParams;
+  const postId = Array.isArray(rawPostId) ? rawPostId[0] : rawPostId;
+
+  const trip = await getTrip(id);
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
