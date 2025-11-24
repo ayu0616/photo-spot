@@ -125,7 +125,9 @@ export default async function PostDetailPage({
             />
           </div>
 
-          <p className="text-base mb-6 mt-6">{post.description}</p>
+          <p className="text-base mb-6 mt-6 whitespace-pre-wrap">
+            {post.description}
+          </p>
 
           {/* 詳細な撮影情報 */}
           <DetailedExifInfo photo={post.photo} />
