@@ -40,6 +40,25 @@ export const formatFocalLength = (value: string | null | undefined): string => {
   if (value.includes("mm")) {
     return value;
   }
+
+  // Handle fractional values like "6249513/1000000"
+  if (value.includes("/")) {
+    const parts = value.split("/");
+    if (parts.length === 2) {
+      const numerator = parseFloat(parts[0]);
+      const denominator = parseFloat(parts[1]);
+      if (
+        !Number.isNaN(numerator) &&
+        !Number.isNaN(denominator) &&
+        denominator !== 0
+      ) {
+        const result = numerator / denominator;
+        // Format to max 2 decimal places, removing trailing zeros if integer
+        return `${parseFloat(result.toFixed(2))}mm`;
+      }
+    }
+  }
+
   // Try to parse as a number and add "mm"
   const num = parseFloat(value);
   if (!Number.isNaN(num)) {
