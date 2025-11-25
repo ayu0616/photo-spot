@@ -57,7 +57,7 @@ resource "google_cloud_run_v2_service" "default" {
       }
       env {
         name  = "NEXT_PUBLIC_API_BASE_URL"
-        value = "https://${var.service_name}-${var.region}.run.app"
+        value = var.next_public_api_base_url
       }
     }
   }
