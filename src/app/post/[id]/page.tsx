@@ -105,12 +105,12 @@ export default async function PostDetailPage({
           )}
         </CardHeader>
         <CardContent>
-          <div className="relative w-full aspect-video mb-6">
+          <div className="w-full mb-6">
             <Image
               src={post.photo.url}
               alt={post.description || "Post Image"}
               fill
-              className="object-contain rounded-lg"
+              className="object-contain rounded-lg w-full max-h-[65svh] static!"
             />
           </div>
 
