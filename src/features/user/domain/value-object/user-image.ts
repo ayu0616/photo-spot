@@ -1,3 +1,3 @@
-import { Url } from "@/features/common/common/value-object/url";
+import { Url } from "@/features/common/domain/value-object/url";
 
 export class UserImage extends Url {}

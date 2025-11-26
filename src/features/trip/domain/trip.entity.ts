@@ -1,5 +1,5 @@
-import type { CreatedAt } from "@/features/common/common/value-object/created-at";
-import type { UpdatedAt } from "@/features/common/common/value-object/updated-at";
+import type { CreatedAt } from "@/features/common/domain/value-object/created-at";
+import type { UpdatedAt } from "@/features/common/domain/value-object/updated-at";
 import type { UserId } from "@/features/user/domain/value-object/user-id";
 import type { TripDescription } from "./value-object/trip-description";
 import type { TripId } from "./value-object/trip-id";

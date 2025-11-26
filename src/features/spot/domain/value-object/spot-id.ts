@@ -1,3 +1,3 @@
-import { UUID } from "@/features/common/common/value-object/uuid";
+import { UUID } from "@/features/common/domain/value-object/uuid";
 
 export class SpotId extends UUID {}

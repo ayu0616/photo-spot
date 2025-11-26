@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { CreatedAt } from "../common/common/value-object/created-at";
-import { UpdatedAt } from "../common/common/value-object/updated-at";
+import { CreatedAt } from "../common/domain/value-object/created-at";
+import { UpdatedAt } from "../common/domain/value-object/updated-at";
 import { TripEntity } from "../trip/domain/trip.entity";
 import { TripDescription } from "../trip/domain/value-object/trip-description";
 import { TripId } from "../trip/domain/value-object/trip-id";

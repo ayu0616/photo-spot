@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { StringValue } from "@/features/common/common/value-object/string";
+import { StringValue } from "@/features/common/domain/value-object/string";
 
 export class UserEmail extends StringValue {
   constructor(value: string) {

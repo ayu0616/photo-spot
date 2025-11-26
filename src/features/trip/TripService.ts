@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/constants/types";
-import { CreatedAt } from "../common/common/value-object/created-at";
-import { UpdatedAt } from "../common/common/value-object/updated-at";
+import { CreatedAt } from "../common/domain/value-object/created-at";
+import { UpdatedAt } from "../common/domain/value-object/updated-at";
 import { UserId } from "../user/domain/value-object/user-id";
 import { TripEntity } from "./domain/trip.entity";
 import type { ITripRepository } from "./domain/trip-repository.interface";

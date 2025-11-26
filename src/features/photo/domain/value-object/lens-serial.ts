@@ -1,3 +1,3 @@
-import { StringValue } from "@/features/common/common/value-object/string";
+import { StringValue } from "@/features/common/domain/value-object/string";
 
 export class LensSerial extends StringValue {}
