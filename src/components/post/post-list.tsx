@@ -10,7 +10,7 @@ import type React from "react";
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import { Button } from "@/components/ui/button";
-import type { PostWithRelationsDto } from "@/dto/post-dto";
+import type { PostWithRelationsDto } from "@/features/post/PostDto";
 import { honoClient } from "@/lib/hono"; // Import honoClient
 import { PostCard } from "./post-card";
 

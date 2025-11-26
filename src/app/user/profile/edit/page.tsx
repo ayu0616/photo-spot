@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { UserDto } from "@/dto/user-dto";
+import type { UserDto } from "@/features/user/UserDto";
 import { honoClient } from "@/lib/hono";
 
 const fetchUserProfile = async (): Promise<UserDto> => {

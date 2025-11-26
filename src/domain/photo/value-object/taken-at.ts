@@ -1,3 +1,0 @@
-import { DateTime } from "../../common/value-object/date-time";
-
-export class TakenAt extends DateTime {}

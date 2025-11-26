@@ -2,28 +2,28 @@ import { Container } from "inversify";
 import { TYPES } from "@/constants/types";
 import "reflect-metadata";
 import type { Bucket } from "@google-cloud/storage"; // Import Bucket type
-// Controllers
-import { ImageController } from "@/controller/imageController";
-import { MasterController } from "@/controller/masterController";
-import { PostController } from "@/controller/postController";
-import { SpotController } from "@/controller/spotController";
-import { UserController } from "@/controller/userController"; // New
-import type { IPhotoRepository } from "@/domain/photo/photo-repository.interface";
-import type { IPostRepository } from "@/domain/post/post-repository.interface";
-import type { ISpotRepository } from "@/domain/spot/spot-repository.interface";
-import type { IUserRepository } from "@/domain/user/user-repository.interface";
-import { bucket } from "@/lib/gcsClient"; // Import the bucket instance
+import { MasterController } from "@/features/master/MasterController";
 // Repositories
-import { MasterRepository } from "@/repositories/masterRepository";
-import { PhotoRepository } from "@/repositories/photoRepository";
-import { PostRepository } from "@/repositories/postRepository";
-import { SpotRepository } from "@/repositories/spotRepository";
-import { StorageRepository } from "@/repositories/storageRepository";
-import { UserRepository } from "@/repositories/userRepository"; // New
+import { MasterRepository } from "@/features/master/MasterRepository";
+import type { IPhotoRepository } from "@/features/photo/domain/photo-repository.interface";
+// Controllers
+import { ImageController } from "@/features/photo/ImageController";
 // Services
-import { ImageStorageService } from "@/services/imageStorageService";
-import { PostService } from "@/services/postService";
-import { type IUserService, UserService } from "@/services/userService"; // New
+import { ImageStorageService } from "@/features/photo/ImageStorageService";
+import { PhotoRepository } from "@/features/photo/PhotoRepository";
+import { StorageRepository } from "@/features/photo/StorageRepository";
+import type { IPostRepository } from "@/features/post/domain/post-repository.interface";
+import { PostController } from "@/features/post/PostController";
+import { PostRepository } from "@/features/post/PostRepository";
+import { PostService } from "@/features/post/PostService";
+import type { ISpotRepository } from "@/features/spot/domain/spot-repository.interface";
+import { SpotController } from "@/features/spot/SpotController";
+import { SpotRepository } from "@/features/spot/SpotRepository";
+import type { IUserRepository } from "@/features/user/domain/user-repository.interface";
+import { UserController } from "@/features/user/UserController";
+import { UserRepository } from "@/features/user/UserRepository";
+import { type IUserService, UserService } from "@/features/user/UserService";
+import { bucket } from "@/lib/gcsClient"; // Import the bucket instance
 
 const container = new Container();
 
@@ -36,31 +36,31 @@ container
   .bind<StorageRepository>(TYPES.StorageRepository)
   .to(StorageRepository);
 container.bind<Bucket>(TYPES.Bucket).toConstantValue(bucket); // Bind the GCS bucket instance
-container.bind<IUserRepository>(TYPES.UserRepository).to(UserRepository); // New
+container.bind<IUserRepository>(TYPES.UserRepository).to(UserRepository);
 
 // Bind Services
 container
   .bind<ImageStorageService>(TYPES.ImageStorageService)
   .to(ImageStorageService);
 container.bind<PostService>(TYPES.PostService).to(PostService);
-container.bind<IUserService>(TYPES.UserService).to(UserService); // New
+container.bind<IUserService>(TYPES.UserService).to(UserService);
 
 // Bind Controllers
 container.bind<ImageController>(TYPES.ImageController).to(ImageController);
 container.bind<MasterController>(TYPES.MasterController).to(MasterController);
 container.bind<PostController>(TYPES.PostController).to(PostController);
 container.bind<SpotController>(TYPES.SpotController).to(SpotController);
-container.bind<UserController>(TYPES.UserController).to(UserController); // New
+container.bind<UserController>(TYPES.UserController).to(UserController);
 
 // Bind Trip
-import type { ITripRepository } from "@/domain/trip/trip-repository.interface";
-import { TripRepository } from "@/repositories/tripRepository";
-import { TripService } from "@/services/tripService";
+import type { ITripRepository } from "@/features/trip/domain/trip-repository.interface";
+import { TripRepository } from "@/features/trip/TripRepository";
+import { TripService } from "@/features/trip/TripService";
 
 container.bind<ITripRepository>(TYPES.TripRepository).to(TripRepository);
 container.bind<TripService>(TYPES.TripService).to(TripService);
 
-import { TripController } from "@/controller/tripController";
+import { TripController } from "@/features/trip/TripController";
 
 container.bind<TripController>(TYPES.TripController).to(TripController);
 
