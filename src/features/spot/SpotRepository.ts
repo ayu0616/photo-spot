@@ -43,8 +43,6 @@ export class SpotRepository implements ISpotRepository {
 
   async findAll(): Promise<SpotEntity[]> {
     const spotDtos = await db.query.SpotsTable.findMany();
-    return spotDtos.map((dto: typeof SpotsTable.$inferSelect) =>
-      SpotDtoMapper.toEntity(dto),
-    );
+    return spotDtos.map((dto) => SpotDtoMapper.toEntity(dto));
   }
 }
