@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Suspense } from "react";
 import { Header } from "@/components/header";
+import { Spinner } from "@/components/ui/spinner";
 import { SessionProvider } from "@/provider/session-provider";
 import { TanstackQueryProvider } from "@/provider/tanstack-query-provider";
 
@@ -34,7 +35,13 @@ export default function RootLayout({
             className={`${geistSans.variable} ${geistMono.variable} antialiased`}
           >
             <Header />
-            <Suspense fallback="loading...">
+            <Suspense
+              fallback={
+                <div className="flex h-[calc(100vh-4rem)] w-full items-center justify-center">
+                  <Spinner size={48} className="text-primary" />
+                </div>
+              }
+            >
               <main>{children}</main>
             </Suspense>
           </body>
