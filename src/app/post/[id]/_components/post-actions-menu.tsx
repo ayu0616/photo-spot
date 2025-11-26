@@ -49,7 +49,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import type { PostWithRelationsDto } from "@/dto/post-dto";
+import type { PostWithRelationsDto } from "@/features/post/PostDto";
 import { useCities } from "@/hooks/use-cities";
 import { usePrefectures } from "@/hooks/use-prefectures";
 import { useSpots } from "@/hooks/use-spots";

@@ -1,5 +1,5 @@
 import React from "react";
-import type { PhotoForPostDto } from "@/dto/post-dto";
+import type { PhotoForPostDto } from "@/features/post/PostDto";
 import {
   formatAperture,
   formatFocalLength,

@@ -1,7 +1,7 @@
 import type React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import type { PhotoForPostDto } from "@/dto/post-dto";
+import type { PhotoForPostDto } from "@/features/post/PostDto";
 import { formatDateTime } from "@/lib/format-date";
 import {
   formatAperture,

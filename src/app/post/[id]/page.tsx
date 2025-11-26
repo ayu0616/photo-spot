@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { PostWithRelationsDto } from "@/dto/post-dto";
+import type { PostWithRelationsDto } from "@/features/post/PostDto";
 import { formatToYYYYMMDD } from "@/lib/format-date";
 import { honoClient } from "@/lib/hono";
 import { BasicExifInfo } from "./_components/basic-exif-info";
