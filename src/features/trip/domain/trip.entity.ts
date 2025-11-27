@@ -1,8 +1,8 @@
-import type { CreatedAt } from "@/features/common/domain/value-object/created-at";
-import type { UpdatedAt } from "@/features/common/domain/value-object/updated-at";
+import { CreatedAt } from "@/features/common/domain/value-object/created-at";
+import { UpdatedAt } from "@/features/common/domain/value-object/updated-at";
 import type { UserId } from "@/features/user/domain/value-object/user-id";
 import type { TripDescription } from "./value-object/trip-description";
-import type { TripId } from "./value-object/trip-id";
+import { TripId } from "./value-object/trip-id";
 import type { TripTitle } from "./value-object/trip-title";
 
 export class TripEntity {
@@ -13,7 +13,7 @@ export class TripEntity {
   private readonly _createdAt: CreatedAt;
   private _updatedAt: UpdatedAt;
 
-  constructor(
+  private constructor(
     id: TripId,
     userId: UserId,
     title: TripTitle,
@@ -27,6 +27,28 @@ export class TripEntity {
     this._description = description;
     this._createdAt = createdAt;
     this._updatedAt = updatedAt;
+  }
+
+  static create(
+    userId: UserId,
+    title: TripTitle,
+    description: TripDescription,
+  ): TripEntity {
+    const id = TripId.create();
+    const createdAt = CreatedAt.create();
+    const updatedAt = UpdatedAt.create();
+    return new TripEntity(id, userId, title, description, createdAt, updatedAt);
+  }
+
+  static from(
+    id: TripId,
+    userId: UserId,
+    title: TripTitle,
+    description: TripDescription,
+    createdAt: CreatedAt,
+    updatedAt: UpdatedAt,
+  ): TripEntity {
+    return new TripEntity(id, userId, title, description, createdAt, updatedAt);
   }
 
   get id(): TripId {
@@ -55,9 +77,11 @@ export class TripEntity {
 
   updateTitle(title: TripTitle): void {
     this._title = title;
+    this._updatedAt = UpdatedAt.create();
   }
 
   updateDescription(description: TripDescription): void {
     this._description = description;
+    this._updatedAt = UpdatedAt.create();
   }
 }

@@ -43,7 +43,7 @@ export class TripRepository implements ITripRepository {
       return null;
     }
 
-    return new TripEntity(
+    return TripEntity.from(
       new TripId(trip.id),
       new UserId(trip.userId),
       new TripTitle(trip.title),
@@ -58,16 +58,15 @@ export class TripRepository implements ITripRepository {
       orderBy: (trips, { desc }) => [desc(trips.createdAt)],
     });
 
-    return trips.map(
-      (trip) =>
-        new TripEntity(
-          new TripId(trip.id),
-          new UserId(trip.userId),
-          new TripTitle(trip.title),
-          new TripDescription(trip.description),
-          new CreatedAt(trip.createdAt),
-          new UpdatedAt(trip.updatedAt),
-        ),
+    return trips.map((trip) =>
+      TripEntity.from(
+        new TripId(trip.id),
+        new UserId(trip.userId),
+        new TripTitle(trip.title),
+        new TripDescription(trip.description),
+        new CreatedAt(trip.createdAt),
+        new UpdatedAt(trip.updatedAt),
+      ),
     );
   }
 

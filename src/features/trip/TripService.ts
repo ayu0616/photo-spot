@@ -1,12 +1,9 @@
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/constants/types";
-import { CreatedAt } from "../common/domain/value-object/created-at";
-import { UpdatedAt } from "../common/domain/value-object/updated-at";
 import { UserId } from "../user/domain/value-object/user-id";
 import { TripEntity } from "./domain/trip.entity";
 import type { ITripRepository } from "./domain/trip-repository.interface";
 import { TripDescription } from "./domain/value-object/trip-description";
-import { TripId } from "./domain/value-object/trip-id";
 import { TripTitle } from "./domain/value-object/trip-title";
 
 @injectable()
@@ -22,21 +19,11 @@ export class TripService {
     title: string,
     description: string | null,
   ): Promise<TripEntity> {
-    const tripId = new TripId(crypto.randomUUID());
     const userIdVo = new UserId(userId);
     const tripTitle = new TripTitle(title);
     const tripDescription = new TripDescription(description);
-    const createdAt = new CreatedAt(new Date());
-    const updatedAt = new UpdatedAt(new Date());
 
-    const trip = new TripEntity(
-      tripId,
-      userIdVo,
-      tripTitle,
-      tripDescription,
-      createdAt,
-      updatedAt,
-    );
+    const trip = TripEntity.create(userIdVo, tripTitle, tripDescription);
 
     await this.tripRepository.save(trip);
 

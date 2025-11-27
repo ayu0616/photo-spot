@@ -3,11 +3,8 @@ import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 import { db } from "@/db";
 import { TripsTable } from "@/db/schema";
 import { UserId } from "@/features/user/domain/value-object/user-id";
-import { CreatedAt } from "../common/domain/value-object/created-at";
-import { UpdatedAt } from "../common/domain/value-object/updated-at";
 import { TripEntity } from "../trip/domain/trip.entity";
 import { TripDescription } from "../trip/domain/value-object/trip-description";
-import { TripId } from "../trip/domain/value-object/trip-id";
 import { TripTitle } from "../trip/domain/value-object/trip-title";
 import { TripRepository } from "./TripRepository";
 
@@ -42,13 +39,10 @@ describe("TripRepository", () => {
   // ...
 
   it("should save a trip", async () => {
-    const trip = new TripEntity(
-      new TripId(crypto.randomUUID()),
+    const trip = TripEntity.create(
       new UserId(crypto.randomUUID()),
       new TripTitle("Test Trip"),
       new TripDescription("Test Description"),
-      new CreatedAt(new Date()),
-      new UpdatedAt(new Date()),
     );
 
     await tripRepository.save(trip);

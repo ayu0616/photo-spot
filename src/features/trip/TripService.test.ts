@@ -1,10 +1,7 @@
 import "reflect-metadata";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { CreatedAt } from "../common/domain/value-object/created-at";
-import { UpdatedAt } from "../common/domain/value-object/updated-at";
 import { TripEntity } from "../trip/domain/trip.entity";
 import { TripDescription } from "../trip/domain/value-object/trip-description";
-import { TripId } from "../trip/domain/value-object/trip-id";
 import { TripTitle } from "../trip/domain/value-object/trip-title";
 import { UserId } from "../user/domain/value-object/user-id";
 import { TripService } from "./TripService";
@@ -42,38 +39,28 @@ describe("TripService", () => {
   });
 
   it("should get a trip by id", async () => {
-    const id = crypto.randomUUID();
-    const userId = crypto.randomUUID();
-    const trip = new TripEntity(
-      new TripId(id),
-      new UserId(userId),
+    const trip = TripEntity.create(
+      UserId.create(),
       new TripTitle("Test Trip"),
       new TripDescription("Test Description"),
-      new CreatedAt(new Date()),
-      new UpdatedAt(new Date()),
     );
     mockTripRepository.findById.mockResolvedValue(trip);
 
-    const result = await tripService.getTrip(id);
+    const result = await tripService.getTrip(trip.id.value);
 
-    expect(mockTripRepository.findById).toHaveBeenCalledWith(id);
+    expect(mockTripRepository.findById).toHaveBeenCalledWith(trip.id.value);
     expect(result).toBe(trip);
   });
 
   it("should update a trip", async () => {
-    const id = crypto.randomUUID();
-    const userId = crypto.randomUUID();
-    const trip = new TripEntity(
-      new TripId(id),
-      new UserId(userId),
+    const trip = TripEntity.create(
+      UserId.create(),
       new TripTitle("Old Title"),
       new TripDescription("Old Description"),
-      new CreatedAt(new Date()),
-      new UpdatedAt(new Date()),
     );
     mockTripRepository.findById.mockResolvedValue(trip);
 
-    await tripService.updateTrip(id, "New Title", "New Description");
+    await tripService.updateTrip(trip.id.value, "New Title", "New Description");
 
     expect(mockTripRepository.save).toHaveBeenCalledTimes(1);
     const savedTrip = mockTripRepository.save.mock.calls[0][0];
@@ -82,8 +69,13 @@ describe("TripService", () => {
   });
 
   it("should delete a trip", async () => {
-    const id = crypto.randomUUID();
-    await tripService.deleteTrip(id);
-    expect(mockTripRepository.delete).toHaveBeenCalledWith(id);
+    const trip = TripEntity.create(
+      UserId.create(),
+      new TripTitle("Test Trip"),
+      new TripDescription("Test Description"),
+    );
+    mockTripRepository.findById.mockResolvedValue(trip);
+    await tripService.deleteTrip(trip.id.value);
+    expect(mockTripRepository.delete).toHaveBeenCalledWith(trip.id.value);
   });
 });
