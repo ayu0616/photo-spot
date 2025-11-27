@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { CreatedAt } from "@/features/common/domain/value-object/created-at";
+import { UpdatedAt } from "@/features/common/domain/value-object/updated-at";
 import { PhotoId } from "../photo/domain/value-object/photo-id";
 import { SpotId } from "../spot/domain/value-object/spot-id";
 import { TripId } from "../trip/domain/value-object/trip-id";
@@ -7,7 +8,6 @@ import { UserId } from "../user/domain/value-object/user-id";
 import { PostEntity } from "./domain/post.entity";
 import { PostDescription } from "./domain/value-object/post-description";
 import { PostId } from "./domain/value-object/post-id";
-import { UpdatedAt } from "./domain/value-object/updated-at";
 
 export const PostDtoSchema = z.object({
   id: z.string().uuid(),

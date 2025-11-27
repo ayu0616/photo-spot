@@ -1,11 +1,11 @@
 import type { CreatedAt } from "@/features/common/domain/value-object/created-at";
+import { UpdatedAt } from "@/features/common/domain/value-object/updated-at";
 import type { PhotoId } from "../../photo/domain/value-object/photo-id";
 import type { SpotId } from "../../spot/domain/value-object/spot-id";
 import type { TripId } from "../../trip/domain/value-object/trip-id";
 import type { UserId } from "../../user/domain/value-object/user-id";
 import type { PostDescription } from "./value-object/post-description";
 import type { PostId } from "./value-object/post-id";
-import { UpdatedAt } from "./value-object/updated-at";
 
 export class PostEntity {
   private readonly _id: PostId;
