@@ -25,6 +25,6 @@ export const SpotDtoMapper = {
     const id = new SpotId(dto.id);
     const name = new SpotName(dto.name);
     const cityId = new CityId(dto.cityId);
-    return new SpotEntity(id, name, cityId);
+    return SpotEntity.from(id, name, cityId);
   },
 };

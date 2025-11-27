@@ -8,7 +8,6 @@ import type { ImageStorageService } from "@/features/photo/ImageStorageService";
 import { SpotEntity } from "@/features/spot/domain/spot.entity";
 import type { ISpotRepository } from "@/features/spot/domain/spot-repository.interface";
 import { CityId } from "@/features/spot/domain/value-object/city-id";
-import { SpotId } from "@/features/spot/domain/value-object/spot-id";
 import { SpotName } from "@/features/spot/domain/value-object/spot-name";
 import { UserId } from "@/features/user/domain/value-object/user-id";
 import { PhotoEntity } from "../photo/domain/photo.entity";
@@ -70,10 +69,9 @@ export class PostService {
       );
 
       if (!foundSpot) {
-        const spotId = new SpotId(crypto.randomUUID());
         const spotName = new SpotName(params.spotName);
         const cityId = new CityId(params.cityId);
-        foundSpot = new SpotEntity(spotId, spotName, cityId);
+        foundSpot = SpotEntity.create(spotName, cityId);
         await this.spotRepository.save(foundSpot);
       }
       spot = foundSpot;
@@ -195,10 +193,9 @@ export class PostService {
       );
 
       if (!foundSpot) {
-        const spotId = new SpotId(crypto.randomUUID());
         const spotName = new SpotName(params.spotName);
         const cityId = new CityId(params.cityId);
-        foundSpot = new SpotEntity(spotId, spotName, cityId);
+        foundSpot = SpotEntity.create(spotName, cityId);
         await this.spotRepository.save(foundSpot);
       }
       spot = foundSpot;
