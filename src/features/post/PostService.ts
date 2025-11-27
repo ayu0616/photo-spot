@@ -1,6 +1,5 @@
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/constants/types";
-import { UpdatedAt } from "@/features/common/domain/value-object/updated-at";
 import type { IPhotoRepository } from "@/features/photo/domain/photo-repository.interface";
 import { PhotoId } from "@/features/photo/domain/value-object/photo-id";
 import { PhotoUrl } from "@/features/photo/domain/value-object/photo-url";
@@ -221,21 +220,10 @@ export class PostService {
       spot = existingSpot;
     }
 
-    const description = new PostDescription(params.description);
-    const updatedAt = UpdatedAt.create();
+    post.updateDescription(new PostDescription(params.description));
+    post.updateSpotId(spot.id);
 
-    const updatedPost = PostEntity.from(
-      post.id,
-      post.userId,
-      description,
-      spot.id,
-      post.photoId,
-      post.tripId,
-      post.createdAt,
-      updatedAt,
-    );
-
-    await this.postRepository.save(updatedPost);
-    return updatedPost;
+    await this.postRepository.save(post);
+    return post;
   }
 }
