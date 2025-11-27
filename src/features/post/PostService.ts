@@ -1,5 +1,6 @@
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/constants/types";
+import { CreatedAt } from "@/features/common/domain/value-object/created-at";
 import type { IPhotoRepository } from "@/features/photo/domain/photo-repository.interface";
 import { PhotoId } from "@/features/photo/domain/value-object/photo-id";
 import { PhotoUrl } from "@/features/photo/domain/value-object/photo-url";
@@ -13,7 +14,6 @@ import { UserId } from "@/features/user/domain/value-object/user-id";
 import { PhotoEntity } from "../photo/domain/photo.entity";
 import { PostEntity } from "./domain/post.entity";
 import type { IPostRepository } from "./domain/post-repository.interface";
-import { CreatedAt } from "./domain/value-object/created-at";
 import { PostDescription } from "./domain/value-object/post-description";
 import { PostId } from "./domain/value-object/post-id";
 import { UpdatedAt } from "./domain/value-object/updated-at";
