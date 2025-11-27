@@ -19,7 +19,7 @@ export class UUID {
   }
 
   static isValid(value: string): boolean {
-    return z.string().uuid().safeParse(value).success;
+    return z.uuid().safeParse(value).success;
   }
 
   static create(): UUID {

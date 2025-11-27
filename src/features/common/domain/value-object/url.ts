@@ -19,6 +19,6 @@ export class Url {
   }
 
   static isValid(value: string): boolean {
-    return z.string().url().safeParse(value).success;
+    return z.url().safeParse(value).success;
   }
 }
