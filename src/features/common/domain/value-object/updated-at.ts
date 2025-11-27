@@ -1,3 +1,3 @@
-export class UpdatedAt {
-  constructor(readonly value: Date) {}
-}
+import { DateTime } from "./date-time";
+
+export class UpdatedAt extends DateTime {}
