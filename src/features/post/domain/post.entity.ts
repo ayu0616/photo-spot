@@ -1,11 +1,11 @@
-import type { CreatedAt } from "@/features/common/domain/value-object/created-at";
+import { CreatedAt } from "@/features/common/domain/value-object/created-at";
 import { UpdatedAt } from "@/features/common/domain/value-object/updated-at";
 import type { PhotoId } from "../../photo/domain/value-object/photo-id";
 import type { SpotId } from "../../spot/domain/value-object/spot-id";
 import type { TripId } from "../../trip/domain/value-object/trip-id";
 import type { UserId } from "../../user/domain/value-object/user-id";
 import type { PostDescription } from "./value-object/post-description";
-import type { PostId } from "./value-object/post-id";
+import { PostId } from "./value-object/post-id";
 
 export class PostEntity {
   private readonly _id: PostId;
@@ -17,7 +17,7 @@ export class PostEntity {
   private readonly _createdAt: CreatedAt;
   private _updatedAt: UpdatedAt;
 
-  constructor(
+  private constructor(
     id: PostId,
     userId: UserId,
     description: PostDescription,
@@ -35,6 +35,50 @@ export class PostEntity {
     this._tripId = tripId;
     this._createdAt = createdAt;
     this._updatedAt = updatedAt;
+  }
+
+  static create(
+    userId: UserId,
+    description: PostDescription,
+    spotId: SpotId,
+    photoId: PhotoId,
+    tripId: TripId | null,
+  ) {
+    const id = PostId.create();
+    const createdAt = CreatedAt.create();
+    const updatedAt = UpdatedAt.create();
+    return new PostEntity(
+      id,
+      userId,
+      description,
+      spotId,
+      photoId,
+      tripId,
+      createdAt,
+      updatedAt,
+    );
+  }
+
+  static from(
+    id: PostId,
+    userId: UserId,
+    description: PostDescription,
+    spotId: SpotId,
+    photoId: PhotoId,
+    tripId: TripId | null,
+    createdAt: CreatedAt,
+    updatedAt: UpdatedAt,
+  ): PostEntity {
+    return new PostEntity(
+      id,
+      userId,
+      description,
+      spotId,
+      photoId,
+      tripId,
+      createdAt,
+      updatedAt,
+    );
   }
 
   get id(): PostId {
@@ -75,21 +119,21 @@ export class PostEntity {
 
   updateDescription(description: PostDescription): void {
     this._description = description;
-    this._updatedAt = new UpdatedAt(new Date());
+    this._updatedAt = UpdatedAt.create();
   }
 
   updateSpotId(spotId: SpotId): void {
     this._spotId = spotId;
-    this._updatedAt = new UpdatedAt(new Date());
+    this._updatedAt = UpdatedAt.create();
   }
 
   updatePhotoId(photoId: PhotoId): void {
     this._photoId = photoId;
-    this._updatedAt = new UpdatedAt(new Date());
+    this._updatedAt = UpdatedAt.create();
   }
 
   updateTripId(tripId: TripId | null): void {
     this._tripId = tripId;
-    this._updatedAt = new UpdatedAt(new Date());
+    this._updatedAt = UpdatedAt.create();
   }
 }

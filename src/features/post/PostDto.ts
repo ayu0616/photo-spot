@@ -45,7 +45,7 @@ export const PostDtoMapper = {
     const tripId = dto.tripId ? new TripId(dto.tripId) : null;
     const createdAt = new CreatedAt(dto.createdAt);
     const updatedAt = new UpdatedAt(dto.updatedAt);
-    return new PostEntity(
+    return PostEntity.from(
       id,
       userId,
       description,

@@ -1,6 +1,5 @@
 import { inject, injectable } from "inversify";
 import { TYPES } from "@/constants/types";
-import { CreatedAt } from "@/features/common/domain/value-object/created-at";
 import { UpdatedAt } from "@/features/common/domain/value-object/updated-at";
 import type { IPhotoRepository } from "@/features/photo/domain/photo-repository.interface";
 import { PhotoId } from "@/features/photo/domain/value-object/photo-id";
@@ -16,7 +15,6 @@ import { PhotoEntity } from "../photo/domain/photo.entity";
 import { PostEntity } from "./domain/post.entity";
 import type { IPostRepository } from "./domain/post-repository.interface";
 import { PostDescription } from "./domain/value-object/post-description";
-import { PostId } from "./domain/value-object/post-id";
 import type { PostWithRelationsDto } from "./PostDto";
 
 interface CreatePostParams {
@@ -125,21 +123,15 @@ export class PostService {
     );
     await this.photoRepository.save(photo);
 
-    const postId = new PostId(crypto.randomUUID());
     const userId = new UserId(params.userId);
     const description = new PostDescription(params.description);
-    const createdAt = new CreatedAt(new Date());
-    const updatedAt = new UpdatedAt(new Date());
 
-    const post = new PostEntity(
-      postId,
+    const post = PostEntity.create(
       userId,
       description,
       spot.id,
       photo.id,
       null, // tripId
-      createdAt,
-      updatedAt,
     );
     await this.postRepository.save(post);
 
@@ -233,9 +225,9 @@ export class PostService {
     }
 
     const description = new PostDescription(params.description);
-    const updatedAt = new UpdatedAt(new Date());
+    const updatedAt = UpdatedAt.create();
 
-    const updatedPost = new PostEntity(
+    const updatedPost = PostEntity.from(
       post.id,
       post.userId,
       description,
