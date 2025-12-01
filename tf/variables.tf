@@ -86,3 +86,9 @@ variable "next_public_api_base_url" {
   type        = string
   default     = "http://localhost:3000"
 }
+
+variable "google_fonts_api_key" {
+  description = "The API key for Google Fonts."
+  type        = string
+  sensitive   = true
+}

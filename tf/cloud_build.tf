@@ -38,6 +38,7 @@ resource "google_cloudbuild_trigger" "cloud_run_trigger" {
         "--build-arg", "GCP_PROJECT_ID=${var.project_id}",
         "--build-arg", "GCS_BUCKET_NAME=${var.cloud_storage_bucket_name}",
         "--build-arg", "NEXT_PUBLIC_API_BASE_URL=${var.next_public_api_base_url}",
+        "--build-arg", "GOOGLE_FONTS_API_KEY=${var.google_fonts_api_key}",
         "."
       ]
     }

@@ -59,6 +59,10 @@ resource "google_cloud_run_v2_service" "default" {
         name  = "NEXT_PUBLIC_API_BASE_URL"
         value = var.next_public_api_base_url
       }
+      env {
+        name  = "GOOGLE_FONTS_API_KEY"
+        value = var.google_fonts_api_key
+      }
     }
   }
 
