@@ -62,7 +62,7 @@ export default async function PostDetailPage({
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <Card className="mb-8">
+      <Card className="mb-8" id="post-share-card">
         <CardHeader>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">

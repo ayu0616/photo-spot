@@ -1,7 +1,8 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Edit, MoreVertical, Trash } from "lucide-react";
+import { toBlob } from "html-to-image";
+import { Edit, MoreVertical, Share, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -115,6 +116,45 @@ export function PostActionsMenu({ post, currentUserId }: PostActionsMenuProps) {
     }
   };
 
+  const handleShare = async () => {
+    if (!navigator.share) {
+      alert("お使いのブラウザは共有機能をサポートしていません。");
+      return;
+    }
+
+    const element = document.getElementById("post-share-card");
+    if (!element) {
+      console.error("Element not found");
+      return;
+    }
+
+    try {
+      const blob = await toBlob(element, {
+        backgroundColor: "#ffffff", // 背景色を白に設定
+        pixelRatio: 2, // 高解像度のためにスケールアップ
+      });
+
+      if (!blob) {
+        console.error("Blob generation failed");
+        return;
+      }
+
+      const file = new File([blob], "post-image.png", { type: "image/png" });
+
+      try {
+        await navigator.share({
+          files: [file],
+          title: "Share Post",
+        });
+        console.log("Shared successfully");
+      } catch (error) {
+        console.error("Sharing failed", error);
+      }
+    } catch (error) {
+      console.error("Image generation failed", error);
+    }
+  };
+
   return (
     <>
       <DropdownMenu>
@@ -125,6 +165,13 @@ export function PostActionsMenu({ post, currentUserId }: PostActionsMenuProps) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
+          <DropdownMenuItem
+            className="flex items-center gap-2"
+            onClick={handleShare}
+          >
+            <Share className="h-4 w-4" />
+            <span>シェア</span>
+          </DropdownMenuItem>
           <DropdownMenuItem
             className="flex items-center gap-2"
             onClick={() => setIsEditDialogOpen(true)}
