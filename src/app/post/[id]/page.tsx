@@ -1,5 +1,4 @@
 import { MapPin, PlaneIcon } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { nextAuth } from "@/app/api/auth/[...nextAuth]/auth";
@@ -18,6 +17,7 @@ import { BasicExifInfo } from "./_components/basic-exif-info";
 import { DetailedExifInfo } from "./_components/detailed-exif-info";
 import { LocationInfo } from "./_components/location-info";
 import { PostActionsMenu } from "./_components/post-actions-menu";
+import { PostImage } from "./_components/post-image";
 
 const getPostDetail = async (
   id: string,
@@ -106,11 +106,9 @@ export default async function PostDetailPage({
         </CardHeader>
         <CardContent>
           <div className="w-full mb-6">
-            <Image
+            <PostImage
               src={post.photo.url}
               alt={post.description || "Post Image"}
-              fill
-              className="object-contain rounded-lg w-full max-h-[65svh] static!"
             />
           </div>
 
