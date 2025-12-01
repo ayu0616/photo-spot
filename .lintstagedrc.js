@@ -6,5 +6,8 @@
 module.exports = {
   "**/*.{js,ts,jsx,tsx,html,css,json,jsonc}":
     "bunx biome check --write --unsafe",
-  "**/*.{js,ts,jsx,tsx}": () => ["bunx tsc --noEmit", "bun run test"],
+  "**/*.{js,ts,jsx,tsx}|package.json": () => [
+    "bunx tsc --noEmit",
+    "bun run test",
+  ],
 };

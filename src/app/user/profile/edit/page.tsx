@@ -29,7 +29,11 @@ const updateUserName = async (name: string): Promise<UserDto> => {
   });
   if (!response.ok) {
     const errorData = await response.json();
-    throw new Error(errorData.error || "Failed to update user name");
+    const errorMessage =
+      typeof errorData.error === "string"
+        ? errorData.error
+        : JSON.stringify(errorData.error);
+    throw new Error(errorMessage || "Failed to update user name");
   }
   const user = await response.json();
   return {

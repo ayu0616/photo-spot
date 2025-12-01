@@ -142,7 +142,11 @@ export default function UploadPage() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "投稿の作成に失敗しました。");
+        const errorMessage =
+          typeof errorData.error === "string"
+            ? errorData.error
+            : JSON.stringify(errorData.error);
+        throw new Error(errorMessage || "投稿の作成に失敗しました。");
       }
 
       const result = await response.json();
