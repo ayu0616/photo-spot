@@ -8,13 +8,13 @@ import { PostCard } from "./post-card";
 
 interface PostListProps {
   allPosts: PostWithRelationsDto[];
-  fetchNextPage: () => Promise<unknown>;
-  hasNextPage: boolean | undefined;
-  isFetchingNextPage: boolean;
-  isLoading: boolean;
-  isError: boolean;
-  error: Error | null;
-  inViewRef: (node?: Element | null) => void;
+  fetchNextPage?: () => Promise<unknown>;
+  hasNextPage?: boolean;
+  isFetchingNextPage?: boolean;
+  isLoading?: boolean;
+  isError?: boolean;
+  error?: Error | null;
+  inViewRef?: (node?: Element | null) => void;
 }
 
 const Spinner: React.FC = () => (
@@ -53,7 +53,7 @@ export const PostList: React.FC<PostListProps> = ({
         ))}
       </div>
 
-      {hasNextPage && (
+      {hasNextPage && fetchNextPage && inViewRef && (
         <div ref={inViewRef} className="flex justify-center my-8">
           {isFetchingNextPage ? (
             <Spinner />
