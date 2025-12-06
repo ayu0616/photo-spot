@@ -15,6 +15,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { DatePicker } from "@/components/ui/date-picker";
 import {
   Form,
   FormControl,
@@ -213,7 +214,12 @@ export default function EditTripPage() {
                   <FormItem>
                     <FormLabel>開始日</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} />
+                      <DatePicker
+                        value={field.value ? new Date(field.value) : undefined}
+                        onChange={(date) =>
+                          field.onChange(date ? formatToYYYYMMDD(date) : "")
+                        }
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -226,7 +232,12 @@ export default function EditTripPage() {
                   <FormItem>
                     <FormLabel>終了日</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} />
+                      <DatePicker
+                        value={field.value ? new Date(field.value) : undefined}
+                        onChange={(date) =>
+                          field.onChange(date ? formatToYYYYMMDD(date) : "")
+                        }
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
