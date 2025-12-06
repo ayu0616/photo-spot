@@ -22,7 +22,6 @@ import { PostImage } from "./_components/post-image";
 const getPostDetail = async (
   id: string,
 ): Promise<PostWithRelationsDto | null> => {
-  "use cache";
   const res = await honoClient.post[":id"].$get({
     param: {
       id,

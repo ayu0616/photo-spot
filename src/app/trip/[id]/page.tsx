@@ -4,7 +4,6 @@ import { honoClient } from "@/lib/hono";
 import { TripScroller } from "./_components/trip-scroller";
 
 const getTrip = async (id: string) => {
-  "use cache";
   const res = await honoClient.trip[":id"].$get({
     param: { id },
   });
