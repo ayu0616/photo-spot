@@ -55,7 +55,9 @@ export default async function AdminTripsPage() {
             <TableBody>
               {trips.map((trip) => (
                 <TableRow key={trip.id}>
-                  <TableCell className="font-medium">{trip.title}</TableCell>
+                  <TableCell className="font-medium">
+                    <Link href={`/trip/${trip.id}`}>{trip.title}</Link>
+                  </TableCell>
                   <TableCell>{trip.description}</TableCell>
                   <TableCell>
                     {formatToYYYYMMDD(new Date(trip.createdAt))}
