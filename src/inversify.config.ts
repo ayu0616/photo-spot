@@ -60,7 +60,7 @@ import { TripService } from "@/features/trip/TripService";
 container.bind<ITripRepository>(TYPES.TripRepository).to(TripRepository);
 container.bind<TripService>(TYPES.TripService).to(TripService);
 
-import { TripController } from "@/features/trip/TripController";
+import { TripController } from "@/features/trip/trip.controller";
 
 container.bind<TripController>(TYPES.TripController).to(TripController);
 

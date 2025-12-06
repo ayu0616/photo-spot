@@ -8,7 +8,7 @@ import type { MasterController } from "@/features/master/MasterController";
 import type { ImageController } from "@/features/photo/ImageController";
 import type { PostController } from "@/features/post/PostController";
 import type { SpotController } from "@/features/spot/SpotController";
-import type { TripController } from "@/features/trip/TripController";
+import type { TripController } from "@/features/trip/trip.controller";
 import type { UserController } from "@/features/user/UserController";
 import { container } from "@/inversify.config";
 
