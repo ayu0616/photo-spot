@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { BIZ_UDPGothic, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Noto_Sans_JP } from "next/font/google";
 import { Suspense } from "react";
 import { Header } from "@/components/header";
 import { Spinner } from "@/components/ui/spinner";
@@ -18,10 +17,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const notoSansJP = Noto_Sans_JP({
-  variable: "--font-noto-sans-jp",
+const bizUDPGothic = BIZ_UDPGothic({
+  variable: "--font-biz-udpgothic",
   subsets: ["latin"],
   display: "swap",
+  weight: ["400", "700"],
 });
 
 export const metadata: Metadata = {
@@ -39,7 +39,7 @@ export default function RootLayout({
       <TanstackQueryProvider>
         <SessionProvider>
           <body
-            className={`${notoSansJP.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
+            className={`${bizUDPGothic.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
           >
             <Header />
             <Suspense
