@@ -10,12 +10,28 @@ import type { TripService } from "@/features/trip/TripService";
 const createTripSchema = z.object({
   title: z.string().min(1).max(255),
   description: z.string().max(255).optional(),
+  startedAt: z
+    .string()
+    .regex(/\d{4}-\d{2}-\d{2}/)
+    .optional(),
+  endedAt: z
+    .string()
+    .regex(/\d{4}-\d{2}-\d{2}/)
+    .optional(),
 });
 
 const updateTripSchema = z.object({
   title: z.string().min(1).max(255),
   description: z.string().max(255).optional(),
   postIds: z.array(z.string()).optional(),
+  startedAt: z
+    .string()
+    .regex(/\d{4}-\d{2}-\d{2}/)
+    .optional(),
+  endedAt: z
+    .string()
+    .regex(/\d{4}-\d{2}-\d{2}/)
+    .optional(),
 });
 
 @injectable()
@@ -84,11 +100,17 @@ export class TripController {
           return c.json({ error: "Forbidden" }, 403);
         }
 
-        const { title, description } = c.req.valid("json");
+        const { title, description, startedAt, endedAt } = c.req.valid("json");
         if (!user.id) {
           return c.json({ error: "User ID is missing" }, 400);
         }
-        await this.tripService.createTrip(user.id, title, description ?? null);
+        await this.tripService.createTrip(
+          user.id,
+          title,
+          description ?? null,
+          startedAt ?? null,
+          endedAt ?? null,
+        );
         return c.json({ message: "Trip created" }, 201);
       } catch (error) {
         console.error("Failed to create trip:", error);
@@ -104,8 +126,15 @@ export class TripController {
         }
 
         const id = c.req.param("id");
-        const { title, description, postIds } = c.req.valid("json");
-        await this.tripService.updateTrip(id, title, description ?? null);
+        const { title, description, postIds, startedAt, endedAt } =
+          c.req.valid("json");
+        await this.tripService.updateTrip(
+          id,
+          title,
+          description ?? null,
+          startedAt ?? null,
+          endedAt ?? null,
+        );
 
         if (postIds) {
           await this.postService.updatePostsTrip(id, postIds);

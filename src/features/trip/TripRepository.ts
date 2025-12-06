@@ -8,7 +8,9 @@ import { UpdatedAt } from "../common/domain/value-object/updated-at";
 import { TripEntity } from "./domain/trip.entity";
 import type { ITripRepository } from "./domain/trip-repository.interface";
 import { TripDescription } from "./domain/value-object/trip-description";
+import { TripEndedAt } from "./domain/value-object/trip-ended-at";
 import { TripId } from "./domain/value-object/trip-id";
+import { TripStartedAt } from "./domain/value-object/trip-started-at";
 import { TripTitle } from "./domain/value-object/trip-title";
 
 @injectable()
@@ -21,6 +23,8 @@ export class TripRepository implements ITripRepository {
         userId: trip.userId.value,
         title: trip.title.value,
         description: trip.description.value,
+        startedAt: trip.startedAt.value,
+        endedAt: trip.endedAt.value,
         createdAt: trip.createdAt.value,
         updatedAt: trip.updatedAt.value,
       })
@@ -29,6 +33,8 @@ export class TripRepository implements ITripRepository {
         set: {
           title: trip.title.value,
           description: trip.description.value,
+          startedAt: trip.startedAt.value,
+          endedAt: trip.endedAt.value,
           updatedAt: trip.updatedAt.value,
         },
       });
@@ -48,6 +54,8 @@ export class TripRepository implements ITripRepository {
       new UserId(trip.userId),
       new TripTitle(trip.title),
       new TripDescription(trip.description),
+      new TripStartedAt(trip.startedAt ?? ""),
+      new TripEndedAt(trip.endedAt ?? ""),
       new CreatedAt(trip.createdAt),
       new UpdatedAt(trip.updatedAt),
     );
@@ -64,6 +72,8 @@ export class TripRepository implements ITripRepository {
         new UserId(trip.userId),
         new TripTitle(trip.title),
         new TripDescription(trip.description),
+        new TripStartedAt(trip.startedAt ?? ""),
+        new TripEndedAt(trip.endedAt ?? ""),
         new CreatedAt(trip.createdAt),
         new UpdatedAt(trip.updatedAt),
       ),

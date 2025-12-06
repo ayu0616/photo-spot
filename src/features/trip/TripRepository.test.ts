@@ -6,6 +6,8 @@ import { UserId } from "@/features/user/domain/value-object/user-id";
 import { TripEntity } from "../trip/domain/trip.entity";
 import { TripDescription } from "../trip/domain/value-object/trip-description";
 import { TripTitle } from "../trip/domain/value-object/trip-title";
+import { TripEndedAt } from "./domain/value-object/trip-ended-at";
+import { TripStartedAt } from "./domain/value-object/trip-started-at";
 import { TripRepository } from "./TripRepository";
 
 // Mock db
@@ -43,6 +45,8 @@ describe("TripRepository", () => {
       new UserId(crypto.randomUUID()),
       new TripTitle("Test Trip"),
       new TripDescription("Test Description"),
+      new TripStartedAt("2025-12-01"),
+      new TripEndedAt("2025-12-31"),
     );
 
     await tripRepository.save(trip);
@@ -58,6 +62,8 @@ describe("TripRepository", () => {
       userId: userId,
       title: "Test Trip",
       description: "Test Description",
+      startedAt: "2025-12-01",
+      endedAt: "2025-12-31",
       createdAt: new Date(),
       updatedAt: new Date(),
     };

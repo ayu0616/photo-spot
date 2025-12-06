@@ -4,6 +4,8 @@ import { UserId } from "../user/domain/value-object/user-id";
 import { TripEntity } from "./domain/trip.entity";
 import type { ITripRepository } from "./domain/trip-repository.interface";
 import { TripDescription } from "./domain/value-object/trip-description";
+import { TripEndedAt } from "./domain/value-object/trip-ended-at";
+import { TripStartedAt } from "./domain/value-object/trip-started-at";
 import { TripTitle } from "./domain/value-object/trip-title";
 
 @injectable()
@@ -18,12 +20,22 @@ export class TripService {
     userId: string,
     title: string,
     description: string | null,
+    startedAt: string | null,
+    endedAt: string | null,
   ): Promise<TripEntity> {
     const userIdVo = new UserId(userId);
     const tripTitle = new TripTitle(title);
     const tripDescription = new TripDescription(description);
+    const tripStartedAt = new TripStartedAt(startedAt ?? "");
+    const tripEndedAt = new TripEndedAt(endedAt ?? "");
 
-    const trip = TripEntity.create(userIdVo, tripTitle, tripDescription);
+    const trip = TripEntity.create(
+      userIdVo,
+      tripTitle,
+      tripDescription,
+      tripStartedAt,
+      tripEndedAt,
+    );
 
     await this.tripRepository.save(trip);
 
@@ -34,6 +46,8 @@ export class TripService {
     id: string,
     title: string,
     description: string | null,
+    startedAt: string | null,
+    endedAt: string | null,
   ): Promise<void> {
     const trip = await this.tripRepository.findById(id);
     if (!trip) {
@@ -42,6 +56,8 @@ export class TripService {
 
     trip.updateTitle(new TripTitle(title));
     trip.updateDescription(new TripDescription(description));
+    trip.updateStartedAt(new TripStartedAt(startedAt ?? ""));
+    trip.updateEndedAt(new TripEndedAt(endedAt ?? ""));
 
     await this.tripRepository.save(trip);
   }

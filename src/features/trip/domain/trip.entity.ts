@@ -2,7 +2,9 @@ import { CreatedAt } from "@/features/common/domain/value-object/created-at";
 import { UpdatedAt } from "@/features/common/domain/value-object/updated-at";
 import type { UserId } from "@/features/user/domain/value-object/user-id";
 import type { TripDescription } from "./value-object/trip-description";
+import type { TripEndedAt } from "./value-object/trip-ended-at";
 import { TripId } from "./value-object/trip-id";
+import type { TripStartedAt } from "./value-object/trip-started-at";
 import type { TripTitle } from "./value-object/trip-title";
 
 export class TripEntity {
@@ -10,6 +12,8 @@ export class TripEntity {
   private readonly _userId: UserId;
   private _title: TripTitle;
   private _description: TripDescription;
+  private _startedAt: TripStartedAt;
+  private _endedAt: TripEndedAt;
   private readonly _createdAt: CreatedAt;
   private _updatedAt: UpdatedAt;
 
@@ -18,6 +22,8 @@ export class TripEntity {
     userId: UserId,
     title: TripTitle,
     description: TripDescription,
+    startedAt: TripStartedAt,
+    endedAt: TripEndedAt,
     createdAt: CreatedAt,
     updatedAt: UpdatedAt,
   ) {
@@ -25,6 +31,8 @@ export class TripEntity {
     this._userId = userId;
     this._title = title;
     this._description = description;
+    this._startedAt = startedAt;
+    this._endedAt = endedAt;
     this._createdAt = createdAt;
     this._updatedAt = updatedAt;
   }
@@ -33,11 +41,22 @@ export class TripEntity {
     userId: UserId,
     title: TripTitle,
     description: TripDescription,
+    startedAt: TripStartedAt,
+    endedAt: TripEndedAt,
   ): TripEntity {
     const id = TripId.create();
     const createdAt = CreatedAt.create();
     const updatedAt = UpdatedAt.create();
-    return new TripEntity(id, userId, title, description, createdAt, updatedAt);
+    return new TripEntity(
+      id,
+      userId,
+      title,
+      description,
+      startedAt,
+      endedAt,
+      createdAt,
+      updatedAt,
+    );
   }
 
   static from(
@@ -45,10 +64,21 @@ export class TripEntity {
     userId: UserId,
     title: TripTitle,
     description: TripDescription,
+    startedAt: TripStartedAt,
+    endedAt: TripEndedAt,
     createdAt: CreatedAt,
     updatedAt: UpdatedAt,
   ): TripEntity {
-    return new TripEntity(id, userId, title, description, createdAt, updatedAt);
+    return new TripEntity(
+      id,
+      userId,
+      title,
+      description,
+      startedAt,
+      endedAt,
+      createdAt,
+      updatedAt,
+    );
   }
 
   get id(): TripId {
@@ -67,6 +97,14 @@ export class TripEntity {
     return this._description;
   }
 
+  get startedAt(): TripStartedAt {
+    return this._startedAt;
+  }
+
+  get endedAt(): TripEndedAt {
+    return this._endedAt;
+  }
+
   get createdAt(): CreatedAt {
     return this._createdAt;
   }
@@ -82,6 +120,16 @@ export class TripEntity {
 
   updateDescription(description: TripDescription): void {
     this._description = description;
+    this._updatedAt = UpdatedAt.create();
+  }
+
+  updateStartedAt(startedAt: TripStartedAt) {
+    this._startedAt = startedAt;
+    this._updatedAt = UpdatedAt.create();
+  }
+
+  updateEndedAt(endedAt: TripEndedAt) {
+    this._endedAt = endedAt;
     this._updatedAt = UpdatedAt.create();
   }
 }

@@ -4,6 +4,8 @@ import { TripEntity } from "../trip/domain/trip.entity";
 import { TripDescription } from "../trip/domain/value-object/trip-description";
 import { TripTitle } from "../trip/domain/value-object/trip-title";
 import { UserId } from "../user/domain/value-object/user-id";
+import { TripEndedAt } from "./domain/value-object/trip-ended-at";
+import { TripStartedAt } from "./domain/value-object/trip-started-at";
 import { TripService } from "./TripService";
 
 describe("TripService", () => {
@@ -27,8 +29,16 @@ describe("TripService", () => {
     const userId = crypto.randomUUID();
     const title = "Test Trip";
     const description = "Test Description";
+    const startedAt = "2025-12-01";
+    const endedAt = "2025-12-31";
 
-    await tripService.createTrip(userId, title, description);
+    await tripService.createTrip(
+      userId,
+      title,
+      description,
+      startedAt,
+      endedAt,
+    );
 
     expect(mockTripRepository.save).toHaveBeenCalledTimes(1);
     const savedTrip = mockTripRepository.save.mock.calls[0][0];
@@ -43,6 +53,8 @@ describe("TripService", () => {
       UserId.create(),
       new TripTitle("Test Trip"),
       new TripDescription("Test Description"),
+      new TripStartedAt("2025-12-01"),
+      new TripEndedAt("2025-12-31"),
     );
     mockTripRepository.findById.mockResolvedValue(trip);
 
@@ -57,10 +69,18 @@ describe("TripService", () => {
       UserId.create(),
       new TripTitle("Old Title"),
       new TripDescription("Old Description"),
+      new TripStartedAt("2025-12-01"),
+      new TripEndedAt("2025-12-31"),
     );
     mockTripRepository.findById.mockResolvedValue(trip);
 
-    await tripService.updateTrip(trip.id.value, "New Title", "New Description");
+    await tripService.updateTrip(
+      trip.id.value,
+      "New Title",
+      "New Description",
+      "2025-12-01",
+      "2025-12-31",
+    );
 
     expect(mockTripRepository.save).toHaveBeenCalledTimes(1);
     const savedTrip = mockTripRepository.save.mock.calls[0][0];
@@ -73,6 +93,8 @@ describe("TripService", () => {
       UserId.create(),
       new TripTitle("Test Trip"),
       new TripDescription("Test Description"),
+      new TripStartedAt("2025-12-01"),
+      new TripEndedAt("2025-12-31"),
     );
     mockTripRepository.findById.mockResolvedValue(trip);
     await tripService.deleteTrip(trip.id.value);
