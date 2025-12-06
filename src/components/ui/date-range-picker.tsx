@@ -22,12 +22,12 @@ export function DateRangePicker({ value, onChange }: DateRangePickerProps) {
   const [open, setOpen] = React.useState(false);
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3 w-full">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
-            className="w-48 justify-between font-normal"
+            className="w-full justify-between font-normal"
           >
             {value?.from ? (
               value.to ? (
@@ -44,15 +44,13 @@ export function DateRangePicker({ value, onChange }: DateRangePickerProps) {
             <ChevronDownIcon />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
+        <PopoverContent className="w-auto p-0" align="center">
           <Calendar
             mode="range"
             selected={value}
             onSelect={(range) => {
               onChange(range);
             }}
-            numberOfMonths={2} // Show two months for easier range selection
-            initialFocus
           />
         </PopoverContent>
       </Popover>

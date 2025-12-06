@@ -13,7 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { DatePicker } from "@/components/ui/date-picker";
+import { DateRangePicker } from "@/components/ui/date-range-picker";
 import {
   Form,
   FormControl,
@@ -30,8 +30,16 @@ import { honoClient } from "@/lib/hono";
 const formSchema = z.object({
   title: z.string().min(1, { message: "タイトルは必須です。" }),
   description: z.string().optional(),
-  startedAt: z.string().optional(),
-  endedAt: z.string().optional(),
+  dateRange: z.object({
+    startedAt: z
+      .string()
+      .regex(/\d{4}-\d{2}-\d{2}/)
+      .optional(),
+    endedAt: z
+      .string()
+      .regex(/\d{4}-\d{2}-\d{2}/)
+      .optional(),
+  }),
 });
 
 export default function NewTripPage() {
@@ -43,8 +51,10 @@ export default function NewTripPage() {
     defaultValues: {
       title: "",
       description: "",
-      startedAt: "",
-      endedAt: "",
+      dateRange: {
+        startedAt: "",
+        endedAt: "",
+      },
     },
   });
 
@@ -56,11 +66,11 @@ export default function NewTripPage() {
         json: {
           title: values.title,
           description: values.description,
-          startedAt: values.startedAt
-            ? formatToYYYYMMDD(new Date(values.startedAt))
+          startedAt: values.dateRange.startedAt
+            ? formatToYYYYMMDD(new Date(values.dateRange.startedAt))
             : undefined,
-          endedAt: values.endedAt
-            ? formatToYYYYMMDD(new Date(values.endedAt))
+          endedAt: values.dateRange.endedAt
+            ? formatToYYYYMMDD(new Date(values.dateRange.endedAt))
             : undefined,
         },
       });
@@ -117,33 +127,29 @@ export default function NewTripPage() {
               />
               <FormField
                 control={form.control}
-                name="startedAt"
+                name="dateRange"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>開始日</FormLabel>
+                    <FormLabel>日程</FormLabel>
                     <FormControl>
-                      <DatePicker
-                        value={field.value ? new Date(field.value) : undefined}
-                        onChange={(date) =>
-                          field.onChange(date ? formatToYYYYMMDD(date) : "")
-                        }
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="endedAt"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>終了日</FormLabel>
-                    <FormControl>
-                      <DatePicker
-                        value={field.value ? new Date(field.value) : undefined}
-                        onChange={(date) =>
-                          field.onChange(date ? formatToYYYYMMDD(date) : "")
+                      <DateRangePicker
+                        value={{
+                          from: field.value.startedAt
+                            ? new Date(field.value.startedAt)
+                            : undefined,
+                          to: field.value.endedAt
+                            ? new Date(field.value.endedAt)
+                            : undefined,
+                        }}
+                        onChange={(dateRange) =>
+                          field.onChange({
+                            startedAt: dateRange?.from
+                              ? formatToYYYYMMDD(dateRange.from)
+                              : "",
+                            endedAt: dateRange?.to
+                              ? formatToYYYYMMDD(dateRange.to)
+                              : "",
+                          })
                         }
                       />
                     </FormControl>

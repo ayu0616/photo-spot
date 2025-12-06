@@ -29,11 +29,25 @@ function Calendar({
 }) {
   const defaultClassNames = getDefaultClassNames();
 
+  const selected = "selected" in props ? props.selected : undefined;
+  const defaultMonth = React.useMemo(() => {
+    if (selected) {
+      if ("from" in selected) {
+        return selected.from;
+      } else if (Array.isArray(selected)) {
+        return selected[0];
+      }
+      return selected;
+    }
+    return undefined;
+  }, [selected]);
+
   return (
     <DayPicker
       locale={ja}
       weekStartsOn={1}
       showOutsideDays={showOutsideDays}
+      defaultMonth={defaultMonth}
       className={cn(
         "bg-background group/calendar p-3 [--cell-size:--spacing(8)] [[data-slot=card-content]_&]:bg-transparent [[data-slot=popover-content]_&]:bg-transparent",
         String.raw`rtl:**:[.rdp-button\_next>svg]:rotate-180`,
