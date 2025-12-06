@@ -253,7 +253,7 @@ export class PostRepository implements IPostRepository {
         PrefectureMasterTable,
         eq(CityMasterTable.prefectureId, PrefectureMasterTable.id),
       )
-      .innerJoin(TripsTable, eq(PostsTable.tripId, TripsTable.id))
+      .leftJoin(TripsTable, eq(PostsTable.tripId, TripsTable.id))
       .where(
         and(
           gte(PhotosTable.takenAt, from),
