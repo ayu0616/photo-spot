@@ -116,6 +116,36 @@ export class PostController {
         return c.json({ error: "Failed to get all posts" }, 500);
       }
     })
+    .get(
+      "/query",
+      zValidator(
+        "query",
+        z.object({
+          from: z
+            .string()
+            .regex(/\d{4}-\d{2}-\d{2}/)
+            .optional(),
+          to: z
+            .string()
+            .regex(/\d{4}-\d{2}-\d{2}/)
+            .optional(),
+        }),
+      ),
+      async (c) => {
+        try {
+          const { from, to } = c.req.valid("query");
+          const posts: PostWithRelationsDto[] =
+            await this.postService.queryPosts({
+              from: from ? new Date(from) : new Date(0),
+              to: to ? new Date(to) : new Date(),
+            });
+          return c.json(posts, 200);
+        } catch (error) {
+          console.error("投稿一覧の取得中にエラーが発生しました:", error);
+          return c.json({ error: "Failed to get posts" }, 500);
+        }
+      },
+    )
     .get("/:id", async (c) => {
       try {
         const id = c.req.param("id");

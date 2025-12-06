@@ -10,6 +10,7 @@ export interface IPostRepository {
   ): Promise<PostWithRelationsDto[]>;
   findByIdWithRelations(id: string): Promise<PostWithRelationsDto | null>;
   findByTripId(tripId: string): Promise<PostWithRelationsDto[]>;
+  findByDateRange(from: Date, to: Date): Promise<PostWithRelationsDto[]>;
   updateTripId(postId: string, tripId: string | null): Promise<void>;
   delete(id: string): Promise<void>;
 }

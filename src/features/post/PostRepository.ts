@@ -1,7 +1,15 @@
-import { eq } from "drizzle-orm";
+import { and, asc, eq, gte, lte } from "drizzle-orm";
 import { injectable } from "inversify";
 import { db } from "../../db";
-import { PostsTable } from "../../db/schema";
+import {
+  CityMasterTable,
+  PhotosTable,
+  PostsTable,
+  PrefectureMasterTable,
+  SpotsTable,
+  TripsTable,
+  usersTable,
+} from "../../db/schema";
 import type { PostEntity } from "./domain/post.entity";
 import type { IPostRepository } from "./domain/post-repository.interface";
 import { PostDtoMapper, type PostWithRelationsDto } from "./PostDto";
@@ -231,6 +239,48 @@ export class PostRepository implements IPostRepository {
     });
 
     return sortedPosts as PostWithRelationsDto[];
+  }
+
+  async findByDateRange(from: Date, to: Date): Promise<PostWithRelationsDto[]> {
+    const posts = await db
+      .select()
+      .from(PostsTable)
+      .innerJoin(PhotosTable, eq(PostsTable.photoId, PhotosTable.id))
+      .innerJoin(usersTable, eq(PostsTable.userId, usersTable.id))
+      .innerJoin(SpotsTable, eq(PostsTable.spotId, SpotsTable.id))
+      .innerJoin(CityMasterTable, eq(SpotsTable.cityId, CityMasterTable.id))
+      .innerJoin(
+        PrefectureMasterTable,
+        eq(CityMasterTable.prefectureId, PrefectureMasterTable.id),
+      )
+      .innerJoin(TripsTable, eq(PostsTable.tripId, TripsTable.id))
+      .where(and(gte(PhotosTable.takenAt, from), lte(PhotosTable.takenAt, to)))
+      .orderBy(asc(PhotosTable.takenAt));
+
+    const postsWithRelations: PostWithRelationsDto[] = posts.map((record) => {
+      return {
+        id: record.post.id,
+        userId: record.post.userId,
+        description: record.post.description,
+        spotId: record.post.spotId,
+        photoId: record.post.photoId,
+        tripId: record.post.tripId,
+        createdAt: record.post.createdAt,
+        updatedAt: record.post.updatedAt,
+        photo: record.photo,
+        user: record.user,
+        spot: {
+          ...record.spot,
+          city: {
+            ...record.city_master,
+            prefecture: record.prefecture_master,
+          },
+        },
+        trip: record.trip,
+      } satisfies PostWithRelationsDto;
+    });
+
+    return postsWithRelations;
   }
 
   async updateTripId(postId: string, tripId: string | null): Promise<void> {

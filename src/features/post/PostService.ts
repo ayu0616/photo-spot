@@ -150,6 +150,16 @@ export class PostService {
     return await this.postRepository.findByTripId(tripId);
   }
 
+  async queryPosts({
+    from,
+    to,
+  }: {
+    from: Date;
+    to: Date;
+  }): Promise<PostWithRelationsDto[]> {
+    return this.postRepository.findByDateRange(from, to);
+  }
+
   async updatePostsTrip(tripId: string, postIds: string[]): Promise<void> {
     // 1. Unassign all posts currently assigned to this trip
     const currentPosts = await this.postRepository.findByTripId(tripId);

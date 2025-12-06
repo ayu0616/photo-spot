@@ -77,18 +77,9 @@ export default function EditTripPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [tripRes, postsRes] = await Promise.all([
-          honoClient.trip[":id"].$get({ param: { id } }),
-          honoClient.post.all.$get(),
-        ]);
-
+        const tripRes = await honoClient.trip[":id"].$get({ param: { id } });
         if (!tripRes.ok) throw new Error("旅行の取得に失敗しました");
-        if (!postsRes.ok) throw new Error("投稿の取得に失敗しました");
-
-        const [trip, posts] = await Promise.all([
-          tripRes.json(),
-          postsRes.json(),
-        ]);
+        const trip = await tripRes.json();
 
         form.reset({
           title: trip.title,
@@ -102,6 +93,16 @@ export default function EditTripPage() {
               : "",
           },
         });
+
+        const postsRes = await honoClient.post.query.$get({
+          query: {
+            from: trip.startedAt,
+            to: trip.endedAt,
+          },
+        });
+
+        if (!postsRes.ok) throw new Error("投稿の取得に失敗しました");
+        const posts = await postsRes.json();
         setAllPosts(posts);
 
         if (trip.posts) {
