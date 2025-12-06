@@ -11,21 +11,23 @@ export const PostImage = ({ src, alt }: PostImageProps) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Image
-          src={src}
-          alt={alt}
-          fill
-          className="object-contain rounded-lg w-full max-h-[65svh] static! cursor-pointer"
-        />
-      </DialogTrigger>
-      <DialogContent className="max-w-[calc(100vw-64px)]! max-h-[calc(100vh-64px)]! sm:max-w-[calc(100vw-96px)]! sm:max-h-[calc(100vh-96px)]! p-0 border-0 outline-4 sm:outline-8 outline-white [&>button]:bg-white overflow-hidden">
-        <DialogTitle className="hidden">{alt}</DialogTitle>
-        <div className="flex justify-center items-center max-w-[calc(100vw-64px)] sm:max-w-[calc(100vw-96px)] h-fit">
+        <div className="w-fit max-w-full h-fit max-h-[65svh] mx-auto">
           <Image
             src={src}
             alt={alt}
             fill
-            className="object-contain static! max-w-[calc(100vw-64px)] max-h-[calc(100vh-64px)] sm:max-w-[calc(100vw-96px)] sm:max-h-[calc(100vh-96px)] mx-auto"
+            className="object-contain rounded-lg w-full max-h-[65svh] static! cursor-pointer"
+          />
+        </div>
+      </DialogTrigger>
+      <DialogContent className="max-w-[calc(100vw-64px)]! max-h-[calc(100vh-64px)]! sm:max-w-[calc(100vw-96px)]! sm:max-h-[calc(100vh-96px)]! p-0 border-0 outline-4 sm:outline-8 outline-white [&>button]:bg-white overflow-hidden">
+        <DialogTitle className="hidden">{alt}</DialogTitle>
+        <div className="w-fit h-fit max-w-[calc(100vw-64px)] max-h-[calc(100vh-64px)] sm:max-w-[calc(100vw-96px)] sm:max-h-[calc(100vh-96px)] mx-auto">
+          <Image
+            src={src}
+            alt={alt}
+            fill
+            className="object-contain static! max-w-[calc(100vw-64px)] max-h-[calc(100vh-64px)] sm:max-w-[calc(100vw-96px)] sm:max-h-[calc(100vh-96px)] rounded-lg"
           />
         </div>
       </DialogContent>
