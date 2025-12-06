@@ -24,14 +24,14 @@ export default async function TripPage({
   params,
   searchParams,
 }: PageProps<"/trip/[id]">) {
-  const { id } = await params;
-  const postId = await searchParams.then((sp) =>
-    Array.isArray(sp.postId) ? sp.postId[0] : sp.postId,
-  );
+  const [postId, trip] = await Promise.all([
+    searchParams.then((sp) =>
+      Array.isArray(sp.postId) ? sp.postId[0] : sp.postId,
+    ),
+    getTrip((await params).id),
+  ]);
 
-  const trip = await getTrip(id);
-
-  const postsWithDateObjects = trip.posts.map((post) => ({
+  const posts = trip.posts.map((post) => ({
     ...post,
     createdAt: new Date(post.createdAt),
     updatedAt: new Date(post.updatedAt),
@@ -54,7 +54,7 @@ export default async function TripPage({
       </div>
 
       <TripScroller postId={postId}>
-        <PostList allPosts={postsWithDateObjects} />
+        <PostList allPosts={posts} />
       </TripScroller>
     </div>
   );
