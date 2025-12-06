@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import { PostList } from "@/components/post/post-list";
-import { formatToYYYYMMDD } from "@/lib/format-date";
 import { honoClient } from "@/lib/hono";
 import { TripScroller } from "./_components/trip-scroller";
 
@@ -49,7 +48,7 @@ export default async function TripPage({
           <p className="text-gray-600">{trip.description}</p>
         )}
         <p className="text-sm text-gray-500 mt-2">
-          {formatToYYYYMMDD(new Date(trip.createdAt))}
+          {trip.startedAt} - {trip.endedAt}
         </p>
       </div>
 
