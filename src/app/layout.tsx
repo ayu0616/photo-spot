@@ -29,8 +29,6 @@ export const metadata: Metadata = {
   description: "お気に入りの写真スポットを共有しよう",
 };
 
-export const revalidate = 60;
-
 export default function RootLayout({
   children,
 }: Readonly<{
