@@ -1,4 +1,5 @@
 import { MapPin, PlaneIcon } from "lucide-react";
+import { cacheLife } from "next/cache";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { nextAuth } from "@/app/api/auth/[...nextAuth]/auth";
@@ -22,6 +23,9 @@ import { PostImage } from "./_components/post-image";
 const getPostDetail = async (
   id: string,
 ): Promise<PostWithRelationsDto | null> => {
+  "use cache";
+  cacheLife("minutes");
+
   const res = await honoClient.post[":id"].$get({
     param: {
       id,

@@ -1,9 +1,13 @@
+import { cacheLife } from "next/cache";
 import { notFound } from "next/navigation";
 import { PostList } from "@/components/post/post-list";
 import { honoClient } from "@/lib/hono";
 import { TripScroller } from "./_components/trip-scroller";
 
 const getTrip = async (id: string) => {
+  "use cache";
+  cacheLife("minutes");
+
   const res = await honoClient.trip[":id"].$get({
     param: { id },
   });
