@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Noto_Sans_JP } from "next/font/google";
 import { Suspense } from "react";
 import { Header } from "@/components/header";
 import { Spinner } from "@/components/ui/spinner";
@@ -15,6 +16,12 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const notoSansJP = Noto_Sans_JP({
+  variable: "--font-noto-sans-jp",
+  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -34,7 +41,7 @@ export default function RootLayout({
       <TanstackQueryProvider>
         <SessionProvider>
           <body
-            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+            className={`${notoSansJP.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
           >
             <Header />
             <Suspense
