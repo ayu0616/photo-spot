@@ -57,6 +57,13 @@
       "when": 1763795066492,
       "tag": "0007_massive_zombie",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1764988061402,
+      "tag": "0008_cloudy_slyde",
+      "breakpoints": true
     }
   ]
 }

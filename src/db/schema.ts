@@ -141,6 +141,8 @@ export const TripsTable = pgTable("trip", {
     .references(() => usersTable.id, { onDelete: "cascade" }),
   title: varchar("title", { length: 255 }).notNull(),
   description: varchar("description", { length: 255 }),
+  startedAt: varchar("startedAt", { length: 10 }), // YYYY-MM-DD
+  endedAt: varchar("endedAt", { length: 10 }), // YYYY-MM-DD
   createdAt: timestamp("createdAt", { mode: "date" }).notNull(),
   updatedAt: timestamp("updatedAt", { mode: "date" }).notNull(),
 });
