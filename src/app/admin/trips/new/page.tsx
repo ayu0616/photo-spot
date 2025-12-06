@@ -23,11 +23,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { formatToYYYYMMDD } from "@/lib/format-date";
 import { honoClient } from "@/lib/hono";
 
 const formSchema = z.object({
   title: z.string().min(1, { message: "タイトルは必須です。" }),
   description: z.string().optional(),
+  startedAt: z.string().optional(),
+  endedAt: z.string().optional(),
 });
 
 export default function NewTripPage() {
@@ -39,6 +42,8 @@ export default function NewTripPage() {
     defaultValues: {
       title: "",
       description: "",
+      startedAt: "",
+      endedAt: "",
     },
   });
 
@@ -50,6 +55,12 @@ export default function NewTripPage() {
         json: {
           title: values.title,
           description: values.description,
+          startedAt: values.startedAt
+            ? formatToYYYYMMDD(new Date(values.startedAt))
+            : undefined,
+          endedAt: values.endedAt
+            ? formatToYYYYMMDD(new Date(values.endedAt))
+            : undefined,
         },
       });
 
@@ -98,6 +109,32 @@ export default function NewTripPage() {
                     <FormLabel>説明</FormLabel>
                     <FormControl>
                       <Textarea placeholder="旅行の説明" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="startedAt"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>開始日</FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="endedAt"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>終了日</FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
