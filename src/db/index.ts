@@ -9,4 +9,5 @@ if (!process.env.DATABASE_URL) {
 export const db = drizzle({
   schema,
   connection: process.env.DATABASE_URL,
+  logger: true,
 });
