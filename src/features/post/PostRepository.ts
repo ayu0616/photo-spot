@@ -254,7 +254,15 @@ export class PostRepository implements IPostRepository {
         eq(CityMasterTable.prefectureId, PrefectureMasterTable.id),
       )
       .innerJoin(TripsTable, eq(PostsTable.tripId, TripsTable.id))
-      .where(and(gte(PhotosTable.takenAt, from), lte(PhotosTable.takenAt, to)))
+      .where(
+        and(
+          gte(PhotosTable.takenAt, from),
+          lte(
+            PhotosTable.takenAt,
+            new Date(to.getTime() + 1000 * 60 * 60 * 24),
+          ),
+        ),
+      )
       .orderBy(asc(PhotosTable.takenAt));
 
     const postsWithRelations: PostWithRelationsDto[] = posts.map((record) => {
