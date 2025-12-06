@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { PostList } from "@/components/post/post-list";
 import { formatToYYYYMMDD } from "@/lib/format-date";
 import { honoClient } from "@/lib/hono";
+import { TripScroller } from "./_components/trip-scroller";
 
 const getTrip = async (id: string) => {
   "use cache";
@@ -19,8 +20,14 @@ const getTrip = async (id: string) => {
   return res.json();
 };
 
-export default async function TripPage({ params }: PageProps<"/trip/[id]">) {
+export default async function TripPage({
+  params,
+  searchParams,
+}: PageProps<"/trip/[id]">) {
   const { id } = await params;
+  const postId = await searchParams.then((sp) =>
+    Array.isArray(sp.postId) ? sp.postId[0] : sp.postId,
+  );
 
   const trip = await getTrip(id);
 
@@ -46,7 +53,9 @@ export default async function TripPage({ params }: PageProps<"/trip/[id]">) {
         </p>
       </div>
 
-      <PostList allPosts={postsWithDateObjects} />
+      <TripScroller postId={postId}>
+        <PostList allPosts={postsWithDateObjects} />
+      </TripScroller>
     </div>
   );
 }

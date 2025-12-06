@@ -21,7 +21,10 @@ interface PostCardProps {
 export const PostCard: React.FC<PostCardProps> = ({ post }) => {
   return (
     <Link href={`/post/${post.id}`} className="block h-full">
-      <Card className="w-full cursor-pointer hover:shadow-lg transition-shadow h-full flex flex-col">
+      <Card
+        className="w-full cursor-pointer hover:shadow-lg transition-shadow h-full flex flex-col"
+        id={post.id}
+      >
         <CardHeader>
           <div className="flex items-center gap-4">
             <Avatar>
