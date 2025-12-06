@@ -32,7 +32,8 @@ export default async function AdminTripsPage() {
         <h1 className="text-3xl font-bold">旅行管理</h1>
         <Button asChild>
           <Link href="/admin/trips/new">
-            <Plus className="mr-2 h-4 w-4" /> 新規作成
+            <Plus className="h-4 w-4" />
+            新規作成
           </Link>
         </Button>
       </div>
