@@ -1,7 +1,10 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,30 +13,43 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { honoClient } from "@/lib/hono";
 
+const formSchema = z.object({
+  title: z.string().min(1, { message: "タイトルは必須です。" }),
+  description: z.string().optional(),
+});
+
 export default function NewTripPage() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [apiError, setApiError] = useState<string | null>(null);
 
-  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setIsLoading(true);
-    setError(null);
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+    },
+  });
 
-    const formData = new FormData(event.currentTarget);
-    const title = formData.get("title") as string;
-    const description = formData.get("description") as string;
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setApiError(null);
 
     try {
       const res = await honoClient.trip.$post({
         json: {
-          title,
-          description,
+          title: values.title,
+          description: values.description,
         },
       });
 
@@ -44,10 +60,8 @@ export default function NewTripPage() {
       router.push("/admin/trips");
       router.refresh();
     } catch (e) {
-      setError("旅行の作成に失敗しました。もう一度お試しください。");
+      setApiError("旅行の作成に失敗しました。もう一度お試しください。");
       console.error(e);
-    } finally {
-      setIsLoading(false);
     }
   }
 
@@ -61,39 +75,50 @@ export default function NewTripPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={onSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="title">タイトル</Label>
-              <Input
-                id="title"
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
                 name="title"
-                required
-                placeholder="旅行のタイトル"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>タイトル</FormLabel>
+                    <FormControl>
+                      <Input placeholder="旅行のタイトル" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="description">説明</Label>
-              <Textarea
-                id="description"
+              <FormField
+                control={form.control}
                 name="description"
-                placeholder="旅行の説明"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>説明</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="旅行の説明" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            {error && <p className="text-red-500 text-sm">{error}</p>}
-            <div className="flex justify-end gap-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => router.back()}
-                disabled={isLoading}
-              >
-                キャンセル
-              </Button>
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? "作成中..." : "作成する"}
-              </Button>
-            </div>
-          </form>
+              {apiError && <p className="text-red-500 text-sm">{apiError}</p>}
+              <div className="flex justify-end gap-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => router.back()}
+                  disabled={form.formState.isSubmitting}
+                >
+                  キャンセル
+                </Button>
+                <Button type="submit" disabled={form.formState.isSubmitting}>
+                  {form.formState.isSubmitting ? "作成中..." : "作成する"}
+                </Button>
+              </div>
+            </form>
+          </Form>
         </CardContent>
       </Card>
     </div>
