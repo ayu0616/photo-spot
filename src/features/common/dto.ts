@@ -1,4 +1,13 @@
+export type Primitive =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | symbol
+  | bigint
+  | Date;
+
 export interface DTO {
-  // Define DTO properties as needed
-  [key: string]: any;
+  [key: string]: Primitive;
 }
