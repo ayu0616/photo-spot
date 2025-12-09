@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq, gte, lte } from "drizzle-orm";
 import { injectable } from "inversify";
 import { db } from "@/db";
 import { TripsTable } from "@/db/schema";
@@ -82,5 +82,28 @@ export class TripRepository implements ITripRepository {
 
   async delete(id: string): Promise<void> {
     await db.delete(TripsTable).where(eq(TripsTable.id, id));
+  }
+
+  async findByDate(date: string): Promise<TripEntity[]> {
+    const trips = await db.query.TripsTable.findMany({
+      where: and(
+        lte(TripsTable.startedAt, date),
+        gte(TripsTable.endedAt, date),
+      ),
+      orderBy: (trips, { desc }) => [desc(trips.createdAt)],
+    });
+
+    return trips.map((trip) =>
+      TripEntity.from(
+        new TripId(trip.id),
+        new UserId(trip.userId),
+        new TripTitle(trip.title),
+        new TripDescription(trip.description),
+        new TripStartedAt(trip.startedAt ?? ""),
+        new TripEndedAt(trip.endedAt ?? ""),
+        new CreatedAt(trip.createdAt),
+        new UpdatedAt(trip.updatedAt),
+      ),
+    );
   }
 }

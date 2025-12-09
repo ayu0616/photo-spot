@@ -1,7 +1,8 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Edit, MoreVertical, Trash } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { Edit, MapPinIcon, MoreVertical, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -53,6 +54,7 @@ import type { PostWithRelationsDto } from "@/features/post/PostDto";
 import { useCities } from "@/hooks/use-cities";
 import { usePrefectures } from "@/hooks/use-prefectures";
 import { useSpots } from "@/hooks/use-spots";
+import { formatToYYYYMMDD } from "@/lib/format-date";
 import { honoClient } from "@/lib/hono";
 
 interface PostActionsMenuProps {
@@ -87,6 +89,7 @@ export function PostActionsMenu({ post, currentUserId }: PostActionsMenuProps) {
   const router = useRouter();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isSelectTripDialogOpen, setIsSelectTripDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   // Check if current user is the author
@@ -133,6 +136,13 @@ export function PostActionsMenu({ post, currentUserId }: PostActionsMenuProps) {
             <span>編集</span>
           </DropdownMenuItem>
           <DropdownMenuItem
+            className="flex items-center gap-2"
+            onClick={() => setIsSelectTripDialogOpen(true)}
+          >
+            <MapPinIcon className="size-4" />
+            <span>旅行を選択</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem
             className="flex items-center gap-2 text-red-600 focus:text-red-600"
             onClick={() => setIsDeleteDialogOpen(true)}
           >
@@ -173,6 +183,12 @@ export function PostActionsMenu({ post, currentUserId }: PostActionsMenuProps) {
         post={post}
         open={isEditDialogOpen}
         onOpenChange={setIsEditDialogOpen}
+      />
+
+      <SelectTripDialog
+        open={isSelectTripDialogOpen}
+        onOpenChange={setIsSelectTripDialogOpen}
+        takenAt={post.photo.takenAt ? formatToYYYYMMDD(post.photo.takenAt) : ""}
       />
     </>
   );
@@ -446,3 +462,42 @@ function EditPostDialog({
     </Dialog>
   );
 }
+
+const SelectTripDialog = ({
+  open,
+  onOpenChange,
+  takenAt,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  takenAt: string;
+}) => {
+  const { data } = useQuery({
+    queryKey: ["trips", takenAt],
+    queryFn: () =>
+      honoClient.trip["get-by-date"]
+        .$get({
+          query: { date: takenAt },
+        })
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error("Failed to get trip by date");
+          }
+          return res.json();
+        }),
+  });
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>旅行を選択</DialogTitle>
+        </DialogHeader>
+        {data?.map((trip) => (
+          <div key={trip.id}>
+            <div>{trip.title}</div>
+          </div>
+        ))}
+      </DialogContent>
+    </Dialog>
+  );
+};

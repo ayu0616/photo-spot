@@ -66,6 +66,34 @@ export class TripController {
         return c.json({ error: "Failed to get trips" }, 500);
       }
     })
+    .get(
+      "get-by-date",
+      zValidator(
+        "query",
+        z.object({
+          date: z.string().regex(/\d{4}-\d{2}-\d{2}/),
+        }),
+      ),
+      async (c) => {
+        try {
+          const { date } = c.req.valid("query");
+          const trips = await this.tripService.getTripByDate(date);
+          return c.json(
+            trips.map((trip) => ({
+              id: trip.id.value,
+              title: trip.title.value,
+              description: trip.description.value,
+              createdAt: trip.createdAt.value,
+              updatedAt: trip.updatedAt.value,
+            })),
+            200,
+          );
+        } catch (error) {
+          console.error("Failed to get trip by date:", error);
+          return c.json({ error: "Failed to get trip by date" }, 500);
+        }
+      },
+    )
     .get("/:id", async (c) => {
       try {
         const id = c.req.param("id");

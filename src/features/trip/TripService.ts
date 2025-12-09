@@ -73,4 +73,8 @@ export class TripService {
   async getAllTrips(): Promise<TripEntity[]> {
     return await this.tripRepository.findAll();
   }
+
+  async getTripByDate(date: string): Promise<TripEntity[]> {
+    return await this.tripRepository.findByDate(date);
+  }
 }
