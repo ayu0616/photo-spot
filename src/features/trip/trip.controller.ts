@@ -77,7 +77,11 @@ export class TripController {
       async (c) => {
         try {
           const { date } = c.req.valid("query");
-          const trips = await this.tripService.getTripByDate(date);
+          const user = (await nextAuth.auth())?.user;
+          if (!user || !user.id) {
+            return c.json({ error: "Unauthorized" }, 401);
+          }
+          const trips = await this.tripService.getTripByDate(date, user.id);
           return c.json(
             trips.map((trip) => ({
               id: trip.id.value,

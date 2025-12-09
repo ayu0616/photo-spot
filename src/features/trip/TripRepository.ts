@@ -84,9 +84,10 @@ export class TripRepository implements ITripRepository {
     await db.delete(TripsTable).where(eq(TripsTable.id, id));
   }
 
-  async findByDate(date: string): Promise<TripEntity[]> {
+  async findByDate(date: string, userId: UserId): Promise<TripEntity[]> {
     const trips = await db.query.TripsTable.findMany({
       where: and(
+        eq(TripsTable.userId, userId.value),
         lte(TripsTable.startedAt, date),
         gte(TripsTable.endedAt, date),
       ),

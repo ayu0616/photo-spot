@@ -74,7 +74,8 @@ export class TripService {
     return await this.tripRepository.findAll();
   }
 
-  async getTripByDate(date: string): Promise<TripEntity[]> {
-    return await this.tripRepository.findByDate(date);
+  async getTripByDate(date: string, userId: string): Promise<TripEntity[]> {
+    const userIdVo = new UserId(userId);
+    return await this.tripRepository.findByDate(date, userIdVo);
   }
 }
