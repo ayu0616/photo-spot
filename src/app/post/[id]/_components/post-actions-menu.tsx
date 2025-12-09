@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { Edit, MapPinIcon, MoreVertical, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
@@ -189,6 +189,7 @@ export function PostActionsMenu({ post, currentUserId }: PostActionsMenuProps) {
         open={isSelectTripDialogOpen}
         onOpenChange={setIsSelectTripDialogOpen}
         takenAt={post.photo.takenAt ? formatToYYYYMMDD(post.photo.takenAt) : ""}
+        defaultTripId={post.tripId}
       />
     </>
   );
@@ -463,15 +464,28 @@ function EditPostDialog({
   );
 }
 
+const selectTripSchema = z.object({
+  tripId: z.string().min(1).nullable(),
+});
+
 const SelectTripDialog = ({
   open,
   onOpenChange,
   takenAt,
+  defaultTripId,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   takenAt: string;
+  defaultTripId: string | null;
 }) => {
+  const form = useForm({
+    resolver: zodResolver(selectTripSchema),
+    defaultValues: {
+      tripId: defaultTripId,
+    },
+  });
+
   const { data } = useQuery({
     queryKey: ["trips", takenAt],
     queryFn: () =>
@@ -485,18 +499,58 @@ const SelectTripDialog = ({
           }
           return res.json();
         }),
+    enabled: !!takenAt,
   });
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>旅行を選択</DialogTitle>
         </DialogHeader>
-        {data?.map((trip) => (
-          <div key={trip.id}>
-            <div>{trip.title}</div>
-          </div>
-        ))}
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit((data) => console.log(data))}
+            className="space-y-4"
+          >
+            <FormField
+              control={form.control}
+              name="tripId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="mb-4">旅行を選択</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      className="flex flex-col"
+                    >
+                      {data?.map((trip) => (
+                        <Fragment key={trip.id}>
+                          <Label className="cursor-pointer">
+                            <RadioGroupItem value={trip.id} />
+                            {trip.title}
+                          </Label>
+                        </Fragment>
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="flex justify-end gap-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => form.setValue("tripId", null)}
+              >
+                旅行を解除
+              </Button>
+              <Button type="submit">保存</Button>
+            </div>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
