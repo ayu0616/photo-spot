@@ -2,7 +2,6 @@ import { cacheLife } from "next/cache";
 import { notFound } from "next/navigation";
 import { PostList } from "@/components/post/post-list";
 import { honoClient } from "@/lib/hono";
-import { TripScroller } from "./_components/trip-scroller";
 
 const getTrip = async (id: string) => {
   "use cache";
@@ -22,16 +21,8 @@ const getTrip = async (id: string) => {
   return res.json();
 };
 
-export default async function TripPage({
-  params,
-  searchParams,
-}: PageProps<"/trip/[id]">) {
-  const [postId, trip] = await Promise.all([
-    searchParams.then((sp) =>
-      Array.isArray(sp.postId) ? sp.postId[0] : sp.postId,
-    ),
-    getTrip((await params).id),
-  ]);
+export default async function TripPage({ params }: PageProps<"/trip/[id]">) {
+  const trip = await getTrip((await params).id);
 
   const posts = trip.posts.map((post) => ({
     ...post,
@@ -54,10 +45,7 @@ export default async function TripPage({
           {trip.startedAt} - {trip.endedAt}
         </p>
       </div>
-
-      <TripScroller postId={postId}>
-        <PostList allPosts={posts} />
-      </TripScroller>
+      <PostList allPosts={posts} />
     </div>
   );
 }

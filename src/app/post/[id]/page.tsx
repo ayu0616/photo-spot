@@ -98,7 +98,10 @@ export default async function PostDetailPage({
           {post.trip && (
             <div className="mt-2">
               <Link
-                href={`/trip/${post.trip.id}?postId=${post.id}`}
+                href={{
+                  pathname: `/trip/${post.trip.id}`,
+                  hash: `#${post.id}`,
+                }}
                 className="text-sm text-blue-600 hover:underline flex items-center gap-1"
               >
                 <PlaneIcon className="w-4 h-4" />
