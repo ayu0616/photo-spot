@@ -20,6 +20,7 @@ import {
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -511,7 +512,7 @@ const SelectTripDialog = ({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit((data) => console.log(data))}
-            className="space-y-4"
+            className="space-y-6"
           >
             <FormField
               control={form.control}
@@ -542,11 +543,17 @@ const SelectTripDialog = ({
             <div className="flex justify-end gap-4">
               <Button
                 type="button"
-                variant="outline"
+                variant="destructive"
                 onClick={() => form.setValue("tripId", null)}
               >
                 旅行を解除
               </Button>
+              <div className="flex-1"></div>
+              <DialogClose asChild>
+                <Button type="button" variant="outline">
+                  キャンセル
+                </Button>
+              </DialogClose>
               <Button type="submit">保存</Button>
             </div>
           </form>
