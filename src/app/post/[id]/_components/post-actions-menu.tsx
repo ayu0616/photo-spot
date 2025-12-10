@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Edit, MapPinIcon, MoreVertical, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Fragment, useEffect, useState } from "react";
@@ -191,6 +191,7 @@ export function PostActionsMenu({ post, currentUserId }: PostActionsMenuProps) {
         onOpenChange={setIsSelectTripDialogOpen}
         takenAt={post.photo.takenAt ? formatToYYYYMMDD(post.photo.takenAt) : ""}
         defaultTripId={post.tripId}
+        postId={post.id}
       />
     </>
   );
@@ -474,12 +475,16 @@ const SelectTripDialog = ({
   onOpenChange,
   takenAt,
   defaultTripId,
+  postId,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   takenAt: string;
   defaultTripId: string | null;
+  postId: string;
 }) => {
+  const router = useRouter();
+
   const form = useForm({
     resolver: zodResolver(selectTripSchema),
     defaultValues: {
@@ -503,6 +508,27 @@ const SelectTripDialog = ({
     enabled: !!takenAt,
   });
 
+  const { mutateAsync, isPending } = useMutation({
+    mutationKey: ["set-trip", postId],
+    mutationFn: (tripId: string | null) =>
+      honoClient.post[":id"]["set-travel"]
+        .$put({
+          param: { id: postId },
+          json: { tripId },
+        })
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error("Failed to set trip");
+          }
+          return res.json();
+        }),
+  });
+
+  const onSubmit = form.handleSubmit(async (data) => {
+    await mutateAsync(data.tripId);
+    router.refresh();
+  });
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -510,10 +536,7 @@ const SelectTripDialog = ({
           <DialogTitle>旅行を選択</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit((data) => console.log(data))}
-            className="space-y-6"
-          >
+          <form onSubmit={onSubmit} className="space-y-6">
             <FormField
               control={form.control}
               name="tripId"
@@ -554,7 +577,9 @@ const SelectTripDialog = ({
                   キャンセル
                 </Button>
               </DialogClose>
-              <Button type="submit">保存</Button>
+              <Button type="submit" disabled={isPending}>
+                保存
+              </Button>
             </div>
           </form>
         </Form>

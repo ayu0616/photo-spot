@@ -10,6 +10,7 @@ import { CityId } from "@/features/spot/domain/value-object/city-id";
 import { SpotName } from "@/features/spot/domain/value-object/spot-name";
 import { UserId } from "@/features/user/domain/value-object/user-id";
 import { PhotoEntity } from "../photo/domain/photo.entity";
+import { TripId } from "../trip/domain/value-object/trip-id";
 import { PostEntity } from "./domain/post.entity";
 import type { IPostRepository } from "./domain/post-repository.interface";
 import { PostDescription } from "./domain/value-object/post-description";
@@ -233,6 +234,26 @@ export class PostService {
     post.updateDescription(new PostDescription(params.description));
     post.updateSpotId(spot.id);
 
+    await this.postRepository.save(post);
+    return post;
+  }
+
+  async setTravel(params: {
+    id: string;
+    tripId: string | null;
+    userId: string;
+  }): Promise<PostEntity> {
+    const { id, tripId, userId } = params;
+    const post = await this.postRepository.findById(id);
+    if (!post) {
+      throw new Error("Post not found");
+    }
+
+    if (post.userId.value !== userId) {
+      throw new Error("Unauthorized");
+    }
+
+    post.updateTripId(tripId ? new TripId(tripId) : null);
     await this.postRepository.save(post);
     return post;
   }

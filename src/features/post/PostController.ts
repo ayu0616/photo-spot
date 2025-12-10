@@ -245,5 +245,37 @@ export class PostController {
           return c.json({ error: "Failed to update post" }, 500);
         }
       },
+    )
+    .put(
+      "/:id/set-travel",
+      zValidator("param", z.object({ id: z.string().min(1) })),
+      zValidator("json", z.object({ tripId: z.string().min(1).nullable() })),
+      async (c) => {
+        try {
+          const auth = await nextAuth.auth();
+          const user = auth?.user;
+          if (!user || !user.id) {
+            return c.json({ error: "Unauthorized" }, 401);
+          }
+
+          const id = c.req.param("id");
+          const { tripId } = c.req.valid("json");
+
+          const updatedPost = await this.postService.setTravel({
+            id,
+            userId: user.id,
+            tripId,
+          });
+
+          const postDto = PostDtoMapper.fromEntity(updatedPost);
+          return c.json(postDto, 200);
+        } catch (error) {
+          console.error("投稿の更新中にエラーが発生しました:", error);
+          if (error instanceof Error && error.message === "Unauthorized") {
+            return c.json({ error: "Forbidden" }, 403);
+          }
+          return c.json({ error: "Failed to update post" }, 500);
+        }
+      },
     );
 }
