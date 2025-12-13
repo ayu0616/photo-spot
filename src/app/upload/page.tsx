@@ -1,9 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ClipboardIcon } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -165,11 +166,39 @@ export default function UploadPage() {
     }
   };
 
+  const pasteImage = useCallback(async () => {
+    /** 許容するコンテンツタイプのリスト */
+    const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
+
+    const image = await navigator.clipboard.read();
+    for (const item of image) {
+      for (const type of item.types) {
+        if (allowedTypes.includes(type)) {
+          const blob = await item.getType(type);
+          const file = new File([blob], "pasted-image.png", { type });
+          form.setValue("image", file);
+          setPreviewUrl(URL.createObjectURL(file));
+          return;
+        }
+      }
+    }
+  }, [form.setValue]);
+
+  useEffect(() => {
+    document.addEventListener("paste", pasteImage);
+    return () => {
+      document.removeEventListener("paste", pasteImage);
+    };
+  }, [pasteImage]);
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">新規投稿作成</h1>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-4 sm:space-y-6"
+        >
           <FormField
             control={form.control}
             name="image"
@@ -193,8 +222,12 @@ export default function UploadPage() {
               </FormItem>
             )}
           />
+          <Button type="button" onClick={pasteImage}>
+            <ClipboardIcon />
+            画像を貼り付け
+          </Button>
           {previewUrl && (
-            <div className="mt-4">
+            <div>
               <Image
                 src={previewUrl}
                 alt="アップロード画像"
