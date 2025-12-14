@@ -167,15 +167,14 @@ export default function UploadPage() {
   };
 
   const pasteImage = useCallback(async () => {
-    /** 許容するコンテンツタイプのリスト */
-    const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
-
-    const image = await navigator.clipboard.read();
-    for (const item of image) {
+    const clipboardItems = await navigator.clipboard.read();
+    for (const item of clipboardItems) {
       for (const type of item.types) {
-        if (allowedTypes.includes(type)) {
+        if (type.startsWith("image/")) {
           const blob = await item.getType(type);
-          const file = new File([blob], "pasted-image.png", { type });
+          const ext = type.split("/")[1];
+          const rnd = crypto.randomUUID();
+          const file = new File([blob], `${rnd}.${ext}`, { type });
           form.setValue("image", file);
           setPreviewUrl(URL.createObjectURL(file));
           return;
