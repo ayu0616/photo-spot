@@ -81,7 +81,9 @@ export default async function PostDetailPage({
               <div>
                 <CardTitle>{post.user.name || "匿名ユーザー"}</CardTitle>
                 <CardDescription>
-                  {formatToYYYYMMDD(new Date(post.createdAt))}
+                  {post.photo.takenAt
+                    ? formatToYYYYMMDD(new Date(post.photo.takenAt))
+                    : "-"}
                 </CardDescription>
               </div>
             </div>

@@ -93,6 +93,7 @@ export class PostRepository implements IPostRepository {
           columns: {
             id: true,
             url: true,
+            takenAt: true,
           },
         },
         trip: {
