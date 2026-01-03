@@ -44,20 +44,20 @@ resource "google_cloudbuild_trigger" "cloud_run_trigger" {
     }
     step {
       name = "gcr.io/cloud-builders/docker"
-      args = ["push", "${var.region}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.docker_repo.repository_id}/${var.image_name}:$COMMIT_SHA"]
+      args = ["push", "${var.region}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.docker_repo.repository_id}/${var.image_name}:latest"]
     }
     step {
       name = "gcr.io/cloud-builders/gcloud"
       args = [
         "run", "deploy", var.service_name,
-        "--image", "${var.region}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.docker_repo.repository_id}/${var.image_name}:$COMMIT_SHA",
+        "--image", "${var.region}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.docker_repo.repository_id}/${var.image_name}:latest",
         "--region", var.region,
         "--platform", "managed",
         "--allow-unauthenticated"
       ]
       entrypoint = "gcloud"
     }
-    images = ["${var.region}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.docker_repo.repository_id}/${var.image_name}:$COMMIT_SHA"]
+    images = ["${var.region}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.docker_repo.repository_id}/${var.image_name}:latest"]
     options {
       logging = "CLOUD_LOGGING_ONLY"
     }

@@ -16,6 +16,12 @@ resource "google_storage_bucket" "image_bucket" {
   #   }
   # }
 
+  cors {
+    origin          = [var.cors_origin]
+    method          = ["GET"]
+    response_header = ["Content-Type", "Access-Control-Allow-Origin"]
+  }
+
   depends_on = [
     google_project_service.cloud_storage_api # Ensure Cloud Storage API is enabled
   ]

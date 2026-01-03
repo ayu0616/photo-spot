@@ -92,3 +92,9 @@ variable "google_fonts_api_key" {
   type        = string
   sensitive   = true
 }
+
+variable "cors_origin" {
+  description = "The origin for CORS."
+  type        = string
+  default     = "http://localhost:3000"
+}
