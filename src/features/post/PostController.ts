@@ -136,8 +136,8 @@ export class PostController {
           const { from, to } = c.req.valid("query");
           const posts: PostWithRelationsDto[] =
             await this.postService.queryPosts({
-              from: from ? new Date(from) : new Date(0),
-              to: to ? new Date(to) : new Date(),
+              from: from ? new Date(`${from}T00:00:00+09:00`) : new Date(0),
+              to: to ? new Date(`${to}T00:00:00+09:00`) : new Date(),
             });
           return c.json(posts, 200);
         } catch (error) {

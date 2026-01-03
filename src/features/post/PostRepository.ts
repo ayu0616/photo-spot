@@ -1,4 +1,4 @@
-import { and, asc, eq, gte, lte } from "drizzle-orm";
+import { and, asc, eq, gte, lt } from "drizzle-orm";
 import { injectable } from "inversify";
 import { db } from "../../db";
 import {
@@ -257,10 +257,7 @@ export class PostRepository implements IPostRepository {
       .where(
         and(
           gte(PhotosTable.takenAt, from),
-          lte(
-            PhotosTable.takenAt,
-            new Date(to.getTime() + 1000 * 60 * 60 * 24),
-          ),
+          lt(PhotosTable.takenAt, new Date(to.getTime() + 1000 * 60 * 60 * 24)),
         ),
       )
       .orderBy(asc(PhotosTable.takenAt));
