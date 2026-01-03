@@ -30,8 +30,10 @@ export const TripListPage = ({
 
   return (
     <YearLoading year={year}>
-      <YearSelect year={year} onChange={handleYearChange} />
-      {JSON.stringify(trips)}
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <YearSelect year={year} onChange={handleYearChange} />
+        {JSON.stringify(trips)}
+      </div>
     </YearLoading>
   );
 };
