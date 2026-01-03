@@ -1,0 +1,1 @@
+ALTER TABLE "photo" ALTER COLUMN "takenAt" SET DATA TYPE timestamp with time zone;

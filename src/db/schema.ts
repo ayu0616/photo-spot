@@ -94,7 +94,7 @@ export const PhotosTable = pgTable("photo", {
 
   // --- 共通のパース済み EXIF フィールド ---
   /** 撮影日時 */
-  takenAt: timestamp("takenAt", { mode: "date" }),
+  takenAt: timestamp("takenAt", { mode: "date", withTimezone: true }),
   /** カメラメーカー（例: Nikon, Canon） */
   cameraMake: varchar("cameraMake", { length: 255 }),
   /** カメラモデル（例: EOS R5） */
