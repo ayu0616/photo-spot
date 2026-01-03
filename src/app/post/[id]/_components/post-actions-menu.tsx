@@ -320,109 +320,29 @@ function EditPostDialog({
               )}
             />
 
-            {spotMode === "new" ? (
-              <>
-                <FormField
-                  control={form.control}
-                  name="newSpotName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>新しいスポット名</FormLabel>
-                      <FormControl>
-                        <Input placeholder="新しいスポット名" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="selectedPrefectureId"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>都道府県</FormLabel>
-                        <Select
-                          onValueChange={(val) => {
-                            field.onChange(val);
-                            form.setValue("newSpotCityId", ""); // Reset city on pref change
-                          }}
-                          value={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="都道府県を選択" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {prefectures.map((pref) => (
-                              <SelectItem
-                                key={pref.id}
-                                value={pref.id.toString()}
-                              >
-                                {pref.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="newSpotCityId"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>市町村</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          value={field.value}
-                          disabled={
-                            !selectedPrefectureId ||
-                            cities.length === 0 ||
-                            isFetchingCities
-                          }
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="市町村を選択" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {cities.map((city) => (
-                              <SelectItem
-                                key={city.id}
-                                value={city.id.toString()}
-                              >
-                                {city.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </>
-            ) : (
+            <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="selectedSpotId"
+                name="selectedPrefectureId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>既存のスポットを選択</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <FormLabel>都道府県</FormLabel>
+                    <Select
+                      onValueChange={(val) => {
+                        field.onChange(val);
+                        form.setValue("newSpotCityId", ""); // Reset city on pref change
+                      }}
+                      value={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="既存のスポットを選択" />
+                          <SelectValue placeholder="都道府県を選択" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {existingSpots.map((spot) => (
-                          <SelectItem key={spot.id} value={spot.id}>
-                            {spot.name} (City ID: {spot.cityId})
+                        {prefectures.map((pref) => (
+                          <SelectItem key={pref.id} value={pref.id.toString()}>
+                            {pref.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -430,6 +350,101 @@ function EditPostDialog({
                     <FormMessage />
                   </FormItem>
                 )}
+              />
+              <FormField
+                control={form.control}
+                name="newSpotCityId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>市町村</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      disabled={
+                        !selectedPrefectureId ||
+                        cities.length === 0 ||
+                        isFetchingCities
+                      }
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="市町村を選択" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {cities.map((city) => (
+                          <SelectItem key={city.id} value={city.id.toString()}>
+                            {city.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {spotMode === "new" ? (
+              <FormField
+                control={form.control}
+                name="newSpotName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>新しいスポット名</FormLabel>
+                    <FormControl>
+                      <Input placeholder="新しいスポット名" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ) : (
+              <FormField
+                control={form.control}
+                name="selectedSpotId"
+                render={({ field }) => {
+                  const selectedCityId = form.watch("newSpotCityId");
+                  const filteredSpots = existingSpots.filter((spot) => {
+                    const prefMatch = selectedPrefectureId
+                      ? spot.prefectureId === Number(selectedPrefectureId)
+                      : true;
+                    const cityMatch = selectedCityId
+                      ? spot.cityId === Number(selectedCityId)
+                      : true;
+                    return prefMatch && cityMatch;
+                  });
+
+                  return (
+                    <FormItem>
+                      <FormLabel>既存のスポットを選択</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="既存のスポットを選択" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {filteredSpots.length === 0 ? (
+                            <div className="p-2 text-sm text-gray-500 text-center">
+                              該当するスポットがありません
+                            </div>
+                          ) : (
+                            filteredSpots.map((spot) => (
+                              <SelectItem key={spot.id} value={spot.id}>
+                                {spot.name}
+                              </SelectItem>
+                            ))
+                          )}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
               />
             )}
 

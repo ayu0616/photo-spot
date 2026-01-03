@@ -20,7 +20,9 @@ export class SpotController {
       // For now, we'll fetch all spots.
       const spots = await this.spotRepository.findAll(); // Assuming a findAll method exists or will be added
 
-      const spotDtos = spots.map((spot) => SpotDtoMapper.fromEntity(spot));
+      const spotDtos = spots.map((spot) =>
+        SpotDtoMapper.fromEntity(spot, spot.prefectureId),
+      );
       return c.json(spotDtos, 200);
     } catch (error) {
       console.error("Failed to fetch spots:", error);

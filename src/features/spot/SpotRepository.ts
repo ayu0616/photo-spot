@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { injectable } from "inversify";
 import { db } from "../../db";
-import { SpotsTable } from "../../db/schema";
+import { CityMasterTable, SpotsTable } from "../../db/schema";
 import type { SpotEntity } from "./domain/spot.entity";
 import type { ISpotRepository } from "./domain/spot-repository.interface";
 import { SpotDtoMapper } from "./SpotDto";
@@ -9,7 +9,7 @@ import { SpotDtoMapper } from "./SpotDto";
 @injectable()
 export class SpotRepository implements ISpotRepository {
   async save(spot: SpotEntity): Promise<void> {
-    const spotDto = SpotDtoMapper.fromEntity(spot);
+    const spotDto = SpotDtoMapper.fromEntity(spot, 0);
     await db.insert(SpotsTable).values({
       id: spotDto.id,
       name: spotDto.name,
@@ -24,7 +24,7 @@ export class SpotRepository implements ISpotRepository {
     if (!spotDto) {
       return null;
     }
-    return SpotDtoMapper.toEntity(spotDto);
+    return SpotDtoMapper.toEntity({ ...spotDto, prefectureId: 0 });
   }
 
   async findByNameAndCityId(
@@ -38,11 +38,24 @@ export class SpotRepository implements ISpotRepository {
     if (!spotDto) {
       return null;
     }
-    return SpotDtoMapper.toEntity(spotDto);
+    return SpotDtoMapper.toEntity({ ...spotDto, prefectureId: 0 });
   }
 
-  async findAll(): Promise<SpotEntity[]> {
-    const spotDtos = await db.query.SpotsTable.findMany();
-    return spotDtos.map((dto) => SpotDtoMapper.toEntity(dto));
+  async findAll(): Promise<(SpotEntity & { prefectureId: number })[]> {
+    const results = await db
+      .select({
+        spot: SpotsTable,
+        prefectureId: CityMasterTable.prefectureId,
+      })
+      .from(SpotsTable)
+      .innerJoin(CityMasterTable, eq(SpotsTable.cityId, CityMasterTable.id));
+
+    return results.map((row) => {
+      const entity = SpotDtoMapper.toEntity({
+        ...row.spot,
+        prefectureId: row.prefectureId,
+      });
+      return Object.assign(entity, { prefectureId: row.prefectureId });
+    });
   }
 }

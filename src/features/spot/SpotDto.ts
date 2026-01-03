@@ -8,16 +8,18 @@ export const SpotDtoSchema = z.object({
   id: z.string().uuid(),
   name: z.string().min(1).max(255),
   cityId: z.number().int().positive(),
+  prefectureId: z.number().int().positive(),
 });
 
 export type SpotDto = z.infer<typeof SpotDtoSchema>;
 
 export const SpotDtoMapper = {
-  fromEntity(entity: SpotEntity): SpotDto {
+  fromEntity(entity: SpotEntity, prefectureId: number): SpotDto {
     return {
       id: entity.id.value,
       name: entity.name.value,
       cityId: entity.cityId.value,
+      prefectureId,
     };
   },
 

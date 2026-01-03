@@ -4,6 +4,7 @@ export interface Spot {
   id: string;
   name: string;
   cityId: number;
+  prefectureId: number;
 }
 
 export interface Prefecture {
