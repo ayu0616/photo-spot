@@ -8,9 +8,6 @@ export const tripSearchParamsSchema = z.object({
 
 export default async function Page({ searchParams }: PageProps<"/trip">) {
   const { year } = tripSearchParamsSchema.parse(await searchParams);
-  if (typeof window !== "undefined") {
-    return "";
-  }
   const res = await honoServerClient.trip["get-by-year"].$get({
     query: { year: year.toString() },
   });
