@@ -2,6 +2,7 @@ import { cacheLife } from "next/cache";
 import { notFound } from "next/navigation";
 import { PostList } from "@/components/post/post-list";
 import { honoClient } from "@/lib/hono";
+import { TripShareDialog } from "./_components/trip-share-dialog";
 
 const getTrip = async (id: string) => {
   "use cache";
@@ -37,11 +38,14 @@ export default async function TripPage({ params }: PageProps<"/trip/[id]">) {
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">{trip.title}</h1>
+        <div className="flex justify-between items-start gap-4 mb-2">
+          <h1 className="text-3xl font-bold">{trip.title}</h1>
+          <TripShareDialog posts={posts} tripTitle={trip.title} />
+        </div>
         {trip.description && (
-          <p className="text-gray-600">{trip.description}</p>
+          <p className="text-gray-600 mb-2">{trip.description}</p>
         )}
-        <p className="text-sm text-gray-500 mt-2">
+        <p className="text-sm text-gray-500">
           {trip.startedAt} - {trip.endedAt}
         </p>
       </div>
