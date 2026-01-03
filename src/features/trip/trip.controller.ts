@@ -2,7 +2,7 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { inject, injectable } from "inversify";
 import { z } from "zod";
-import { nextAuth } from "@/app/api/auth/[...nextAuth]/auth";
+import { auth } from "@/app/api/auth/[...nextAuth]/auth";
 import { TYPES } from "@/constants/types";
 import type { PostService } from "@/features/post/PostService";
 import type { TripService } from "@/features/trip/TripService";
@@ -77,7 +77,7 @@ export class TripController {
       async (c) => {
         try {
           const { date } = c.req.valid("query");
-          const user = (await nextAuth.auth())?.user;
+          const user = (await auth())?.user;
           if (!user || !user.id) {
             return c.json({ error: "Unauthorized" }, 401);
           }
@@ -107,7 +107,7 @@ export class TripController {
       async (c) => {
         try {
           const { year } = c.req.valid("query");
-          const user = (await nextAuth.auth())?.user;
+          const user = (await auth())?.user;
           if (!user || !user.id) {
             return c.json({ error: "Unauthorized" }, 401);
           }
@@ -158,8 +158,7 @@ export class TripController {
     })
     .post("/", zValidator("json", createTripSchema), async (c) => {
       try {
-        const auth = await nextAuth.auth();
-        const user = auth?.user;
+        const user = (await auth())?.user;
         if (!user || user.role !== "ADMIN") {
           return c.json({ error: "Forbidden" }, 403);
         }
@@ -183,8 +182,7 @@ export class TripController {
     })
     .put("/:id", zValidator("json", updateTripSchema), async (c) => {
       try {
-        const auth = await nextAuth.auth();
-        const user = auth?.user;
+        const user = (await auth())?.user;
         if (!user || user.role !== "ADMIN") {
           return c.json({ error: "Forbidden" }, 403);
         }
@@ -212,8 +210,7 @@ export class TripController {
     })
     .delete("/:id", async (c) => {
       try {
-        const auth = await nextAuth.auth();
-        const user = auth?.user;
+        const user = (await auth())?.user;
         if (!user || user.role !== "ADMIN") {
           return c.json({ error: "Forbidden" }, 403);
         }

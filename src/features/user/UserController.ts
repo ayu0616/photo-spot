@@ -2,7 +2,7 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { inject, injectable } from "inversify";
 import { z } from "zod";
-import { nextAuth } from "@/app/api/auth/[...nextAuth]/auth";
+import { auth } from "@/app/api/auth/[...nextAuth]/auth";
 import { TYPES } from "@/constants/types";
 import { UserDtoMapper } from "@/features/user/UserDto";
 import type { UserService } from "@/features/user/UserService";
@@ -32,8 +32,7 @@ export class UserController {
       }),
       async (c) => {
         try {
-          const auth = await nextAuth.auth();
-          const user = auth?.user;
+          const user = (await auth())?.user;
           if (!user || !user.id) {
             return c.json({ error: "Unauthorized" }, 401);
           }
@@ -55,8 +54,7 @@ export class UserController {
     )
     .get("/profile", async (c) => {
       try {
-        const auth = await nextAuth.auth();
-        const user = auth?.user;
+        const user = (await auth())?.user;
         if (!user || !user.id) {
           return c.json({ error: "Unauthorized" }, 401);
         }

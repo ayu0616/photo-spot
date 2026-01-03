@@ -2,7 +2,7 @@ import { MapPin, PlaneIcon } from "lucide-react";
 import { cacheLife } from "next/cache";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { nextAuth } from "@/app/api/auth/[...nextAuth]/auth";
+import { auth } from "@/app/api/auth/[...nextAuth]/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Card,
@@ -57,7 +57,7 @@ export default async function PostDetailPage({
   params,
 }: PageProps<"/post/[id]">) {
   const post = await getPostDetail((await params).id);
-  const session = await nextAuth.auth();
+  const session = await auth();
 
   if (!post) {
     notFound();

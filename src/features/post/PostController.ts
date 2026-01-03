@@ -2,7 +2,7 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { inject, injectable } from "inversify";
 import { z } from "zod";
-import { nextAuth } from "@/app/api/auth/[...nextAuth]/auth";
+import { auth } from "@/app/api/auth/[...nextAuth]/auth";
 import { TYPES } from "@/constants/types";
 import { PostDtoMapper, type PostWithRelationsDto } from "./PostDto";
 import type { PostService } from "./PostService";
@@ -46,8 +46,7 @@ export class PostController {
       }),
       async (c) => {
         try {
-          const auth = await nextAuth.auth();
-          const user = auth?.user;
+          const user = (await auth())?.user;
           if (!user || !user.id) {
             return c.json({ error: "Unauthorized" }, 401);
           }
@@ -163,8 +162,7 @@ export class PostController {
     })
     .delete("/:id", async (c) => {
       try {
-        const auth = await nextAuth.auth();
-        const user = auth?.user;
+        const user = (await auth())?.user;
         if (!user || !user.id) {
           return c.json({ error: "Unauthorized" }, 401);
         }
@@ -202,8 +200,7 @@ export class PostController {
       }),
       async (c) => {
         try {
-          const auth = await nextAuth.auth();
-          const user = auth?.user;
+          const user = (await auth())?.user;
           if (!user || !user.id) {
             return c.json({ error: "Unauthorized" }, 401);
           }
@@ -252,8 +249,7 @@ export class PostController {
       zValidator("json", z.object({ tripId: z.string().min(1).nullable() })),
       async (c) => {
         try {
-          const auth = await nextAuth.auth();
-          const user = auth?.user;
+          const user = (await auth())?.user;
           if (!user || !user.id) {
             return c.json({ error: "Unauthorized" }, 401);
           }
