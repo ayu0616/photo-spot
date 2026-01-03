@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 import {
+  convertCameraModelName,
   formatAperture,
   formatFocalLength,
   formatISO,
@@ -220,7 +221,7 @@ export default async function Image({ params }: { params: { id: string } }) {
         }}
       >
         <div style={{ fontSize: 24, fontWeight: "bold" }}>
-          {post.photo.cameraModel || "Unknown Camera"}
+          {convertCameraModelName(post.photo.cameraModel)}
         </div>
         {post.photo.lensModel && (
           <div style={{ fontSize: 18 }}>{post.photo.lensModel}</div>

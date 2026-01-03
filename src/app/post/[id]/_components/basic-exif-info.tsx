@@ -1,6 +1,7 @@
 import React from "react";
 import type { PhotoForPostDto } from "@/features/post/PostDto";
 import {
+  convertCameraModelName,
   formatAperture,
   formatFocalLength,
   formatISO,
@@ -60,7 +61,7 @@ export const BasicExifInfo: React.FC<BasicExifInfoProps> = ({ photo }) => {
     <div className="mt-6 space-y-6">
       <div className="text-center space-y-1">
         <h3 className="font-bold text-lg">
-          {photo.cameraModel || "Unknown Camera"}
+          {convertCameraModelName(photo.cameraModel)}
         </h3>
         {photo.lensModel && (
           <p className="text-sm font-medium">{photo.lensModel}</p>

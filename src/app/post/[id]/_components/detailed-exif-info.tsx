@@ -4,6 +4,7 @@ import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import type { PhotoForPostDto } from "@/features/post/PostDto";
 import { formatDateTime } from "@/lib/format-date";
 import {
+  convertCameraModelName,
   formatAperture,
   formatFocalLength,
   formatISO,
@@ -23,7 +24,7 @@ export const DetailedExifInfo: React.FC<DetailedExifInfoProps> = ({
       value: photo.takenAt ? formatDateTime(new Date(photo.takenAt)) : "-",
     },
     { label: "カメラメーカー", value: photo.cameraMake || "-" },
-    { label: "カメラモデル", value: photo.cameraModel || "-" },
+    { label: "カメラモデル", value: convertCameraModelName(photo.cameraModel) },
     { label: "レンズメーカー", value: photo.lensMake || "-" },
     { label: "レンズモデル", value: photo.lensModel || "-" },
     { label: "レンズシリアル", value: photo.lensSerial || "-" },
