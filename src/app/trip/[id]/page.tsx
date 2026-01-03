@@ -1,5 +1,6 @@
 import { cacheLife } from "next/cache";
 import { notFound } from "next/navigation";
+import { auth } from "@/app/api/auth/[...nextAuth]/auth";
 import { PostList } from "@/components/post/post-list";
 import { honoClient } from "@/lib/hono";
 import { TripShareDialog } from "./_components/trip-share-dialog";
@@ -35,12 +36,19 @@ export default async function TripPage({ params }: PageProps<"/trip/[id]">) {
     },
   }));
 
+  const session = await auth();
+  const userId = session?.user.id;
+
+  const sharePosts = posts.filter((post) => post.userId === userId);
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="mb-8">
         <div className="flex justify-between items-start gap-4 mb-2">
           <h1 className="text-3xl font-bold">{trip.title}</h1>
-          <TripShareDialog posts={posts} tripTitle={trip.title} />
+          {userId && sharePosts.length > 0 && (
+            <TripShareDialog posts={sharePosts} tripTitle={trip.title} />
+          )}
         </div>
         {trip.description && (
           <p className="text-gray-600 mb-2">{trip.description}</p>
