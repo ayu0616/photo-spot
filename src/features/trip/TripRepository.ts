@@ -1,4 +1,4 @@
-import { and, eq, gte, lte } from "drizzle-orm";
+import { and, eq, gte, lt, lte } from "drizzle-orm";
 import { injectable } from "inversify";
 import { db } from "@/db";
 import { TripsTable } from "@/db/schema";
@@ -92,6 +92,32 @@ export class TripRepository implements ITripRepository {
         gte(TripsTable.endedAt, date),
       ),
       orderBy: (trips, { desc }) => [desc(trips.createdAt)],
+    });
+
+    return trips.map((trip) =>
+      TripEntity.from(
+        new TripId(trip.id),
+        new UserId(trip.userId),
+        new TripTitle(trip.title),
+        new TripDescription(trip.description),
+        new TripStartedAt(trip.startedAt ?? ""),
+        new TripEndedAt(trip.endedAt ?? ""),
+        new CreatedAt(trip.createdAt),
+        new UpdatedAt(trip.updatedAt),
+      ),
+    );
+  }
+
+  async findByYear(year: number, userId: UserId): Promise<TripEntity[]> {
+    const firstDayOfYear = `${year}-01-01`;
+    const firstDayOfNextYear = `${year + 1}-01-01`;
+    const trips = await db.query.TripsTable.findMany({
+      where: and(
+        eq(TripsTable.userId, userId.value),
+        gte(TripsTable.endedAt, firstDayOfYear),
+        lt(TripsTable.startedAt, firstDayOfNextYear),
+      ),
+      orderBy: (trips, { desc }) => [desc(trips.startedAt)],
     });
 
     return trips.map((trip) =>

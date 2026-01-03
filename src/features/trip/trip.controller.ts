@@ -98,6 +98,36 @@ export class TripController {
         }
       },
     )
+    .get(
+      "/get-by-year",
+      zValidator(
+        "query",
+        z.object({ year: z.coerce.number().int().positive() }),
+      ),
+      async (c) => {
+        try {
+          const { year } = c.req.valid("query");
+          const user = (await nextAuth.auth())?.user;
+          if (!user || !user.id) {
+            return c.json({ error: "Unauthorized" }, 401);
+          }
+          const trips = await this.tripService.getTripByYear(year, user.id);
+          return c.json(
+            trips.map((trip) => ({
+              id: trip.id.value,
+              title: trip.title.value,
+              description: trip.description.value,
+              createdAt: trip.createdAt.value,
+              updatedAt: trip.updatedAt.value,
+            })),
+            200,
+          );
+        } catch (error) {
+          console.error("Failed to get trip by date:", error);
+          return c.json({ error: "Failed to get trip by date" }, 500);
+        }
+      },
+    )
     .get("/:id", async (c) => {
       try {
         const id = c.req.param("id");

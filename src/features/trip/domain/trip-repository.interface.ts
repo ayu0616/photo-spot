@@ -7,4 +7,5 @@ export interface ITripRepository {
   findAll(): Promise<TripEntity[]>;
   delete(id: string): Promise<void>;
   findByDate(date: string, userId: UserId): Promise<TripEntity[]>;
+  findByYear(year: number, userId: UserId): Promise<TripEntity[]>;
 }

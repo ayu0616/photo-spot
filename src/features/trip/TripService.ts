@@ -78,4 +78,9 @@ export class TripService {
     const userIdVo = new UserId(userId);
     return await this.tripRepository.findByDate(date, userIdVo);
   }
+
+  async getTripByYear(year: number, userId: string): Promise<TripEntity[]> {
+    const userIdVo = new UserId(userId);
+    return this.tripRepository.findByYear(year, userIdVo);
+  }
 }
