@@ -23,9 +23,9 @@ export const BasicExifInfo: React.FC<BasicExifInfoProps> = ({ photo }) => {
       node: (
         <span className="inline-flex items-baseline">
           {formatFocalLength(photo.focalLength35mm)}
-          <span className="text-[10px] text-muted-foreground ml-0.5">
+          {/* <span className="text-[10px] text-muted-foreground ml-0.5">
             (35mm換算)
-          </span>
+          </span> */}
         </span>
       ),
     });
