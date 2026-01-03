@@ -1,6 +1,3 @@
-"use client";
-
-import { useRouter } from "next/navigation";
 import {
   Select,
   SelectContent,
@@ -9,14 +6,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export const YearSelect = ({ year }: { year: number }) => {
-  const router = useRouter();
-
-  const handleChange = (value: string) => {
-    router.push(`/trip?year=${value}`);
-  };
+export const YearSelect = ({
+  year,
+  onChange,
+}: {
+  year: number;
+  onChange: (year: number) => void;
+}) => {
   return (
-    <Select defaultValue={year.toString()} onValueChange={handleChange}>
+    <Select
+      defaultValue={year.toString()}
+      onValueChange={(value) => onChange(Number.parseInt(value, 10))}
+    >
       <SelectTrigger>
         <SelectValue placeholder="Select a year" />
       </SelectTrigger>
