@@ -25,7 +25,6 @@ import { LensModel } from "./domain/value-object/lens-model";
 import { LensSerial } from "./domain/value-object/lens-serial";
 import { Longitude } from "./domain/value-object/longitude";
 import { Orientation } from "./domain/value-object/orientation";
-import { PhotoExif } from "./domain/value-object/photo-exif";
 import { PhotoId } from "./domain/value-object/photo-id";
 import { PhotoUrl } from "./domain/value-object/photo-url";
 import { ShutterSpeed } from "./domain/value-object/shutter-speed";
@@ -66,7 +65,6 @@ describe("PhotoRepository", () => {
     const mockPhotoEntity = new PhotoEntity(
       PhotoId.create(),
       new PhotoUrl("http://example.com/photo1.jpg"),
-      new PhotoExif(JSON.stringify({ some: "exif" })),
       new TakenAt(new Date("2023-01-01T12:00:00Z")),
       new CameraMake("Nikon"),
       new CameraModel("D850"),
@@ -91,7 +89,6 @@ describe("PhotoRepository", () => {
     expect(db.insert(PhotosTable).values).toHaveBeenCalledWith({
       id: mockPhotoEntity.id.value,
       url: "http://example.com/photo1.jpg",
-      exif: JSON.stringify({ some: "exif" }),
       takenAt: new Date("2023-01-01T12:00:00Z"),
       cameraMake: "Nikon",
       cameraModel: "D850",

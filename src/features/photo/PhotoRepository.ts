@@ -13,7 +13,6 @@ export class PhotoRepository implements IPhotoRepository {
     await db.insert(PhotosTable).values({
       id: photoDto.id,
       url: photoDto.url,
-      exif: photoDto.exif,
       takenAt: photoDto.takenAt,
       cameraMake: photoDto.cameraMake,
       cameraModel: photoDto.cameraModel,

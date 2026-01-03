@@ -71,6 +71,13 @@
       "when": 1767422191624,
       "tag": "0009_complete_dark_phoenix",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1767423441399,
+      "tag": "0010_friendly_thena",
+      "breakpoints": true
     }
   ]
 }

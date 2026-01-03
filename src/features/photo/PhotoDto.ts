@@ -12,7 +12,6 @@ import { LensModel } from "./domain/value-object/lens-model";
 import { LensSerial } from "./domain/value-object/lens-serial";
 import { Longitude } from "./domain/value-object/longitude";
 import { Orientation } from "./domain/value-object/orientation";
-import { PhotoExif } from "./domain/value-object/photo-exif";
 import { PhotoId } from "./domain/value-object/photo-id";
 import { PhotoUrl } from "./domain/value-object/photo-url";
 import { ShutterSpeed } from "./domain/value-object/shutter-speed";
@@ -21,7 +20,6 @@ import { TakenAt } from "./domain/value-object/taken-at";
 export const PhotoDtoSchema = z.object({
   id: z.string().uuid(),
   url: z.string().url(),
-  exif: z.string().nullable(),
   takenAt: z.date().nullable(),
   cameraMake: z.string().nullable(),
   cameraModel: z.string().nullable(),
@@ -45,7 +43,6 @@ export const PhotoDtoMapper = {
     return {
       id: entity.id.value,
       url: entity.url.value,
-      exif: entity.exif ? entity.exif.value : null,
       takenAt: entity.takenAt ? entity.takenAt.value : null,
       cameraMake: entity.cameraMake ? entity.cameraMake.value : null,
       cameraModel: entity.cameraModel ? entity.cameraModel.value : null,
@@ -68,7 +65,6 @@ export const PhotoDtoMapper = {
   toEntity(dto: PhotoDto): PhotoEntity {
     const id = new PhotoId(dto.id);
     const url = new PhotoUrl(dto.url);
-    const exif = dto.exif ? new PhotoExif(dto.exif) : null;
     const takenAt = dto.takenAt ? new TakenAt(dto.takenAt) : null;
     const cameraMake = dto.cameraMake ? new CameraMake(dto.cameraMake) : null;
     const cameraModel = dto.cameraModel
@@ -97,7 +93,6 @@ export const PhotoDtoMapper = {
     return new PhotoEntity(
       id,
       url,
-      exif,
       takenAt,
       cameraMake,
       cameraModel,

@@ -86,12 +86,6 @@ export const PhotosTable = pgTable("photo", {
    */
   url: varchar("url", { length: 255 }).notNull(),
 
-  /**
-   * 生の EXIF 情報を JSON 文字列として保存します。
-   * 必要に応じてパースして個別フィールドにも格納します。
-   */
-  exif: text("exif"),
-
   // --- 共通のパース済み EXIF フィールド ---
   /** 撮影日時 */
   takenAt: timestamp("takenAt", { mode: "date", withTimezone: true }),

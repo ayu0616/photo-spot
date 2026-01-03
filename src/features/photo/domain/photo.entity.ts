@@ -10,7 +10,6 @@ import type { LensModel } from "./value-object/lens-model";
 import type { LensSerial } from "./value-object/lens-serial";
 import type { Longitude } from "./value-object/longitude";
 import type { Orientation } from "./value-object/orientation";
-import type { PhotoExif } from "./value-object/photo-exif";
 import type { PhotoId } from "./value-object/photo-id";
 import type { PhotoUrl } from "./value-object/photo-url";
 import type { ShutterSpeed } from "./value-object/shutter-speed";
@@ -19,7 +18,6 @@ import type { TakenAt } from "./value-object/taken-at";
 export class PhotoEntity {
   private readonly _id: PhotoId;
   private _url: PhotoUrl;
-  private _exif: PhotoExif | null;
   private _takenAt: TakenAt | null;
   private _cameraMake: CameraMake | null;
   private _cameraModel: CameraModel | null;
@@ -38,7 +36,6 @@ export class PhotoEntity {
   constructor(
     id: PhotoId,
     url: PhotoUrl,
-    exif: PhotoExif | null,
     takenAt: TakenAt | null,
     cameraMake: CameraMake | null,
     cameraModel: CameraModel | null,
@@ -56,7 +53,6 @@ export class PhotoEntity {
   ) {
     this._id = id;
     this._url = url;
-    this._exif = exif;
     this._takenAt = takenAt;
     this._cameraMake = cameraMake;
     this._cameraModel = cameraModel;
@@ -79,10 +75,6 @@ export class PhotoEntity {
 
   get url(): PhotoUrl {
     return this._url;
-  }
-
-  get exif(): PhotoExif | null {
-    return this._exif;
   }
 
   get takenAt(): TakenAt | null {
@@ -147,10 +139,6 @@ export class PhotoEntity {
 
   updateUrl(url: PhotoUrl): void {
     this._url = url;
-  }
-
-  updateExif(exif: PhotoExif | null): void {
-    this._exif = exif;
   }
 
   updateTakenAt(takenAt: TakenAt | null): void {

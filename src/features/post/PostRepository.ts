@@ -147,7 +147,6 @@ export class PostRepository implements IPostRepository {
           columns: {
             id: true,
             url: true,
-            exif: true,
             takenAt: true,
             cameraMake: true,
             cameraModel: true,

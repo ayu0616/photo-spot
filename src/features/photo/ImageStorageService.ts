@@ -16,7 +16,6 @@ import { LensModel } from "./domain/value-object/lens-model";
 import type { LensSerial } from "./domain/value-object/lens-serial";
 import { Longitude } from "./domain/value-object/longitude";
 import { Orientation } from "./domain/value-object/orientation";
-import { PhotoExif } from "./domain/value-object/photo-exif";
 import { ShutterSpeed } from "./domain/value-object/shutter-speed";
 import { TakenAt } from "./domain/value-object/taken-at";
 import type { StorageRepository } from "./StorageRepository";
@@ -47,7 +46,6 @@ function formatRational(rational: [number, number] | undefined): string | null {
 
 // ExifData 型を定義し、エクスポート
 export type ExifData = {
-  raw: PhotoExif | null;
   takenAt: TakenAt | null;
   cameraMake: CameraMake | null;
   cameraModel: CameraModel | null;
@@ -141,8 +139,6 @@ export class ImageStorageService {
     try {
       const tags = ExifReader.load(imageBuffer) as ExifTags;
 
-      const rawExif = new PhotoExif(JSON.stringify(tags));
-
       // 共通のパース済み EXIF フィールド
       const takenAt = tags.DateTimeOriginal?.value?.[0]
         ? new TakenAt(
@@ -207,7 +203,6 @@ export class ImageStorageService {
       }
 
       return {
-        raw: rawExif,
         takenAt,
         cameraMake,
         cameraModel,
@@ -226,7 +221,6 @@ export class ImageStorageService {
     } catch (error) {
       console.error("EXIFデータの抽出中にエラーが発生しました:", error);
       return {
-        raw: null,
         takenAt: null,
         cameraMake: null,
         cameraModel: null,

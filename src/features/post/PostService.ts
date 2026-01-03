@@ -84,7 +84,6 @@ export class PostService {
 
     const photoId = new PhotoId(crypto.randomUUID());
     const photoUrlVo = new PhotoUrl(photoUrl);
-    const photoExif = exifData.raw;
     const takenAt = exifData.takenAt;
     const cameraMake = exifData.cameraMake;
     const cameraModel = exifData.cameraModel;
@@ -103,7 +102,6 @@ export class PostService {
     const photo = new PhotoEntity(
       photoId,
       photoUrlVo,
-      photoExif,
       takenAt,
       cameraMake,
       cameraModel,
