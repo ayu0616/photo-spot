@@ -117,7 +117,7 @@ export class TripRepository implements ITripRepository {
         gte(TripsTable.endedAt, firstDayOfYear),
         lt(TripsTable.startedAt, firstDayOfNextYear),
       ),
-      orderBy: (trips, { desc }) => [desc(trips.startedAt)],
+      orderBy: (trips, { asc }) => [asc(trips.startedAt)],
     });
 
     return trips.map((trip) =>

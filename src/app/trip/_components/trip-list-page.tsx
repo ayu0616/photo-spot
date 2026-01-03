@@ -9,6 +9,8 @@ interface Trip {
   id: string;
   title: string;
   description: string | null;
+  startedAt: string;
+  endedAt: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -29,11 +31,14 @@ export const TripListPage = ({
   };
 
   return (
-    <YearLoading year={year}>
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="space-y-6">
+        <h1 className="text-2xl font-bold">{year}年の旅行</h1>
         <YearSelect year={year} onChange={handleYearChange} />
-        {JSON.stringify(trips)}
+        <YearLoading year={year}>
+          <div>{JSON.stringify(trips)}</div>
+        </YearLoading>
       </div>
-    </YearLoading>
+    </div>
   );
 };

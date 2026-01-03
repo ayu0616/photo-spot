@@ -117,6 +117,8 @@ export class TripController {
               id: trip.id.value,
               title: trip.title.value,
               description: trip.description.value,
+              startedAt: trip.startedAt.value,
+              endedAt: trip.endedAt.value,
               createdAt: trip.createdAt.value,
               updatedAt: trip.updatedAt.value,
             })),
