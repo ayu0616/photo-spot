@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import {
   boolean,
+  index,
   integer,
   pgTable,
   primaryKey,
@@ -39,13 +40,17 @@ export const prefectureMasterRelations = relations(
   }),
 );
 
-export const CityMasterTable = pgTable("city_master", {
-  id: integer("id").primaryKey(),
-  prefectureId: integer("prefecture_id")
-    .notNull()
-    .references(() => PrefectureMasterTable.id),
-  name: varchar("name", { length: 255 }).notNull(),
-});
+export const CityMasterTable = pgTable(
+  "city_master",
+  {
+    id: integer("id").primaryKey(),
+    prefectureId: integer("prefecture_id")
+      .notNull()
+      .references(() => PrefectureMasterTable.id),
+    name: varchar("name", { length: 255 }).notNull(),
+  },
+  (table) => [index("city_master_prefecture_id").on(table.prefectureId)],
+);
 
 export const cityMasterRelations = relations(
   CityMasterTable,
@@ -58,15 +63,19 @@ export const cityMasterRelations = relations(
   }),
 );
 
-export const SpotsTable = pgTable("spot", {
-  id: varchar("id", { length: 255 })
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  name: varchar("name", { length: 255 }).notNull(),
-  cityId: integer("cityId")
-    .notNull()
-    .references(() => CityMasterTable.id),
-});
+export const SpotsTable = pgTable(
+  "spot",
+  {
+    id: varchar("id", { length: 255 })
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    name: varchar("name", { length: 255 }).notNull(),
+    cityId: integer("cityId")
+      .notNull()
+      .references(() => CityMasterTable.id),
+  },
+  (table) => [index("spot_city_id").on(table.cityId)],
+);
 
 export const spotsRelations = relations(SpotsTable, ({ one, many }) => ({
   city: one(CityMasterTable, {
@@ -126,20 +135,24 @@ export const photosRelations = relations(PhotosTable, ({ one }) => ({
   }),
 }));
 
-export const TripsTable = pgTable("trip", {
-  id: varchar("id", { length: 255 })
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  userId: varchar("userId", { length: 255 })
-    .notNull()
-    .references(() => usersTable.id, { onDelete: "cascade" }),
-  title: varchar("title", { length: 255 }).notNull(),
-  description: varchar("description", { length: 255 }),
-  startedAt: varchar("startedAt", { length: 10 }), // YYYY-MM-DD
-  endedAt: varchar("endedAt", { length: 10 }), // YYYY-MM-DD
-  createdAt: timestamp("createdAt", { mode: "date" }).notNull(),
-  updatedAt: timestamp("updatedAt", { mode: "date" }).notNull(),
-});
+export const TripsTable = pgTable(
+  "trip",
+  {
+    id: varchar("id", { length: 255 })
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    userId: varchar("userId", { length: 255 })
+      .notNull()
+      .references(() => usersTable.id, { onDelete: "cascade" }),
+    title: varchar("title", { length: 255 }).notNull(),
+    description: varchar("description", { length: 255 }),
+    startedAt: varchar("startedAt", { length: 10 }), // YYYY-MM-DD
+    endedAt: varchar("endedAt", { length: 10 }), // YYYY-MM-DD
+    createdAt: timestamp("createdAt", { mode: "date" }).notNull(),
+    updatedAt: timestamp("updatedAt", { mode: "date" }).notNull(),
+  },
+  (table) => [index("trip_user_id").on(table.userId)],
+);
 
 export const tripsRelations = relations(TripsTable, ({ one, many }) => ({
   user: one(usersTable, {
@@ -149,26 +162,36 @@ export const tripsRelations = relations(TripsTable, ({ one, many }) => ({
   posts: many(PostsTable),
 }));
 
-export const PostsTable = pgTable("post", {
-  id: varchar("id", { length: 255 })
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  userId: varchar("userId", { length: 255 })
-    .notNull()
-    .references(() => usersTable.id, { onDelete: "cascade" }),
-  description: varchar("description", { length: 255 }).notNull(),
-  spotId: varchar("spot_id", { length: 255 }) // Renamed from 'id' to 'spot_id'
-    .notNull()
-    .references(() => SpotsTable.id, { onDelete: "cascade" }), // Added onDelete
-  photoId: varchar("photo_id", { length: 255 }) // Renamed from 'photoId' to 'photo_id'
-    .notNull()
-    .references(() => PhotosTable.id, { onDelete: "cascade" }), // Added onDelete
-  tripId: varchar("trip_id", { length: 255 }).references(() => TripsTable.id, {
-    onDelete: "set null",
-  }),
-  createdAt: timestamp("createdAt", { mode: "date" }).notNull(),
-  updatedAt: timestamp("updatedAt", { mode: "date" }).notNull(),
-});
+export const PostsTable = pgTable(
+  "post",
+  {
+    id: varchar("id", { length: 255 })
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    userId: varchar("userId", { length: 255 })
+      .notNull()
+      .references(() => usersTable.id, { onDelete: "cascade" }),
+    description: varchar("description", { length: 255 }).notNull(),
+    spotId: varchar("spot_id", { length: 255 }) // Renamed from 'id' to 'spot_id'
+      .notNull()
+      .references(() => SpotsTable.id, { onDelete: "cascade" }), // Added onDelete
+    photoId: varchar("photo_id", { length: 255 }) // Renamed from 'photoId' to 'photo_id'
+      .notNull()
+      .references(() => PhotosTable.id, { onDelete: "cascade" }), // Added onDelete
+    tripId: varchar("trip_id", { length: 255 }).references(
+      () => TripsTable.id,
+      {
+        onDelete: "set null",
+      },
+    ),
+    createdAt: timestamp("createdAt", { mode: "date" }).notNull(),
+    updatedAt: timestamp("updatedAt", { mode: "date" }).notNull(),
+  },
+  (table) => [
+    index("post_trip_id").on(table.tripId),
+    index("post_user_id").on(table.userId),
+  ],
+);
 
 export const postsRelations = relations(PostsTable, ({ one }) => ({
   user: one(usersTable, {
