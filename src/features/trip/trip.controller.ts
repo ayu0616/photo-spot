@@ -1,8 +1,10 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { inject, injectable } from "inversify";
+import { revalidateTag } from "next/cache";
 import { z } from "zod";
 import { auth } from "@/app/api/auth/[...nextAuth]/auth";
+import { getTripCacheTag } from "@/app/trip/[id]/page";
 import { TYPES } from "@/constants/types";
 import type { PostService } from "@/features/post/PostService";
 import type { TripService } from "@/features/trip/TripService";
@@ -143,6 +145,7 @@ export class TripController {
         return c.json(
           {
             id: trip.id.value,
+            userId: trip.userId.value,
             title: trip.title.value,
             description: trip.description.value,
             startedAt: trip.startedAt.value,
@@ -185,11 +188,23 @@ export class TripController {
     .put("/:id", zValidator("json", updateTripSchema), async (c) => {
       try {
         const user = (await auth())?.user;
-        if (!user || user.role !== "ADMIN") {
-          return c.json({ error: "Forbidden" }, 403);
+        if (!user || !user.id) {
+          return c.json({ error: "Unauthorized" }, 401);
         }
 
         const id = c.req.param("id");
+
+        // Check ownership if not admin
+        if (user.role !== "ADMIN") {
+          const trip = await this.tripService.getTrip(id);
+          if (!trip) {
+            return c.json({ error: "Trip not found" }, 404);
+          }
+          if (trip.userId.value !== user.id) {
+            return c.json({ error: "Forbidden" }, 403);
+          }
+        }
+
         const { title, description, postIds, startedAt, endedAt } =
           c.req.valid("json");
         await this.tripService.updateTrip(
@@ -204,6 +219,7 @@ export class TripController {
           await this.postService.updatePostsTrip(id, postIds);
         }
 
+        revalidateTag(getTripCacheTag(id), "max");
         return c.json({ message: "Trip updated" }, 200);
       } catch (error) {
         console.error("Failed to update trip:", error);
@@ -213,12 +229,25 @@ export class TripController {
     .delete("/:id", async (c) => {
       try {
         const user = (await auth())?.user;
-        if (!user || user.role !== "ADMIN") {
-          return c.json({ error: "Forbidden" }, 403);
+        if (!user || !user.id) {
+          return c.json({ error: "Unauthorized" }, 401);
         }
 
         const id = c.req.param("id");
+
+        // Check ownership if not admin
+        if (user.role !== "ADMIN") {
+          const trip = await this.tripService.getTrip(id);
+          if (!trip) {
+            return c.json({ error: "Trip not found" }, 404);
+          }
+          if (trip.userId.value !== user.id) {
+            return c.json({ error: "Forbidden" }, 403);
+          }
+        }
+
         await this.tripService.deleteTrip(id);
+        revalidateTag(getTripCacheTag(id), "max");
         return c.json({ message: "Trip deleted" }, 200);
       } catch (error) {
         console.error("Failed to delete trip:", error);
