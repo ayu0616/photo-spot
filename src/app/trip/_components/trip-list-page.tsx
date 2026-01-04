@@ -5,7 +5,7 @@ import { ja } from "date-fns/locale";
 import { Calendar, ChevronRight, MapPin } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { YearLoading } from "./year-loading";
 import { YearSelect } from "./year-select";
 
@@ -31,8 +31,13 @@ export const TripListPage = ({
 
   const handleYearChange = (year: number) => {
     setYear(year);
-    router.push(`/trip?year=${year}`);
+    history.replaceState(null, "", `/trip?year=${year}`);
+    router.replace(`/trip?year=${year}`);
   };
+
+  useEffect(() => {
+    setYear(defaultYear);
+  }, [defaultYear]);
 
   // 月ごとにグループ化
   const groupedTrips = useMemo(() => {

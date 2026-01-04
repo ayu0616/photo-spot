@@ -15,7 +15,7 @@ export const YearSelect = ({
 }) => {
   return (
     <Select
-      defaultValue={year.toString()}
+      value={year.toString()}
       onValueChange={(value) => onChange(Number.parseInt(value, 10))}
     >
       <SelectTrigger>
