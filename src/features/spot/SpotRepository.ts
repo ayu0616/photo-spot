@@ -72,9 +72,9 @@ export class SpotRepository implements ISpotRepository {
         spot: SpotsTable,
         tripId: TripsTable.id,
       })
-      .from(PostsTable)
+      .from(TripsTable)
+      .innerJoin(PostsTable, eq(TripsTable.id, PostsTable.tripId))
       .innerJoin(SpotsTable, eq(PostsTable.spotId, SpotsTable.id))
-      .innerJoin(TripsTable, eq(PostsTable.tripId, TripsTable.id))
       .where(inArray(TripsTable.id, tripIds));
 
     return results.reduce(
