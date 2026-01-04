@@ -1,7 +1,12 @@
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { injectable } from "inversify";
 import { db } from "../../db";
-import { CityMasterTable, SpotsTable } from "../../db/schema";
+import {
+  CityMasterTable,
+  PostsTable,
+  SpotsTable,
+  TripsTable,
+} from "../../db/schema";
 import type { SpotEntity } from "./domain/spot.entity";
 import type { ISpotRepository } from "./domain/spot-repository.interface";
 import { SpotDtoMapper } from "./SpotDto";
@@ -57,5 +62,35 @@ export class SpotRepository implements ISpotRepository {
       });
       return Object.assign(entity, { prefectureId: row.prefectureId });
     });
+  }
+
+  async getSpotNamesByTrips(
+    tripIds: string[],
+  ): Promise<Record<string, SpotEntity[]>> {
+    const results = await db
+      .selectDistinct({
+        spot: SpotsTable,
+        tripId: TripsTable.id,
+      })
+      .from(PostsTable)
+      .innerJoin(SpotsTable, eq(PostsTable.spotId, SpotsTable.id))
+      .innerJoin(TripsTable, eq(PostsTable.tripId, TripsTable.id))
+      .where(inArray(TripsTable.id, tripIds));
+
+    return results.reduce(
+      (prev, cur) => {
+        if (prev[cur.tripId]) {
+          prev[cur.tripId].push(
+            SpotDtoMapper.toEntity({ ...cur.spot, prefectureId: 0 }),
+          );
+        } else {
+          prev[cur.tripId] = [
+            SpotDtoMapper.toEntity({ ...cur.spot, prefectureId: 0 }),
+          ];
+        }
+        return prev;
+      },
+      {} as Record<string, SpotEntity[]>,
+    );
   }
 }

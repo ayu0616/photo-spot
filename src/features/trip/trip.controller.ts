@@ -8,6 +8,7 @@ import { getTripCacheTag } from "@/app/trip/[id]/page";
 import { TYPES } from "@/constants/types";
 import type { PostService } from "@/features/post/PostService";
 import type { TripService } from "@/features/trip/TripService";
+import type { SpotService } from "../spot/spot.service";
 
 const createTripSchema = z.object({
   title: z.string().min(1).max(255),
@@ -40,13 +41,16 @@ const updateTripSchema = z.object({
 export class TripController {
   private readonly tripService: TripService;
   private readonly postService: PostService;
+  private readonly spotService: SpotService;
 
   public constructor(
     @inject(TYPES.TripService) tripService: TripService,
     @inject(TYPES.PostService) postService: PostService,
+    @inject(TYPES.SpotService) spotService: SpotService,
   ) {
     this.tripService = tripService;
     this.postService = postService;
+    this.spotService = spotService;
   }
 
   public readonly app = new Hono()
@@ -114,6 +118,9 @@ export class TripController {
             return c.json({ error: "Unauthorized" }, 401);
           }
           const trips = await this.tripService.getTripByYear(year, user.id);
+          const spotNames = await this.spotService.getSpotNamesByTrips(
+            trips.map((trip) => trip.id.value),
+          );
           return c.json(
             trips.map((trip) => ({
               id: trip.id.value,
@@ -123,6 +130,7 @@ export class TripController {
               endedAt: trip.endedAt.value,
               createdAt: trip.createdAt.value,
               updatedAt: trip.updatedAt.value,
+              spotNames: spotNames[trip.id.value] ?? [],
             })),
             200,
           );

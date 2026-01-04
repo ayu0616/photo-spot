@@ -11,7 +11,8 @@ const TYPES = {
   // Services
   ImageStorageService: Symbol.for("ImageStorageService"),
   PostService: Symbol.for("PostService"),
-  UserService: Symbol.for("UserService"), // New
+  UserService: Symbol.for("UserService"),
+  SpotService: Symbol.for("SpotService"),
 
   // Controllers
   ImageController: Symbol.for("ImageController"),

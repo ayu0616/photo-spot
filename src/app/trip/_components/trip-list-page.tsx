@@ -17,6 +17,7 @@ interface Trip {
   endedAt: string;
   createdAt: string;
   updatedAt: string;
+  spotNames: string[];
 }
 
 export const TripListPage = ({
@@ -153,9 +154,16 @@ const TripItem = ({ trip }: { trip: Trip }) => {
 
             <div className="space-y-4 relative z-10">
               <div className="flex items-center justify-between">
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary">
-                  {format(startDate, "M月d日", { locale: ja })}
-                </span>
+                <div className="flex flex-1 gap-2">
+                  {trip.spotNames.map((spotName) => (
+                    <span
+                      key={spotName}
+                      className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary"
+                    >
+                      {spotName}
+                    </span>
+                  ))}
+                </div>
                 <div className="p-1 rounded-full bg-muted opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-4 group-hover:translate-x-0">
                   <ChevronRight className="w-4 h-4 text-primary" />
                 </div>

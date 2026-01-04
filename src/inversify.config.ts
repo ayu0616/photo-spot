@@ -44,6 +44,7 @@ container
   .to(ImageStorageService);
 container.bind<PostService>(TYPES.PostService).to(PostService);
 container.bind<IUserService>(TYPES.UserService).to(UserService);
+container.bind<SpotService>(TYPES.SpotService).to(SpotService);
 
 // Bind Controllers
 container.bind<ImageController>(TYPES.ImageController).to(ImageController);
@@ -61,6 +62,7 @@ container.bind<ITripRepository>(TYPES.TripRepository).to(TripRepository);
 container.bind<TripService>(TYPES.TripService).to(TripService);
 
 import { TripController } from "@/features/trip/trip.controller";
+import { SpotService } from "./features/spot/spot.service";
 
 container.bind<TripController>(TYPES.TripController).to(TripController);
 
