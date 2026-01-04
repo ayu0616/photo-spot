@@ -2,10 +2,11 @@
 
 import { format, parseISO } from "date-fns";
 import { ja } from "date-fns/locale";
-import { Calendar, ChevronRight, MapPin } from "lucide-react";
+import { Calendar } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { Badge } from "@/components/ui/badge";
 import { YearLoading } from "./year-loading";
 import { YearSelect } from "./year-select";
 
@@ -138,57 +139,46 @@ const TripItem = ({ trip }: { trip: Trip }) => {
   return (
     <div className="relative flex items-center group">
       {/* タイムラインのドット（アイテムごと） */}
-      <div className="absolute left-0 translate-x-3.5 w-3 h-3 rounded-full border-2 border-background bg-border group-hover:bg-primary group-hover:scale-125 transition-all duration-300 z-20" />
-
+      <div className="absolute left-0 translate-x-3.5 w-3 h-3 rounded-full border-2 border-background bg-border group-hover:bg-primary group-hover:scale-125 transition-all duration-200 z-20" />
       {/* コンテンツ */}
-      <div className="flex-1 ml-12 pb-4">
-        <Link href={`/trip/${trip.id}`} className="block">
-          <div className="relative p-6 rounded-2xl bg-card border border-border/60 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 group-hover:border-primary/30 overflow-hidden">
-            {/* 装飾用グラデーション */}
-            <div className="absolute -inset-px bg-linear-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="w-full grid grid-cols-[calc(var(--spacing)*12)_1fr]">
+        <div className="w-12"></div>
+        <div className="">
+          <Link href={`/trip/${trip.id}`} className="block">
+            <div className="relative p-6 rounded-2xl bg-card border border-border/60 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 group-hover:border-primary/30 overflow-hidden">
+              {/* 装飾用グラデーション */}
+              <div className="absolute -inset-px bg-linear-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-            {/* 装飾用背景アイコン */}
-            <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-500">
-              <MapPin className="w-20 h-20" />
-            </div>
+              <div className="space-y-4 relative z-10">
+                <div className="space-y-1">
+                  <h3 className="text-xl font-bold tracking-tight group-hover:text-primary transition-colors duration-300">
+                    {trip.title}
+                  </h3>
+                  {trip.description && (
+                    <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+                      {trip.description}
+                    </p>
+                  )}
+                </div>
 
-            <div className="space-y-4 relative z-10">
-              <div className="flex items-center justify-between">
-                <div className="flex flex-1 gap-2">
+                <div className="flex flex-wrap flex-1 line-clamp-1 gap-2">
                   {trip.spotNames.map((spotName) => (
-                    <span
-                      key={spotName}
-                      className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary"
-                    >
+                    <Badge variant="secondary" key={spotName}>
                       {spotName}
-                    </span>
+                    </Badge>
                   ))}
                 </div>
-                <div className="p-1 rounded-full bg-muted opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-4 group-hover:translate-x-0">
-                  <ChevronRight className="w-4 h-4 text-primary" />
-                </div>
-              </div>
 
-              <div className="space-y-1">
-                <h3 className="text-xl font-bold tracking-tight group-hover:text-primary transition-colors duration-300">
-                  {trip.title}
-                </h3>
-                {trip.description && (
-                  <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
-                    {trip.description}
-                  </p>
-                )}
-              </div>
-
-              <div className="pt-2 flex items-center text-xs text-muted-foreground/80 gap-4">
-                <div className="flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5" />
-                  <span>{dateDisplay}</span>
+                <div className="pt-2 flex items-center text-xs text-muted-foreground/80 gap-4">
+                  <div className="flex items-center gap-1.5">
+                    <Calendar className="w-3.5 h-3.5" />
+                    <span>{dateDisplay}</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </Link>
+          </Link>
+        </div>
       </div>
     </div>
   );
