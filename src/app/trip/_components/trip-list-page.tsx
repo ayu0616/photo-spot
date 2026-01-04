@@ -6,7 +6,6 @@ import { Calendar, ChevronRight, MapPin } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { cn } from "@/lib/utils";
 import { YearLoading } from "./year-loading";
 import { YearSelect } from "./year-select";
 
@@ -73,39 +72,30 @@ export const TripListPage = ({
         </header>
 
         <YearLoading year={year}>
-          <div className="relative space-y-12 before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-linear-to-b before:from-transparent before:via-border before:to-transparent">
+          <div className="relative space-y-12 before:absolute before:inset-0 before:ml-5 before:-translate-x-px before:h-full before:w-0.5 before:bg-linear-to-b before:from-transparent before:via-border before:to-transparent">
             {groupedTrips.length > 0 ? (
-              groupedTrips.map(({ month, trips }) => (
-                <div key={month} className="relative">
-                  {/* 月の見出し */}
-                  <div className="md:flex items-center justify-between md:mb-8 mb-4">
-                    <div className="flex items-center">
-                      <div className="absolute left-0 translate-x-3.5 md:left-1/2 md:-translate-x-1/2 w-4 h-4 rounded-full border-4 border-background bg-primary shadow-sm" />
-                      <div className="ml-12 md:ml-0 md:w-1/2 md:pr-12 md:text-right flex-1">
+              groupedTrips.map(({ month, trips }) => {
+                return (
+                  <div key={month} className="relative">
+                    {/* 月の見出し */}
+                    <div className="flex items-center mb-8">
+                      <div className="absolute left-0 translate-x-3.5 w-4 h-4 rounded-full border-4 border-background bg-primary shadow-sm z-30" />
+                      <div className="ml-12">
                         <h2 className="text-2xl font-bold text-primary">
                           {month}月
                         </h2>
                       </div>
                     </div>
-                  </div>
 
-                  {/* その月の旅行リスト */}
-                  <div className="space-y-6 ml-12 md:ml-0">
-                    {trips.map((trip, tripIndex) => (
-                      <TripItem
-                        key={trip.id}
-                        trip={trip}
-                        index={
-                          groupedTrips
-                            .slice(0, groupedTrips.indexOf({ month, trips }))
-                            .reduce((acc, curr) => acc + curr.trips.length, 0) +
-                          tripIndex
-                        }
-                      />
-                    ))}
+                    {/* その月の旅行リスト */}
+                    <div className="space-y-6">
+                      {trips.map((trip) => (
+                        <TripItem key={trip.id} trip={trip} />
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             ) : (
               <div className="text-center py-20 bg-muted/30 rounded-3xl border-2 border-dashed border-muted">
                 <p className="text-muted-foreground">
@@ -120,33 +110,32 @@ export const TripListPage = ({
   );
 };
 
-const TripItem = ({ trip, index }: { trip: Trip; index: number }) => {
+const TripItem = ({ trip }: { trip: Trip }) => {
   const startDate = parseISO(trip.startedAt);
   const endDate = parseISO(trip.endedAt);
 
-  const dateDisplay =
-    format(startDate, "M/d", { locale: ja }) ===
-    format(endDate, "M/d", { locale: ja })
-      ? format(startDate, "yyyy年M月d日(E)", { locale: ja })
-      : `${format(startDate, "M/d", { locale: ja })} - ${format(endDate, "M/d", { locale: ja })}`;
+  const dateDisplay = useMemo(() => {
+    const startFormatted = format(startDate, "M/d", { locale: ja });
+    const endFormatted = format(endDate, "M/d", { locale: ja });
 
-  const isEven = index % 2 === 0;
+    if (startFormatted === endFormatted) {
+      return startFormatted;
+    }
+
+    if (startDate.getMonth() === endDate.getMonth()) {
+      return `${startFormatted} - ${format(endDate, "d", { locale: ja })}`;
+    }
+
+    return `${startFormatted} - ${endFormatted}`;
+  }, [startDate, endDate]);
 
   return (
-    <div
-      className={cn(
-        "relative md:flex items-center gap-8 md:gap-0 group",
-        isEven ? "md:flex-row" : "md:flex-row-reverse",
-      )}
-    >
-      {/* デスクトップ用：反対側のスペース */}
-      <div className="hidden md:block md:w-1/2" />
-
+    <div className="relative flex items-center group">
       {/* タイムラインのドット（アイテムごと） */}
-      <div className="absolute left-0 translate-x-3.5 md:left-1/2 md:-translate-x-1/2 w-3 h-3 rounded-full border-2 border-background bg-border group-hover:bg-primary group-hover:scale-125 transition-all duration-300 z-20" />
+      <div className="absolute left-0 translate-x-3.5 w-3 h-3 rounded-full border-2 border-background bg-border group-hover:bg-primary group-hover:scale-125 transition-all duration-300 z-20" />
 
       {/* コンテンツ */}
-      <div className={cn("md:w-1/2 pb-4", isEven ? "md:pl-12" : "md:pr-12")}>
+      <div className="flex-1 ml-12 pb-4">
         <Link href={`/trip/${trip.id}`} className="block">
           <div className="relative p-6 rounded-2xl bg-card border border-border/60 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 group-hover:border-primary/30 overflow-hidden">
             {/* 装飾用グラデーション */}
