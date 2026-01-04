@@ -1,8 +1,10 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { inject, injectable } from "inversify";
+import { revalidateTag } from "next/cache";
 import { z } from "zod";
 import { auth } from "@/app/api/auth/[...nextAuth]/auth";
+import { getPostCacheTag } from "@/app/post/[id]/page";
 import { TYPES } from "@/constants/types";
 import { PostDtoMapper, type PostWithRelationsDto } from "./PostDto";
 import type { PostService } from "./PostService";
@@ -185,6 +187,7 @@ export class PostController {
         }
 
         await this.postService.deletePost(id);
+        revalidateTag(getPostCacheTag(id), "max");
         return c.json({ message: "Post deleted successfully" }, 200);
       } catch (error) {
         console.error("投稿の削除中にエラーが発生しました:", error);
@@ -233,6 +236,7 @@ export class PostController {
           });
 
           const postDto = PostDtoMapper.fromEntity(updatedPost);
+          revalidateTag(getPostCacheTag(id), "max");
           return c.json(postDto, 200);
         } catch (error) {
           console.error("投稿の更新中にエラーが発生しました:", error);
@@ -264,6 +268,7 @@ export class PostController {
           });
 
           const postDto = PostDtoMapper.fromEntity(updatedPost);
+          revalidateTag(getPostCacheTag(id), "max");
           return c.json(postDto, 200);
         } catch (error) {
           console.error("投稿の更新中にエラーが発生しました:", error);
