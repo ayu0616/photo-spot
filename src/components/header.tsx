@@ -6,6 +6,7 @@ import {
   Home,
   List,
   LogOut,
+  Map as MapIcon,
   Menu,
   Settings,
   Upload,
@@ -39,6 +40,7 @@ export function Header() {
   const navigationLinks = [
     { href: "/", label: "ホーム", icon: Home, show: true },
     { href: "/post", label: "投稿一覧", icon: List, show: true },
+    { href: "/trip", label: "旅行", icon: MapIcon, show: true },
     { href: "/upload", label: "アップロード", icon: Upload, show: isAdmin },
     { href: "/admin", label: "管理", icon: Settings, show: isAdmin },
   ] as const;
