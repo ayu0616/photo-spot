@@ -537,6 +537,9 @@ const SelectTripDialog = ({
           }
           return res.json();
         }),
+    onSuccess: () => {
+      onOpenChange(false);
+    },
   });
 
   const onSubmit = form.handleSubmit(async (data) => {
