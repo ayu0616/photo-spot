@@ -97,7 +97,7 @@ export const app = new Hono()
     }
   })
   .get(
-    "/query",
+    "/for-trip-edit",
     zValidator(
       "query",
       z.object({
@@ -109,14 +109,16 @@ export const app = new Hono()
           .string()
           .regex(/\d{4}-\d{2}-\d{2}/)
           .optional(),
+        tripId: z.string().min(1),
       }),
     ),
     async (c) => {
       try {
-        const { from, to } = c.req.valid("query");
-        const posts = await postService.queryPosts(
+        const { from, to, tripId } = c.req.valid("query");
+        const posts = await postService.queryPostsForTripEdit(
           from ? new Date(`${from}T00:00:00+09:00`) : new Date(0),
           to ? new Date(`${to}T00:00:00+09:00`) : new Date(),
+          tripId,
         );
         return c.json(posts, 200);
       } catch (error) {

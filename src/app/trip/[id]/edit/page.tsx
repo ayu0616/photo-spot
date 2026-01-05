@@ -7,8 +7,10 @@ import EditTripForm from "./edit-trip-form";
 interface PostSummary {
   id: string;
   spot: { name: string };
-  createdAt: string;
-  photo: { url: string };
+  photo: {
+    takenAt: string | null;
+    url: string;
+  };
 }
 
 interface Trip {
@@ -57,10 +59,11 @@ export default async function EditTripPage({
     ? formatToYYYYMMDD(new Date(tripData.endedAt))
     : undefined;
 
-  const postsRes = await honoClient.post.query.$get({
+  const postsRes = await honoClient.post["for-trip-edit"].$get({
     query: {
       from: fromDate,
       to: toDate,
+      tripId: id,
     },
   });
 

@@ -35,8 +35,10 @@ import { honoClient } from "@/lib/hono";
 interface PostSummary {
   id: string;
   spot: { name: string };
-  createdAt: string;
-  photo: { url: string };
+  photo: {
+    takenAt: string | null;
+    url: string;
+  };
 }
 
 interface Trip {
@@ -112,10 +114,11 @@ export default function EditTripForm({
       dateRange?.to ? formatToYYYYMMDD(dateRange.to) : undefined,
     ),
     queryFn: async () => {
-      const res = await honoClient.post.query.$get({
+      const res = await honoClient.post["for-trip-edit"].$get({
         query: {
           from: dateRange?.from ? formatToYYYYMMDD(dateRange.from) : undefined,
           to: dateRange?.to ? formatToYYYYMMDD(dateRange.to) : undefined,
+          tripId: id,
         },
       });
       if (!res.ok) {
@@ -308,7 +311,9 @@ export default function EditTripForm({
                               {post.spot.name}
                             </p>
                             <p className="text-xs text-muted-foreground">
-                              {new Date(post.createdAt).toLocaleDateString()}
+                              {post.photo.takenAt
+                                ? formatToYYYYMMDD(new Date(post.photo.takenAt))
+                                : "-"}
                             </p>
                           </div>
                           <div

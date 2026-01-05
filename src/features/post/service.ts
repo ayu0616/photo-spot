@@ -1,15 +1,7 @@
 import type { InferSelectModel } from "drizzle-orm";
-import { and, asc, eq, gte, inArray, lt } from "drizzle-orm";
+import { and, asc, eq, gte, inArray, isNull, lt, or } from "drizzle-orm";
 import { db } from "@/db";
-import {
-  CityMasterTable,
-  PhotosTable,
-  PostsTable,
-  PrefectureMasterTable,
-  SpotsTable,
-  TripsTable,
-  usersTable,
-} from "@/db/schema";
+import { PhotosTable, PostsTable, SpotsTable, TripsTable } from "@/db/schema";
 import * as imageService from "@/features/photo/image.service";
 
 export type Post = InferSelectModel<typeof PostsTable>;
@@ -272,53 +264,36 @@ export async function getPostsByTripId(tripId: string) {
   });
 }
 
-export async function queryPosts(from: Date, to: Date) {
+export async function queryPostsForTripEdit(
+  from: Date,
+  to: Date,
+  tripId: string,
+) {
   const posts = await db
-    .select()
+    .select({
+      id: PostsTable.id,
+      spot: {
+        name: SpotsTable.name,
+      },
+      photo: {
+        url: PhotosTable.url,
+        takenAt: PhotosTable.takenAt,
+      },
+    })
     .from(PostsTable)
     .innerJoin(PhotosTable, eq(PostsTable.photoId, PhotosTable.id))
-    .innerJoin(usersTable, eq(PostsTable.userId, usersTable.id))
     .innerJoin(SpotsTable, eq(PostsTable.spotId, SpotsTable.id))
-    .innerJoin(CityMasterTable, eq(SpotsTable.cityId, CityMasterTable.id))
-    .innerJoin(
-      PrefectureMasterTable,
-      eq(CityMasterTable.prefectureId, PrefectureMasterTable.id),
-    )
     .leftJoin(TripsTable, eq(PostsTable.tripId, TripsTable.id))
     .where(
       and(
         gte(PhotosTable.takenAt, from),
         lt(PhotosTable.takenAt, new Date(to.getTime() + 1000 * 60 * 60 * 24)),
+        or(isNull(PostsTable.tripId), eq(PostsTable.tripId, tripId)),
       ),
     )
     .orderBy(asc(PhotosTable.takenAt));
 
-  return posts.map((record) => {
-    return {
-      id: record.post.id,
-      userId: record.post.userId,
-      description: record.post.description,
-      spotId: record.post.spotId,
-      photoId: record.post.photoId,
-      tripId: record.post.tripId,
-      createdAt: record.post.createdAt,
-      updatedAt: record.post.updatedAt,
-      photo: record.photo,
-      user: {
-        id: record.user.id,
-        name: record.user.name,
-        image: record.user.image,
-      },
-      spot: {
-        ...record.spot,
-        city: {
-          ...record.city_master,
-          prefecture: record.prefecture_master,
-        },
-      },
-      trip: record.trip,
-    };
-  });
+  return posts;
 }
 
 export async function deletePost(id: string): Promise<void> {
