@@ -5,12 +5,23 @@ import { notFound } from "next/navigation";
 import { auth } from "@/app/api/auth/[...nextAuth]/auth";
 import { PostList } from "@/components/post/post-list";
 import { Button } from "@/components/ui/button";
+import type { PostList as PostListType } from "@/features/post/service";
 import { honoClient } from "@/lib/hono";
 import { TripShareDialog } from "./_components/trip-share-dialog";
 
 export const getTripCacheTag = (id: string) => `trip-details-${id}`;
 
-const getTrip = async (id: string) => {
+interface TripDetail {
+  id: string;
+  title: string;
+  description: string | null;
+  startedAt: string | null;
+  endedAt: string | null;
+  userId: string;
+  posts: PostListType[];
+}
+
+const getTrip = async (id: string): Promise<TripDetail> => {
   "use cache";
   cacheTag(getTripCacheTag(id));
   cacheLife("minutes");
@@ -26,10 +37,15 @@ const getTrip = async (id: string) => {
     throw new Error("Failed to fetch trip");
   }
 
-  return res.json();
+  // Cast because Hono client inference might be tricky with complex relations or I'm lazy
+  return (await res.json()) as unknown as TripDetail;
 };
 
-export default async function TripPage({ params }: PageProps<"/trip/[id]">) {
+export default async function TripPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const trip = await getTrip((await params).id);
 
   const posts = trip.posts.map((post) => ({
@@ -40,7 +56,7 @@ export default async function TripPage({ params }: PageProps<"/trip/[id]">) {
       ...post.photo,
       takenAt: post.photo.takenAt ? new Date(post.photo.takenAt) : null,
     },
-  }));
+  })) as PostListType[];
 
   const session = await auth();
   const userId = session?.user.id;
@@ -55,7 +71,8 @@ export default async function TripPage({ params }: PageProps<"/trip/[id]">) {
           <div className="flex gap-2">
             {userId === trip.userId && (
               <Button variant="outline" size="icon" asChild>
-                <Link href={`/trip/${trip.id}/edit`}>
+                {/* biome-ignore lint/suspicious/noExplicitAny: Route inference issue */}
+                <Link href={`/trip/${trip.id}/edit` as any}>
                   <Edit className="h-4 w-4" />
                   <span className="sr-only">編集</span>
                 </Link>

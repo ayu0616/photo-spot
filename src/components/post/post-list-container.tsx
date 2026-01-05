@@ -7,16 +7,16 @@ import {
 } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
-import type { PostWithRelationsDto } from "@/features/post/PostDto";
+import type { PostList } from "@/features/post/service";
 import { honoClient } from "@/lib/hono";
-import { PostList } from "./post-list"; // Import the presentational component
+import { PostList as PostListComponent } from "./post-list";
 
 const POSTS_PER_PAGE = 10;
 
 // Define the fetch function for TanStack Query
 const fetchPostsData = async ({
   pageParam = 0,
-}: QueryFunctionContext<string[], number>): Promise<PostWithRelationsDto[]> => {
+}: QueryFunctionContext<string[], number>): Promise<PostList[]> => {
   const response = await honoClient.post.$get({
     query: {
       limit: POSTS_PER_PAGE.toString(),
@@ -37,7 +37,7 @@ const fetchPostsData = async ({
       ...post.photo,
       takenAt: post.photo.takenAt ? new Date(post.photo.takenAt) : null,
     },
-  }));
+  })) as PostList[];
 };
 
 export const PostListContainer: React.FC = () => {
@@ -54,9 +54,9 @@ export const PostListContainer: React.FC = () => {
     isError,
     error,
   } = useInfiniteQuery<
-    PostWithRelationsDto[],
+    PostList[],
     Error,
-    InfiniteData<PostWithRelationsDto[]>,
+    InfiniteData<PostList[]>,
     string[],
     number
   >({
@@ -77,10 +77,10 @@ export const PostListContainer: React.FC = () => {
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  const allPosts: PostWithRelationsDto[] = data?.pages.flat() || [];
+  const allPosts: PostList[] = data?.pages.flat() || [];
 
   return (
-    <PostList
+    <PostListComponent
       allPosts={allPosts}
       fetchNextPage={fetchNextPage}
       hasNextPage={hasNextPage}

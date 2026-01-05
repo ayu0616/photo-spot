@@ -14,8 +14,8 @@ interface Trip {
   id: string;
   title: string;
   description: string | null;
-  startedAt: string;
-  endedAt: string;
+  startedAt: string | null;
+  endedAt: string | null;
   createdAt: string;
   updatedAt: string;
   spotNames: string[];
@@ -45,6 +45,7 @@ export const TripListPage = ({
   const groupedTrips = useMemo(() => {
     const groups: Record<number, Trip[]> = {};
     for (const trip of trips) {
+      if (!trip.startedAt) continue;
       const month = parseISO(trip.startedAt).getMonth() + 1;
       if (!groups[month]) {
         groups[month] = [];
@@ -118,10 +119,17 @@ export const TripListPage = ({
 };
 
 const TripItem = ({ trip }: { trip: Trip }) => {
-  const startDate = parseISO(trip.startedAt);
-  const endDate = parseISO(trip.endedAt);
+  const startDate = useMemo(
+    () => (trip.startedAt ? parseISO(trip.startedAt) : null),
+    [trip.startedAt],
+  );
+  const endDate = useMemo(
+    () => (trip.endedAt ? parseISO(trip.endedAt) : null),
+    [trip.endedAt],
+  );
 
   const dateDisplay = useMemo(() => {
+    if (!startDate || !endDate) return "-";
     const startFormatted = format(startDate, "M/d", { locale: ja });
     const endFormatted = format(endDate, "M/d", { locale: ja });
 
@@ -135,6 +143,8 @@ const TripItem = ({ trip }: { trip: Trip }) => {
 
     return `${startFormatted} - ${endFormatted}`;
   }, [startDate, endDate]);
+
+  if (!trip.startedAt || !trip.endedAt || !startDate || !endDate) return null;
 
   return (
     <div className="relative flex items-center group">

@@ -11,11 +11,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { PostWithRelationsDto } from "@/features/post/PostDto";
+import type { PostList } from "@/features/post/service";
 import { formatToYYYYMMDD } from "@/lib/format-date";
 
 interface PostCardProps {
-  post: PostWithRelationsDto;
+  post: PostList;
 }
 
 export const PostCard: React.FC<PostCardProps> = ({ post }) => {

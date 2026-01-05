@@ -62,7 +62,8 @@ export default function NewTripPage() {
     setApiError(null);
 
     try {
-      const res = await honoClient.trip.$post({
+      // biome-ignore lint/suspicious/noExplicitAny: Hono client inference issue
+      const res = await (honoClient as any).trip.$post({
         json: {
           title: values.title,
           description: values.description,

@@ -1,7 +1,7 @@
 import type React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import type { PhotoForPostDto } from "@/features/post/PostDto";
+import type { PhotoForPost } from "@/features/post/service";
 import { formatDateTime } from "@/lib/format-date";
 import {
   convertCameraModelName,
@@ -12,7 +12,7 @@ import {
 } from "@/lib/format-exif";
 
 interface DetailedExifInfoProps {
-  photo: PhotoForPostDto;
+  photo: PhotoForPost;
 }
 
 export const DetailedExifInfo: React.FC<DetailedExifInfoProps> = ({

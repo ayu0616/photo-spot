@@ -23,7 +23,9 @@ interface Trip {
 
 export default async function EditTripPage({
   params,
-}: PageProps<"/trip/[id]/edit">) {
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   const session = await auth();
 

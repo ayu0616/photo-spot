@@ -3,11 +3,11 @@
 import { Loader2 } from "lucide-react";
 import type React from "react";
 import { Button } from "@/components/ui/button";
-import type { PostWithRelationsDto } from "@/features/post/PostDto";
+import type { PostList as PostListType } from "@/features/post/service";
 import { PostCard } from "./post-card";
 
 interface PostListProps {
-  allPosts: PostWithRelationsDto[];
+  allPosts: PostListType[];
   fetchNextPage?: () => Promise<unknown>;
   hasNextPage?: boolean;
   isFetchingNextPage?: boolean;

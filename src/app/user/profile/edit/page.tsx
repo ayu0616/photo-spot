@@ -8,10 +8,10 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { UserDto } from "@/features/user/UserDto";
+import type { User } from "@/features/user/service";
 import { honoClient } from "@/lib/hono";
 
-const fetchUserProfile = async (): Promise<UserDto> => {
+const fetchUserProfile = async (): Promise<User> => {
   const response = await honoClient.user.profile.$get();
   if (!response.ok) {
     throw new Error("Failed to fetch user profile");
@@ -20,10 +20,10 @@ const fetchUserProfile = async (): Promise<UserDto> => {
   return {
     ...user,
     emailVerified: user.emailVerified ? new Date(user.emailVerified) : null,
-  };
+  } as User;
 };
 
-const updateUserName = async (name: string): Promise<UserDto> => {
+const updateUserName = async (name: string): Promise<User> => {
   const response = await honoClient.user.profile.$put({
     json: { name },
   });
@@ -39,7 +39,7 @@ const updateUserName = async (name: string): Promise<UserDto> => {
   return {
     ...user,
     emailVerified: user.emailVerified ? new Date(user.emailVerified) : null,
-  };
+  } as User;
 };
 
 export default function EditProfilePage() {
@@ -56,30 +56,28 @@ export default function EditProfilePage() {
     isLoading: isProfileLoading,
     isError: isProfileError,
     error: profileError,
-  } = useQuery<UserDto, Error>({
+  } = useQuery<User, Error>({
     queryKey: ["userProfile"],
     queryFn: fetchUserProfile,
     enabled: status === "authenticated", // Only fetch if authenticated
   });
 
-  const { mutate, isPending: isUpdating } = useMutation<UserDto, Error, string>(
-    {
-      mutationFn: updateUserName,
-      onSuccess: (_data) => {
-        setSuccess("ユーザー名が更新されました！");
-        setError(null);
-        // Invalidate and refetch the user profile query to get the updated name
-        queryClient.invalidateQueries({ queryKey: ["userProfile"] });
-        // Optionally, update the session in the client to reflect the new name immediately
-        // This might require a custom solution depending on how session is managed by @hono/auth-js/react
-        // For now, relying on refetching userProfile and potentially a page refresh to update session data
-      },
-      onError: (err) => {
-        setError(err.message);
-        setSuccess(null);
-      },
+  const { mutate, isPending: isUpdating } = useMutation<User, Error, string>({
+    mutationFn: updateUserName,
+    onSuccess: (_data) => {
+      setSuccess("ユーザー名が更新されました！");
+      setError(null);
+      // Invalidate and refetch the user profile query to get the updated name
+      queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+      // Optionally, update the session in the client to reflect the new name immediately
+      // This might require a custom solution depending on how session is managed by @hono/auth-js/react
+      // For now, relying on refetching userProfile and potentially a page refresh to update session data
     },
-  );
+    onError: (err) => {
+      setError(err.message);
+      setSuccess(null);
+    },
+  });
 
   useEffect(() => {
     if (userProfile?.name) {

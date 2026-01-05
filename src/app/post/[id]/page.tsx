@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { PostWithRelationsDto } from "@/features/post/PostDto";
+import type { PostDetail } from "@/features/post/service";
 import { formatToYYYYMMDD } from "@/lib/format-date";
 import { honoClient } from "@/lib/hono";
 import { BasicExifInfo } from "./_components/basic-exif-info";
@@ -22,9 +22,7 @@ import { PostImage } from "./_components/post-image";
 
 export const getPostCacheTag = (id: string) => `post-detail-${id}`;
 
-const getPostDetail = async (
-  id: string,
-): Promise<PostWithRelationsDto | null> => {
+const getPostDetail = async (id: string): Promise<PostDetail | null> => {
   "use cache";
   cacheTag(getPostCacheTag(id));
   cacheLife("minutes");
@@ -53,7 +51,7 @@ const getPostDetail = async (
     },
     createdAt: new Date(postWithRelation.createdAt),
     updatedAt: new Date(postWithRelation.updatedAt),
-  };
+  } as PostDetail;
 };
 
 export default async function PostDetailPage({

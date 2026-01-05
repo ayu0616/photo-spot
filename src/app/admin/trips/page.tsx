@@ -20,7 +20,8 @@ import { formatToYYYYMMDD } from "@/lib/format-date";
 import { honoClient } from "@/lib/hono";
 
 export default async function AdminTripsPage() {
-  const res = await honoClient.trip.$get();
+  // biome-ignore lint/suspicious/noExplicitAny: Hono client inference issue
+  const res = await (honoClient as any).trip.$get();
   if (!res.ok) {
     throw new Error("旅行の取得に失敗しました");
   }
@@ -54,7 +55,8 @@ export default async function AdminTripsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {trips.map((trip) => (
+              {/* biome-ignore lint/suspicious/noExplicitAny: Hono client inference issue */}
+              {trips.map((trip: any) => (
                 <TableRow key={trip.id}>
                   <TableCell className="font-medium">
                     <Link href={`/trip/${trip.id}`}>{trip.title}</Link>

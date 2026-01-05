@@ -1,5 +1,5 @@
 import React from "react";
-import type { PhotoForPostDto } from "@/features/post/PostDto";
+import type { PhotoForPost } from "@/features/post/service";
 import {
   convertCameraModelName,
   formatAperture,
@@ -9,7 +9,7 @@ import {
 } from "@/lib/format-exif";
 
 interface BasicExifInfoProps {
-  photo: PhotoForPostDto;
+  photo: PhotoForPost;
 }
 
 export const BasicExifInfo: React.FC<BasicExifInfoProps> = ({ photo }) => {
