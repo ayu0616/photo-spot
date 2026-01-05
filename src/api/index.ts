@@ -3,14 +3,13 @@ import { compress } from "hono/compress";
 import { csrf } from "hono/csrf";
 import { logger } from "hono/logger";
 import { secureHeaders } from "hono/secure-headers";
-import { TYPES } from "@/constants/types";
-import type { MasterController } from "@/features/master/MasterController";
-import type { ImageController } from "@/features/photo/ImageController";
-import type { PostController } from "@/features/post/PostController";
-import type { SpotController } from "@/features/spot/SpotController";
-import type { TripController } from "@/features/trip/trip.controller";
-import type { UserController } from "@/features/user/UserController";
-import { container } from "@/inversify.config";
+
+import { app as masterApp } from "@/features/master";
+import { app as imageApp } from "@/features/photo";
+import { app as postApp } from "@/features/post";
+import { app as spotApp } from "@/features/spot";
+import { app as tripApp } from "@/features/trip";
+import { app as userApp } from "@/features/user";
 
 export const app = new Hono()
   .basePath("/api")
@@ -27,11 +26,11 @@ export const app = new Hono()
     console.error(err);
     return c.json({ error: err.message }, 500);
   })
-  .route("/image", container.get<ImageController>(TYPES.ImageController).app)
-  .route("/master", container.get<MasterController>(TYPES.MasterController).app)
-  .route("/post", container.get<PostController>(TYPES.PostController).app)
-  .route("/spot", container.get<SpotController>(TYPES.SpotController).app)
-  .route("/user", container.get<UserController>(TYPES.UserController).app) // Register UserController
-  .route("/trip", container.get<TripController>(TYPES.TripController).app); // Register TripController
+  .route("/image", imageApp)
+  .route("/master", masterApp)
+  .route("/post", postApp)
+  .route("/spot", spotApp)
+  .route("/user", userApp)
+  .route("/trip", tripApp);
 
 export type AppType = typeof app;
