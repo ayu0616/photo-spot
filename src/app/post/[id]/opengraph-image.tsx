@@ -93,6 +93,69 @@ export default async function Image({ params }: { params: { id: string } }) {
 
   const post = await res.json();
 
+  if (!post.photo) {
+    return new ImageResponse(
+      <div
+        style={{
+          background: "white",
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          padding: "40px",
+          fontFamily: "Noto Sans JP",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <div
+            style={{
+              fontSize: 36,
+              fontWeight: "bold",
+              textAlign: "center",
+              lineHeight: 1.5,
+            }}
+          >
+            {post.description}
+          </div>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 16,
+            marginTop: 20,
+          }}
+        >
+          {post.user.image && (
+            // biome-ignore lint/performance/noImgElement: satoriのog画像生成用
+            <img
+              src={post.user.image}
+              alt={post.user.name || "User"}
+              style={{
+                width: 48,
+                height: 48,
+                borderRadius: "50%",
+              }}
+            />
+          )}
+          <div style={{ fontSize: 24 }}>{post.user.name}</div>
+        </div>
+      </div>,
+      {
+        ...size,
+        fonts,
+      },
+    );
+  }
+
   const shutterSpeed = formatShutterSpeed(post.photo.shutterSpeed);
   const settingsItems: string[] = [];
 
@@ -170,26 +233,30 @@ export default async function Image({ params }: { params: { id: string } }) {
             color: "white",
           }}
         >
-          <div
-            style={{
-              fontSize: 36,
-              fontWeight: "bold",
-              marginBottom: 6,
-              display: "flex",
-            }}
-          >
-            {post.spot.name}
-          </div>
-          <div
-            style={{
-              fontSize: 24,
-              opacity: 0.9,
-              display: "flex",
-              marginBottom: 10,
-            }}
-          >
-            {post.spot.city.prefecture.name} {post.spot.city.name}
-          </div>
+          {post.spot && (
+            <>
+              <div
+                style={{
+                  fontSize: 36,
+                  fontWeight: "bold",
+                  marginBottom: 6,
+                  display: "flex",
+                }}
+              >
+                {post.spot.name}
+              </div>
+              <div
+                style={{
+                  fontSize: 24,
+                  opacity: 0.9,
+                  display: "flex",
+                  marginBottom: 10,
+                }}
+              >
+                {post.spot.city.prefecture.name} {post.spot.city.name}
+              </div>
+            </>
+          )}
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             {post.user.image && (
               // biome-ignore lint/performance/noImgElement: satoriのog画像生成用

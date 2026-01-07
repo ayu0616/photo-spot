@@ -43,12 +43,14 @@ const getPostDetail = async (id: string): Promise<PostDetail | null> => {
   const postWithRelation = await res.json();
   return {
     ...postWithRelation,
-    photo: {
-      ...postWithRelation.photo,
-      takenAt: postWithRelation.photo.takenAt
-        ? new Date(postWithRelation.photo.takenAt)
-        : null,
-    },
+    photo: postWithRelation.photo
+      ? {
+          ...postWithRelation.photo,
+          takenAt: postWithRelation.photo.takenAt
+            ? new Date(postWithRelation.photo.takenAt)
+            : null,
+        }
+      : null,
     createdAt: new Date(postWithRelation.createdAt),
     updatedAt: new Date(postWithRelation.updatedAt),
   } as PostDetail;
@@ -82,9 +84,9 @@ export default async function PostDetailPage({
               <div>
                 <CardTitle>{post.user.name || "匿名ユーザー"}</CardTitle>
                 <CardDescription>
-                  {post.photo.takenAt
+                  {post.photo?.takenAt
                     ? formatToYYYYMMDD(new Date(post.photo.takenAt))
-                    : "-"}
+                    : formatToYYYYMMDD(post.createdAt)}
                 </CardDescription>
               </div>
             </div>
@@ -94,10 +96,12 @@ export default async function PostDetailPage({
             />
           </div>
 
-          <p className="text-sm flex items-center text-gray-500">
-            <MapPin className="w-4 h-4 mr-1" /> {post.spot.name} (
-            {post.spot.city.prefecture.name} {post.spot.city.name})
-          </p>
+          {post.spot && (
+            <p className="text-sm flex items-center text-gray-500">
+              <MapPin className="w-4 h-4 mr-1" /> {post.spot.name} (
+              {post.spot.city.prefecture.name} {post.spot.city.name})
+            </p>
+          )}
           {post.trip && (
             <div className="mt-2">
               <Link
@@ -114,30 +118,34 @@ export default async function PostDetailPage({
           )}
         </CardHeader>
         <CardContent>
-          <div className="w-full mb-6">
-            <PostImage
-              src={post.photo.url}
-              alt={post.description || "Post Image"}
-            />
-          </div>
+          {post.photo && (
+            <div className="w-full mb-6">
+              <PostImage
+                src={post.photo.url}
+                alt={post.description || "Post Image"}
+              />
+            </div>
+          )}
 
           {/* 基本的な撮影情報 */}
-          <BasicExifInfo photo={post.photo} />
+          {post.photo && <BasicExifInfo photo={post.photo} />}
 
           {/* 位置情報 */}
-          <div className="mt-6">
-            <LocationInfo
-              latitude={post.photo.latitude}
-              longitude={post.photo.longitude}
-            />
-          </div>
+          {post.photo && (
+            <div className="mt-6">
+              <LocationInfo
+                latitude={post.photo.latitude}
+                longitude={post.photo.longitude}
+              />
+            </div>
+          )}
 
           <p className="text-base mb-6 mt-6 whitespace-pre-wrap">
             {post.description}
           </p>
 
           {/* 詳細な撮影情報 */}
-          <DetailedExifInfo photo={post.photo} />
+          {post.photo && <DetailedExifInfo photo={post.photo} />}
         </CardContent>
       </Card>
     </div>

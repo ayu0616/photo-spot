@@ -189,7 +189,11 @@ export function PostActionsMenu({ post, currentUserId }: PostActionsMenuProps) {
       <SelectTripDialog
         open={isSelectTripDialogOpen}
         onOpenChange={setIsSelectTripDialogOpen}
-        takenAt={post.photo.takenAt ? formatToYYYYMMDD(post.photo.takenAt) : ""}
+        takenAt={
+          post.photo?.takenAt
+            ? formatToYYYYMMDD(post.photo.takenAt)
+            : formatToYYYYMMDD(post.createdAt)
+        }
         defaultTripId={post.tripId}
         postId={post.id}
       />
@@ -214,10 +218,10 @@ function EditPostDialog({
     defaultValues: {
       description: post.description || "",
       spotMode: "existing",
-      selectedSpotId: post.spot.id,
-      selectedPrefectureId: post.spot.city.prefecture.id.toString(),
-      newSpotCityId: post.spot.city.id.toString(),
-      newSpotName: post.spot.name,
+      selectedSpotId: post.spot?.id || "",
+      selectedPrefectureId: post.spot?.city.prefecture.id.toString() || "",
+      newSpotCityId: post.spot?.city.id.toString() || "",
+      newSpotName: post.spot?.name || "",
     },
   });
 
@@ -227,10 +231,10 @@ function EditPostDialog({
       form.reset({
         description: post.description || "",
         spotMode: "existing",
-        selectedSpotId: post.spot.id,
-        selectedPrefectureId: post.spot.city.prefecture.id.toString(),
-        newSpotCityId: post.spot.city.id.toString(),
-        newSpotName: post.spot.name,
+        selectedSpotId: post.spot?.id || "",
+        selectedPrefectureId: post.spot?.city.prefecture.id.toString() || "",
+        newSpotCityId: post.spot?.city.id.toString() || "",
+        newSpotName: post.spot?.name || "",
       });
     }
   }, [open, post, form]);

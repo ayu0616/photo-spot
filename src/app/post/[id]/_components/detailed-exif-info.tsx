@@ -12,7 +12,7 @@ import {
 } from "@/lib/format-exif";
 
 interface DetailedExifInfoProps {
-  photo: PhotoForPost;
+  photo: NonNullable<PhotoForPost>;
 }
 
 export const DetailedExifInfo: React.FC<DetailedExifInfoProps> = ({

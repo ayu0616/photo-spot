@@ -9,7 +9,7 @@ import {
 } from "@/lib/format-exif";
 
 interface BasicExifInfoProps {
-  photo: PhotoForPost;
+  photo: NonNullable<PhotoForPost>;
 }
 
 export const BasicExifInfo: React.FC<BasicExifInfoProps> = ({ photo }) => {

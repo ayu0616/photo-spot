@@ -3,12 +3,15 @@ import {
   boolean,
   index,
   integer,
+  pgEnum,
   pgTable,
   primaryKey,
   text,
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
+
+export const postTypeEnum = pgEnum("post_type", ["PHOTO", "NOTE"]);
 
 export const usersTable = pgTable("user", {
   id: varchar("id", { length: 255 })
@@ -172,12 +175,17 @@ export const PostsTable = pgTable(
       .notNull()
       .references(() => usersTable.id, { onDelete: "cascade" }),
     description: varchar("description", { length: 255 }).notNull(),
-    spotId: varchar("spot_id", { length: 255 }) // Renamed from 'id' to 'spot_id'
-      .notNull()
-      .references(() => SpotsTable.id, { onDelete: "cascade" }), // Added onDelete
-    photoId: varchar("photo_id", { length: 255 }) // Renamed from 'photoId' to 'photo_id'
-      .notNull()
-      .references(() => PhotosTable.id, { onDelete: "cascade" }), // Added onDelete
+    type: postTypeEnum("type").default("PHOTO").notNull(),
+    spotId: varchar("spot_id", { length: 255 }).references(
+      () => SpotsTable.id,
+      {
+        onDelete: "cascade",
+      },
+    ),
+    photoId: varchar("photo_id", { length: 255 }).references(
+      () => PhotosTable.id,
+      { onDelete: "cascade" },
+    ),
     tripId: varchar("trip_id", { length: 255 }).references(
       () => TripsTable.id,
       {

@@ -33,10 +33,12 @@ const fetchPostsData = async ({
     ...post,
     createdAt: new Date(post.createdAt),
     updatedAt: new Date(post.updatedAt),
-    photo: {
-      ...post.photo,
-      takenAt: post.photo.takenAt ? new Date(post.photo.takenAt) : null,
-    },
+    photo: post.photo
+      ? {
+          ...post.photo,
+          takenAt: post.photo.takenAt ? new Date(post.photo.takenAt) : null,
+        }
+      : null,
   })) as PostList[];
 };
 

@@ -52,16 +52,24 @@ export default async function TripPage({
     ...post,
     createdAt: new Date(post.createdAt),
     updatedAt: new Date(post.updatedAt),
-    photo: {
-      ...post.photo,
-      takenAt: post.photo.takenAt ? new Date(post.photo.takenAt) : null,
-    },
+    photo: post.photo
+      ? {
+          ...post.photo,
+          takenAt: post.photo.takenAt ? new Date(post.photo.takenAt) : null,
+        }
+      : null,
   })) as PostListType[];
 
   const session = await auth();
   const userId = session?.user.id;
 
-  const sharePosts = posts.filter((post) => post.userId === userId);
+  // Filter posts that are owned by the user and have a photo
+  const sharePosts = posts.filter(
+    (
+      post,
+    ): post is PostListType & { photo: NonNullable<PostListType["photo"]> } =>
+      post.userId === userId && post.photo !== null,
+  );
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">

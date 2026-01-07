@@ -6,16 +6,32 @@ import { auth } from "@/app/api/auth/[...nextAuth]/auth";
 import { getPostCacheTag } from "@/app/post/[id]/page";
 import * as postService from "./service";
 
-const createPostSchema = z.object({
-  image: z.instanceof(File, { message: "画像ファイルが必要です。" }),
-  description: z.string(),
-  spotId: z.string().optional(),
-  spotName: z.string().optional(),
-  cityId: z
-    .string()
-    .optional()
-    .transform((val) => (val ? parseInt(val, 10) : undefined)),
-});
+const createPostSchema = z.discriminatedUnion("type", [
+  z.object({
+    type: z.literal("PHOTO"),
+    image: z.instanceof(File, { message: "画像ファイルが必要です。" }),
+    description: z.string(),
+    spotId: z.string().optional(),
+    spotName: z.string().optional(),
+    cityId: z
+      .string()
+      .optional()
+      .transform((val) => (val ? parseInt(val, 10) : undefined)),
+    tripId: z.string().optional(),
+  }),
+  z.object({
+    type: z.literal("NOTE"),
+    image: z.any().optional(),
+    description: z.string(),
+    spotId: z.string().optional(),
+    spotName: z.string().optional(),
+    cityId: z
+      .string()
+      .optional()
+      .transform((val) => (val ? parseInt(val, 10) : undefined)),
+    tripId: z.string().optional(),
+  }),
+]);
 
 const updatePostSchema = z.object({
   description: z.string(),
@@ -53,19 +69,33 @@ export const app = new Hono()
           );
         }
 
-        const { image, description, spotId, spotName, cityId } =
-          c.req.valid("form");
+        const data = c.req.valid("form");
 
-        if (!spotId && (!spotName || !cityId)) {
-          return c.json({ error: "Spot information is missing." }, 400);
+        if (data.type === "PHOTO") {
+          if (!data.spotId && (!data.spotName || !data.cityId)) {
+            return c.json({ error: "Spot information is missing." }, 400);
+          }
+          const post = await postService.createPost({
+            userId,
+            type: "PHOTO",
+            description: data.description,
+            imageFile: data.image,
+            spotId: data.spotId,
+            spotName: data.spotName,
+            cityId: data.cityId,
+            tripId: data.tripId,
+          });
+          return c.json(post, 201);
         }
 
         const post = await postService.createPost({
           userId,
-          description,
-          imageFile: image,
-          ...(spotId && { spotId }),
-          ...(spotName && cityId && { spotName, cityId }),
+          type: "NOTE",
+          description: data.description,
+          spotId: data.spotId,
+          spotName: data.spotName,
+          cityId: data.cityId,
+          tripId: data.tripId,
         });
 
         return c.json(post, 201);

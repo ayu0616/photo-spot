@@ -6,19 +6,59 @@ import * as imageService from "@/features/photo/image.service";
 
 export type Post = InferSelectModel<typeof PostsTable>;
 
-export async function createPost(params: {
-  userId: string;
-  description: string;
-  imageFile: File;
-  spotId?: string;
-  spotName?: string;
-  cityId?: number;
-}): Promise<Post> {
-  // Upload image first
-  const { url, exifData } = await imageService.uploadImage(params.imageFile);
+type CreatePostParams =
+  | {
+      type: "PHOTO";
+      userId: string;
+      description: string;
+      imageFile: File;
+      spotId?: string;
+      spotName?: string;
+      cityId?: number;
+      tripId?: string;
+    }
+  | {
+      type: "NOTE";
+      userId: string;
+      description: string;
+      imageFile?: undefined;
+      spotId?: string;
+      spotName?: string;
+      cityId?: number;
+      tripId?: string;
+    };
+
+export async function createPost(params: CreatePostParams): Promise<Post> {
+  let photoId: string | null = null;
+
+  if (params.type === "PHOTO") {
+    // Upload image first
+    const { url, exifData } = await imageService.uploadImage(params.imageFile);
+    const [photo] = await db
+      .insert(PhotosTable)
+      .values({
+        url,
+        takenAt: exifData.takenAt,
+        cameraMake: exifData.cameraMake,
+        cameraModel: exifData.cameraModel,
+        latitude: exifData.latitude?.toString(),
+        longitude: exifData.longitude?.toString(),
+        orientation: exifData.orientation,
+        iso: exifData.iso,
+        lensMake: exifData.lensMake,
+        lensModel: exifData.lensModel,
+        lensSerial: exifData.lensSerial,
+        focalLength: exifData.focalLength,
+        focalLength35mm: exifData.focalLength35mm,
+        aperture: exifData.aperture,
+        shutterSpeed: exifData.shutterSpeed,
+      })
+      .returning();
+    photoId = photo.id;
+  }
 
   return await db.transaction(async (tx) => {
-    let spotId = params.spotId;
+    let spotId: string | null = params.spotId ?? null;
 
     if (!spotId) {
       if (params.spotName && params.cityId) {
@@ -44,7 +84,9 @@ export async function createPost(params: {
             .returning();
           spotId = newSpot.id;
         }
-      } else {
+      }
+      // For NOTE type, spot is optional, so we don't throw if missing
+      else if (params.type === "PHOTO") {
         throw new Error("Spot information is missing.");
       }
     } else {
@@ -55,34 +97,15 @@ export async function createPost(params: {
       if (!found) throw new Error("Selected spot not found.");
     }
 
-    const [photo] = await tx
-      .insert(PhotosTable)
-      .values({
-        url,
-        takenAt: exifData.takenAt,
-        cameraMake: exifData.cameraMake,
-        cameraModel: exifData.cameraModel,
-        latitude: exifData.latitude?.toString(),
-        longitude: exifData.longitude?.toString(),
-        orientation: exifData.orientation,
-        iso: exifData.iso,
-        lensMake: exifData.lensMake,
-        lensModel: exifData.lensModel,
-        lensSerial: exifData.lensSerial,
-        focalLength: exifData.focalLength,
-        focalLength35mm: exifData.focalLength35mm,
-        aperture: exifData.aperture,
-        shutterSpeed: exifData.shutterSpeed,
-      })
-      .returning();
-
     const [post] = await tx
       .insert(PostsTable)
       .values({
         userId: params.userId,
         description: params.description,
-        spotId: spotId!,
-        photoId: photo.id,
+        type: params.type,
+        spotId: spotId,
+        photoId: photoId,
+        tripId: params.tripId,
         createdAt: new Date(),
         updatedAt: new Date(),
       })
@@ -258,8 +281,12 @@ export async function getPostsByTripId(tripId: string) {
   });
 
   return posts.sort((a, b) => {
-    const dateA = a.photo.takenAt ? new Date(a.photo.takenAt).getTime() : 0;
-    const dateB = b.photo.takenAt ? new Date(b.photo.takenAt).getTime() : 0;
+    const dateA = a.photo?.takenAt
+      ? new Date(a.photo.takenAt).getTime()
+      : new Date(a.createdAt).getTime();
+    const dateB = b.photo?.takenAt
+      ? new Date(b.photo.takenAt).getTime()
+      : new Date(b.createdAt).getTime();
     return dateA - dateB;
   });
 }
