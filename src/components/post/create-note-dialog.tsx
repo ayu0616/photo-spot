@@ -30,6 +30,7 @@ interface CreateNoteDialogProps {
   tripId: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  defaultDate?: Date;
 }
 
 const formSchema = z.object({
@@ -41,6 +42,7 @@ export function CreateNoteDialog({
   tripId,
   open,
   onOpenChange,
+  defaultDate,
 }: CreateNoteDialogProps) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -108,6 +110,7 @@ export function CreateNoteDialog({
                     <DateTimePicker
                       value={field.value}
                       onChange={field.onChange}
+                      defaultMonth={defaultDate}
                     />
                   </FormControl>
                   <FormMessage />

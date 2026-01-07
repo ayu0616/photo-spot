@@ -25,12 +25,14 @@ export interface DateTimePickerProps {
   value: Date | undefined;
   onChange: (date: Date | undefined) => void;
   className?: string;
+  defaultMonth?: Date;
 }
 
 export function DateTimePicker({
   value,
   onChange,
   className,
+  defaultMonth,
 }: DateTimePickerProps) {
   const [open, setOpen] = React.useState(false);
 
@@ -92,6 +94,7 @@ export function DateTimePicker({
             selected={value}
             onSelect={handleDateSelect}
             initialFocus
+            defaultMonth={defaultMonth}
           />
           <div className="p-3 border-t border-border flex items-center gap-2">
             <Select
