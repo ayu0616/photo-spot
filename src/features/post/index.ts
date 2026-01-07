@@ -18,6 +18,10 @@ const createPostSchema = z.discriminatedUnion("type", [
       .optional()
       .transform((val) => (val ? parseInt(val, 10) : undefined)),
     tripId: z.string().optional(),
+    takenAt: z
+      .string()
+      .optional()
+      .transform((val) => (val ? new Date(val) : undefined)),
   }),
   z.object({
     type: z.literal("NOTE"),
@@ -30,6 +34,10 @@ const createPostSchema = z.discriminatedUnion("type", [
       .optional()
       .transform((val) => (val ? parseInt(val, 10) : undefined)),
     tripId: z.string().optional(),
+    takenAt: z
+      .string()
+      .optional()
+      .transform((val) => (val ? new Date(val) : undefined)),
   }),
 ]);
 
@@ -84,6 +92,7 @@ export const app = new Hono()
             spotName: data.spotName,
             cityId: data.cityId,
             tripId: data.tripId,
+            takenAt: data.takenAt,
           });
           return c.json(post, 201);
         }
@@ -96,6 +105,7 @@ export const app = new Hono()
           spotName: data.spotName,
           cityId: data.cityId,
           tripId: data.tripId,
+          takenAt: data.takenAt,
         });
 
         return c.json(post, 201);

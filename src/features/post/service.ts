@@ -16,6 +16,7 @@ type CreatePostParams =
       spotName?: string;
       cityId?: number;
       tripId?: string;
+      takenAt?: Date;
     }
   | {
       type: "NOTE";
@@ -26,10 +27,12 @@ type CreatePostParams =
       spotName?: string;
       cityId?: number;
       tripId?: string;
+      takenAt?: Date;
     };
 
 export async function createPost(params: CreatePostParams): Promise<Post> {
   let photoId: string | null = null;
+  let photoTakenAt: Date | null = null;
 
   if (params.type === "PHOTO") {
     // Upload image first
@@ -55,6 +58,7 @@ export async function createPost(params: CreatePostParams): Promise<Post> {
       })
       .returning();
     photoId = photo.id;
+    photoTakenAt = exifData.takenAt || null;
   }
 
   return await db.transaction(async (tx) => {
@@ -106,6 +110,7 @@ export async function createPost(params: CreatePostParams): Promise<Post> {
         spotId: spotId || null,
         photoId: photoId,
         tripId: params.tripId || null,
+        takenAt: photoTakenAt || params.takenAt || new Date(),
         createdAt: new Date(),
         updatedAt: new Date(),
       })
@@ -119,7 +124,7 @@ export async function getPosts(limit: number, offset: number) {
   return await db.query.PostsTable.findMany({
     limit: limit,
     offset: offset,
-    orderBy: (posts, { desc }) => [desc(posts.createdAt)],
+    orderBy: (posts, { desc }) => [desc(posts.takenAt)],
     with: {
       user: {
         columns: {
@@ -234,6 +239,7 @@ export async function getPostById(id: string) {
 export async function getPostsByTripId(tripId: string) {
   const posts = await db.query.PostsTable.findMany({
     where: eq(PostsTable.tripId, tripId),
+    orderBy: (posts, { asc }) => [asc(posts.takenAt)],
     with: {
       user: {
         columns: {
@@ -280,15 +286,7 @@ export async function getPostsByTripId(tripId: string) {
     },
   });
 
-  return posts.sort((a, b) => {
-    const dateA = a.photo?.takenAt
-      ? new Date(a.photo.takenAt).getTime()
-      : new Date(a.createdAt).getTime();
-    const dateB = b.photo?.takenAt
-      ? new Date(b.photo.takenAt).getTime()
-      : new Date(b.createdAt).getTime();
-    return dateA - dateB;
-  });
+  return posts;
 }
 
 export async function queryPostsForTripEdit(
