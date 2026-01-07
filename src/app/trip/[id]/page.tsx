@@ -1,13 +1,9 @@
-import { Edit } from "lucide-react";
 import { cacheLife, cacheTag } from "next/cache";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/app/api/auth/[...nextAuth]/auth";
-import { PostList } from "@/components/post/post-list";
-import { Button } from "@/components/ui/button";
 import type { PostList as PostListType } from "@/features/post/service";
 import { honoClient } from "@/lib/hono";
-import { TripShareDialog } from "./_components/trip-share-dialog";
+import { TripDetailView } from "./_components/trip-detail-view";
 
 export const getTripCacheTag = (id: string) => `trip-details-${id}`;
 
@@ -61,7 +57,7 @@ export default async function TripPage({
   })) as PostListType[];
 
   const session = await auth();
-  const userId = session?.user.id;
+  const userId = session?.user?.id || undefined;
 
   // Filter posts that are owned by the user and have a photo
   const sharePosts = posts.filter(
@@ -72,33 +68,11 @@ export default async function TripPage({
   );
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
-      <div className="mb-8">
-        <div className="flex justify-between items-start gap-4 mb-2">
-          <h1 className="text-3xl font-bold">{trip.title}</h1>
-          <div className="flex gap-2">
-            {userId === trip.userId && (
-              <Button variant="outline" size="icon" asChild>
-                {/* biome-ignore lint/suspicious/noExplicitAny: Route inference issue */}
-                <Link href={`/trip/${trip.id}/edit` as any}>
-                  <Edit className="h-4 w-4" />
-                  <span className="sr-only">編集</span>
-                </Link>
-              </Button>
-            )}
-            {userId && sharePosts.length > 0 && (
-              <TripShareDialog posts={sharePosts} tripTitle={trip.title} />
-            )}
-          </div>
-        </div>
-        {trip.description && (
-          <p className="text-gray-600 mb-2">{trip.description}</p>
-        )}
-        <p className="text-sm text-gray-500">
-          {trip.startedAt} - {trip.endedAt}
-        </p>
-      </div>
-      <PostList allPosts={posts} />
-    </div>
+    <TripDetailView
+      trip={trip}
+      posts={posts}
+      currentUserId={userId}
+      sharePosts={sharePosts}
+    />
   );
 }
