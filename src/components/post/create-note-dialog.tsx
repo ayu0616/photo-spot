@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
+import { DateTimePicker } from "@/components/ui/datetime-picker";
 import {
   Dialog,
   DialogContent,
@@ -22,9 +23,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { formatToDateTimeLocal } from "@/lib/format-date";
 import { honoClient } from "@/lib/hono";
 
 interface CreateNoteDialogProps {
@@ -35,7 +34,7 @@ interface CreateNoteDialogProps {
 
 const formSchema = z.object({
   description: z.string().min(1, { message: "説明は必須です。" }),
-  takenAt: z.string().min(1, { message: "日時は必須です。" }),
+  takenAt: z.date({ message: "日時は必須です。" }),
 });
 
 export function CreateNoteDialog({
@@ -51,7 +50,7 @@ export function CreateNoteDialog({
     resolver: zodResolver(formSchema),
     defaultValues: {
       description: "",
-      takenAt: formatToDateTimeLocal(new Date()),
+      takenAt: undefined,
     },
   });
 
@@ -63,7 +62,7 @@ export function CreateNoteDialog({
           type: "NOTE",
           description: values.description,
           tripId: tripId,
-          takenAt: values.takenAt,
+          takenAt: values.takenAt.toISOString(),
           spotName: "", // Optional for NOTE
           cityId: "", // Optional for NOTE
           spotId: "", // Optional for NOTE
@@ -106,7 +105,10 @@ export function CreateNoteDialog({
                 <FormItem>
                   <FormLabel>日時</FormLabel>
                   <FormControl>
-                    <Input type="datetime-local" {...field} />
+                    <DateTimePicker
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

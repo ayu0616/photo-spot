@@ -8,6 +8,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
+import { DateTimePicker } from "@/components/ui/datetime-picker";
 import {
   Form,
   FormControl,
@@ -31,7 +32,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { useCities } from "@/hooks/use-cities";
 import { usePrefectures } from "@/hooks/use-prefectures";
 import { useSpots } from "@/hooks/use-spots";
-import { formatToDateTimeLocal } from "@/lib/format-date";
 import { honoClient } from "@/lib/hono";
 import { cn } from "@/lib/utils";
 
@@ -40,7 +40,7 @@ const formSchema = z
     type: z.enum(["PHOTO", "NOTE"]),
     image: z.custom<File>().optional(),
     description: z.string().min(0, { message: "説明は必須です。" }),
-    takenAt: z.string().min(1, { message: "日時は必須です。" }),
+    takenAt: z.date({ message: "日時は必須です。" }),
     spotMode: z.enum(["new", "existing", "none"]),
     selectedSpotId: z.string().optional(),
     newSpotName: z.string().optional(),
@@ -110,7 +110,7 @@ export default function UploadPage() {
     defaultValues: {
       type: "PHOTO",
       description: "",
-      takenAt: formatToDateTimeLocal(new Date()),
+      takenAt: undefined,
       spotMode: "new",
       selectedPrefectureId: "",
       newSpotCityId: "",
@@ -151,7 +151,7 @@ export default function UploadPage() {
 
     const commonData = {
       description: values.description,
-      takenAt: values.takenAt,
+      takenAt: values.takenAt.toISOString(),
       spotName: "",
       cityId: "",
       spotId: "",
@@ -507,7 +507,10 @@ export default function UploadPage() {
               <FormItem>
                 <FormLabel>日時</FormLabel>
                 <FormControl>
-                  <Input type="datetime-local" {...field} />
+                  <DateTimePicker
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
