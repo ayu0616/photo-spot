@@ -22,7 +22,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { formatToDateTimeLocal } from "@/lib/format-date";
 import { honoClient } from "@/lib/hono";
 
 interface CreateNoteDialogProps {
@@ -33,6 +35,7 @@ interface CreateNoteDialogProps {
 
 const formSchema = z.object({
   description: z.string().min(1, { message: "説明は必須です。" }),
+  takenAt: z.string().min(1, { message: "日時は必須です。" }),
 });
 
 export function CreateNoteDialog({
@@ -48,6 +51,7 @@ export function CreateNoteDialog({
     resolver: zodResolver(formSchema),
     defaultValues: {
       description: "",
+      takenAt: formatToDateTimeLocal(new Date()),
     },
   });
 
@@ -59,6 +63,7 @@ export function CreateNoteDialog({
           type: "NOTE",
           description: values.description,
           tripId: tripId,
+          takenAt: values.takenAt,
           spotName: "", // Optional for NOTE
           cityId: "", // Optional for NOTE
           spotId: "", // Optional for NOTE
@@ -94,6 +99,19 @@ export function CreateNoteDialog({
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="takenAt"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>日時</FormLabel>
+                  <FormControl>
+                    <Input type="datetime-local" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="description"

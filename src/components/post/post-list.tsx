@@ -63,8 +63,8 @@ export const PostList: React.FC<PostListProps> = ({
             {/* 日時表示 */}
             <div className="mb-3 text-xs font-medium text-muted-foreground flex items-center gap-2">
               <span className="bg-muted px-2 py-0.5 rounded">
-                {post.photo?.takenAt
-                  ? formatDateTime(new Date(post.photo.takenAt))
+                {post.takenAt
+                  ? formatDateTime(new Date(post.takenAt))
                   : formatDateTime(new Date(post.createdAt))}
               </span>
             </div>

@@ -51,6 +51,9 @@ const getPostDetail = async (id: string): Promise<PostDetail | null> => {
             : null,
         }
       : null,
+    takenAt: postWithRelation.takenAt
+      ? new Date(postWithRelation.takenAt)
+      : null,
     createdAt: new Date(postWithRelation.createdAt),
     updatedAt: new Date(postWithRelation.updatedAt),
   } as PostDetail;
@@ -84,8 +87,8 @@ export default async function PostDetailPage({
               <div>
                 <CardTitle>{post.user.name || "匿名ユーザー"}</CardTitle>
                 <CardDescription>
-                  {post.photo?.takenAt
-                    ? formatToYYYYMMDD(new Date(post.photo.takenAt))
+                  {post.takenAt
+                    ? formatToYYYYMMDD(new Date(post.takenAt))
                     : formatToYYYYMMDD(post.createdAt)}
                 </CardDescription>
               </div>

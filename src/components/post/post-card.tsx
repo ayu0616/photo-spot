@@ -42,7 +42,9 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
                   {post.user.name || "匿名ユーザー"}
                 </CardTitle>
                 <CardDescription>
-                  {formatToYYYYMMDD(new Date(post.createdAt))}
+                  {post.takenAt
+                    ? formatToYYYYMMDD(new Date(post.takenAt))
+                    : formatToYYYYMMDD(new Date(post.createdAt))}
                 </CardDescription>
               </div>
             </div>
@@ -90,8 +92,8 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
                 {post.user.name || "匿名ユーザー"}
               </CardTitle>
               <CardDescription>
-                {post.photo?.takenAt
-                  ? formatToYYYYMMDD(new Date(post.photo.takenAt))
+                {post.takenAt
+                  ? formatToYYYYMMDD(new Date(post.takenAt))
                   : formatToYYYYMMDD(new Date(post.createdAt))}
               </CardDescription>
             </div>
