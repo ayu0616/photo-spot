@@ -103,9 +103,9 @@ export async function createPost(params: CreatePostParams): Promise<Post> {
         userId: params.userId,
         description: params.description,
         type: params.type,
-        spotId: spotId,
+        spotId: spotId || null,
         photoId: photoId,
-        tripId: params.tripId,
+        tripId: params.tripId || null,
         createdAt: new Date(),
         updatedAt: new Date(),
       })
