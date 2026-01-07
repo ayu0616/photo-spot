@@ -72,7 +72,7 @@ export default async function TripPage({
   );
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="container mx-auto px-4 py-8 max-w-2xl">
       <div className="mb-8">
         <div className="flex justify-between items-start gap-4 mb-2">
           <h1 className="text-3xl font-bold">{trip.title}</h1>
