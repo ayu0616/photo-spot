@@ -192,6 +192,7 @@ export const PostsTable = pgTable(
         onDelete: "set null",
       },
     ),
+    takenAt: timestamp("takenAt", { mode: "date", withTimezone: true }),
     createdAt: timestamp("createdAt", { mode: "date" }).notNull(),
     updatedAt: timestamp("updatedAt", { mode: "date" }).notNull(),
   },

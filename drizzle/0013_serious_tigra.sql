@@ -1,0 +1,1 @@
+ALTER TABLE "post" ADD COLUMN "takenAt" timestamp with time zone;
