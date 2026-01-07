@@ -103,7 +103,8 @@ export function TripDetailView({
         tripId={trip.id}
         open={isNoteDialogOpen}
         onOpenChange={setIsNoteDialogOpen}
-        defaultDate={trip.startedAt ? new Date(trip.startedAt) : undefined}
+        startDate={trip.startedAt ? new Date(trip.startedAt) : undefined}
+        endDate={trip.endedAt ? new Date(trip.endedAt) : undefined}
       />
       <CreatePhotoDialog
         tripId={trip.id}

@@ -216,6 +216,7 @@ function CalendarDayButton({
       ref={ref}
       variant="ghost"
       size="icon"
+      disabled={modifiers.disabled}
       data-day={day.date.toLocaleDateString()}
       data-selected-single={
         modifiers.selected &&

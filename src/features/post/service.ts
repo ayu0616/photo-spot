@@ -61,6 +61,30 @@ export async function createPost(params: CreatePostParams): Promise<Post> {
     photoTakenAt = exifData.takenAt || null;
   }
 
+  const takenAt = photoTakenAt || params.takenAt || new Date();
+
+  // Validate trip date range if tripId is provided
+  if (params.tripId) {
+    const [trip] = await db
+      .select()
+      .from(TripsTable)
+      .where(eq(TripsTable.id, params.tripId));
+
+    if (trip) {
+      if (trip.startedAt && takenAt < new Date(trip.startedAt)) {
+        throw new Error("投稿の日時が旅行の開始日より前です。");
+      }
+      if (trip.endedAt) {
+        // Set to end of the day for endedAt
+        const endOfDay = new Date(trip.endedAt);
+        endOfDay.setHours(23, 59, 59, 999);
+        if (takenAt > endOfDay) {
+          throw new Error("投稿の日時が旅行の終了日より後です。");
+        }
+      }
+    }
+  }
+
   return await db.transaction(async (tx) => {
     let spotId: string | null = params.spotId ?? null;
 
@@ -110,7 +134,7 @@ export async function createPost(params: CreatePostParams): Promise<Post> {
         spotId: spotId || null,
         photoId: photoId,
         tripId: params.tripId || null,
-        takenAt: photoTakenAt || params.takenAt || new Date(),
+        takenAt: takenAt,
         createdAt: new Date(),
         updatedAt: new Date(),
       })

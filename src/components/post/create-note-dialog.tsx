@@ -30,23 +30,33 @@ interface CreateNoteDialogProps {
   tripId: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  defaultDate?: Date;
+  startDate?: Date;
+  endDate?: Date;
 }
-
-const formSchema = z.object({
-  description: z.string().min(1, { message: "説明は必須です。" }),
-  takenAt: z.date({ message: "日時は必須です。" }),
-});
 
 export function CreateNoteDialog({
   tripId,
   open,
   onOpenChange,
-  defaultDate,
+  startDate,
+  endDate,
 }: CreateNoteDialogProps) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const queryClient = useQueryClient();
+
+  const formSchema = z.object({
+    description: z.string().min(1, { message: "説明は必須です。" }),
+    takenAt: z.date({ message: "日時は必須です。" }).refine(
+      (date) => {
+        if (!startDate || !endDate) return true;
+        return date >= startDate && date <= endDate;
+      },
+      {
+        message: "旅行の日付範囲内で選択してください。",
+      },
+    ),
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -110,7 +120,9 @@ export function CreateNoteDialog({
                     <DateTimePicker
                       value={field.value}
                       onChange={field.onChange}
-                      defaultMonth={defaultDate}
+                      defaultMonth={startDate}
+                      fromDate={startDate}
+                      toDate={endDate}
                     />
                   </FormControl>
                   <FormMessage />

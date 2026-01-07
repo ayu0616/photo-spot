@@ -26,6 +26,8 @@ export interface DateTimePickerProps {
   onChange: (date: Date | undefined) => void;
   className?: string;
   defaultMonth?: Date;
+  fromDate?: Date;
+  toDate?: Date;
 }
 
 export function DateTimePicker({
@@ -33,6 +35,8 @@ export function DateTimePicker({
   onChange,
   className,
   defaultMonth,
+  fromDate,
+  toDate,
 }: DateTimePickerProps) {
   const [open, setOpen] = React.useState(false);
 
@@ -69,6 +73,10 @@ export function DateTimePicker({
     (i * 5).toString().padStart(2, "0"),
   );
 
+  const disabledMatchers = [];
+  if (fromDate) disabledMatchers.push({ before: fromDate });
+  if (toDate) disabledMatchers.push({ after: toDate });
+
   return (
     <div className={cn("grid gap-2", className)}>
       <Popover open={open} onOpenChange={setOpen}>
@@ -95,6 +103,9 @@ export function DateTimePicker({
             onSelect={handleDateSelect}
             initialFocus
             defaultMonth={defaultMonth}
+            fromDate={fromDate}
+            toDate={toDate}
+            disabled={disabledMatchers}
           />
           <div className="p-3 border-t border-border flex items-center gap-2">
             <Select
