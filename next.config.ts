@@ -20,6 +20,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  experimental: {
+    authInterrupts: true,
+  },
 };
 
 if (process.env.NODE_ENV === "development") {
